@@ -4,8 +4,8 @@
       <el-form-item label="打击日期" prop="strikeDate">
         <el-date-picker
             v-model="queryParams.strikeDate"
-            format="yyyy-MM-dd"
-            value-format="yyyy-MM-dd"
+            format="YYYY-MM-DD"
+            value-format="YYYY-MM-DD"
             type="date"
             placeholder="请选择打击日期"
         ></el-date-picker>
@@ -85,7 +85,9 @@
       <el-table-column label="总盘查人数" prop="totalPerson" v-show="showColumns.totalPerson"></el-table-column>
       <el-table-column label="检查车辆数" prop="checkCarCount" v-show="showColumns.checkCarCount"></el-table-column>
       <el-table-column label="拉车门数" prop="openDoorCount" v-show="showColumns.openDoorCount"></el-table-column>
-      <el-table-column label="在逃人员数" prop="netFugitiveCount" v-show="showColumns.netFugitiveCount"></el-table-column>
+      <el-table-column label="抓网逃数" prop="netFugitiveCount" v-show="showColumns.netFugitiveCount"></el-table-column>
+      <el-table-column label="抓获团伙数" prop="arrestGroupCount" v-show="showColumns.arrestGroupCount"></el-table-column>
+      <el-table-column label="抓获嫌疑人数" prop="arrestSuspectCount" v-show="showColumns.arrestSuspectCount"></el-table-column>
       <el-table-column label="送矫未成年数量" prop="correctMinorCount" v-show="showColumns.correctMinorCount"></el-table-column>
       <el-table-column label="单位名称" prop="unitName" v-show="showColumns.unitName"></el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -123,7 +125,7 @@
                @update:model-value="open = $event" width="950px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="140px">
         <el-form-item label="打击日期" prop="strikeDate">
-          <el-date-picker v-model="form.strikeDate" value-format="yyyy-MM-dd" type="date" placeholder="请选择打击日期"></el-date-picker>
+          <el-date-picker v-model="form.strikeDate" value-format="YYYY-MM-DD" type="date" placeholder="请选择打击日期"></el-date-picker>
         </el-form-item>
 
         <el-divider content-position="left">敲打未成年</el-divider>
@@ -227,7 +229,7 @@
         <el-divider content-position="left">追网逃</el-divider>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="检查车辆数">
+            <el-form-item label="抓网逃数">
               <el-input-number v-model="form.netFugitiveCount" :min="0" style="width:140px"></el-input-number>
             </el-form-item>
           </el-col>
@@ -389,7 +391,7 @@ export default {
         { label:"总盘查人数", prop:"totalPerson" },
         { label:"检查车辆数", prop:"checkCarCount" },
         { label:"拉车门数", prop:"openDoorCount" },
-        { label:"在逃人员数", prop:"netFugitiveCount" },
+        { label:"抓网逃数", prop:"netFugitiveCount" },
         { label:"送矫未成年数量", prop:"correctMinorCount" },
         { label:"单位名称", prop:"unitName" }
       ],
