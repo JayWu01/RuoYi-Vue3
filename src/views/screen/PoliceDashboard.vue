@@ -33,12 +33,12 @@ const createInitialMonthRange = () => [
   query.value.endDate.slice(0, 7)
 ]
 const rankFilter = shallowRef({
-  monthRange: createInitialMonthRange(),
+  monthRange: createInitialMonthRange()
   // deptId: '全部单位',
   // deptName: '全部单位'
 })
 const juvenileFilter = shallowRef({
-  monthRange: createInitialMonthRange(),
+  monthRange: createInitialMonthRange()
   // deptId: '全部单位',
   // deptName: '全部单位'
 })
@@ -87,7 +87,7 @@ const updatePanelUnit = (filter, deptId, unitOptions, reloadPanel) => {
     ...filter.value,
     // deptId: deptId || '全部单位',
     // deptName: selectedUnit?.deptName || '全部单位'
-    deptId: deptId,
+    deptId,
     deptName: selectedUnit?.deptName
   }
   filter.value = nextFilter
