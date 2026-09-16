@@ -11,11 +11,11 @@
         ></el-date-picker>
       </el-form-item>
       <!--新增单位下拉-->
-      <el-form-item label="所属单位" prop="deptId">
-        <el-select v-model="queryParams.deptId" placeholder="请选择单位" clearable>
-          <el-option label="单位A" :value="1"></el-option>
-          <!-- 实际项目用部门树/部门下拉组件 -->
-        </el-select>
+      <el-form-item label="所属单位" prop="unitName">
+          <el-input
+              v-model="queryParams.unitName"
+              placeholder="请输入单位名称"
+              clearable />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -83,6 +83,7 @@
       <el-table-column label="蓝色警情" prop="crimeBlue" v-show="showColumns.crimeBlue"></el-table-column>
       <el-table-column label="黑色警情" prop="crimeBlack" v-show="showColumns.crimeBlack"></el-table-column>
       <el-table-column label="总盘查人数" prop="totalPerson" v-show="showColumns.totalPerson"></el-table-column>
+      <el-table-column label="非预警未成年人数" prop="unwarnedMinor" v-show="showColumns.unwarnedMinor"></el-table-column>
       <el-table-column label="检查车辆数" prop="checkCarCount" v-show="showColumns.checkCarCount"></el-table-column>
       <el-table-column label="拉车门数" prop="openDoorCount" v-show="showColumns.openDoorCount"></el-table-column>
       <el-table-column label="抓网逃数" prop="netFugitiveCount" v-show="showColumns.netFugitiveCount"></el-table-column>
@@ -165,9 +166,16 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="非预警未成年数">
+              <el-input-number v-model="form.unwarnedMinor" :min="0" style="width:140px" @change="calcTotal"></el-input-number>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
         <!--敲打未成年身份证子表-->
-        <div v-if="form.totalPerson > 0">
+        <div v-if="form.totalPerson > 0|| form.unwarnedMinor > 0">
           <el-form-item label="人员身份证列表">
             <el-table :data="form.personList" border size="small">
               <el-table-column label="序号" type="index" width="60"/>
@@ -361,7 +369,7 @@ export default {
         pageNum:1,
         pageSize:10,
         strikeDate:null,
-        deptId: null //新增单位查询条件
+        unitName: null //新增单位查询条件
       },
       //========全部列配置：key和prop一一对应，true默认显示 false默认隐藏========
       showColumns: {
@@ -373,6 +381,7 @@ export default {
         crimeBlue:true,
         crimeBlack:true,
         totalPerson:true,
+        unwarnedMinor:true,
         checkCarCount:true,
         openDoorCount:true,
         netFugitiveCount:true,
@@ -389,6 +398,7 @@ export default {
         { label:"蓝色警情", prop:"crimeBlue" },
         { label:"黑色警情", prop:"crimeBlack" },
         { label:"总盘查人数", prop:"totalPerson" },
+        { label:"非预警未成年数", prop:"unwarnedMinor" },
         { label:"检查车辆数", prop:"checkCarCount" },
         { label:"拉车门数", prop:"openDoorCount" },
         { label:"抓网逃数", prop:"netFugitiveCount" },
@@ -406,6 +416,7 @@ export default {
         crimeBlue:0,
         crimeBlack:0,
         totalPerson:0,
+        unwarnedMinor:0,
         checkCarCount:0,
         openDoorCount:0,
         netFugitiveCount:0,
@@ -505,6 +516,7 @@ export default {
         crimeBlue:0,
         crimeBlack:0,
         totalPerson:0,
+        unwarnedMinor:0,
         checkCarCount:0,
         openDoorCount:0,
         netFugitiveCount:0,
@@ -524,7 +536,9 @@ export default {
     },
     calcTotal(){
       this.form.totalPerson = this.form.crimeRed + this.form.crimeOrange + this.form.crimeYellow + this.form.crimeBlue + this.form.crimeBlack;
-      const need = this.form.totalPerson;
+      // 取两者最大值：总盘查人数 / 非预警未成年数
+      const need = Math.max(this.form.totalPerson, this.form.unwarnedMinor);
+      // const need = this.form.totalPerson;
       const list = this.form.personList;
       if(list.length > need){
         this.form.personList = list.slice(0, need);
@@ -596,9 +610,10 @@ export default {
       this.form.personList.forEach(item=>item.idCardError="");
       let hasError = false;
 
-      if(this.form.totalPerson > 0){
+      if(this.form.totalPerson > 0|| this.form.unwarnedMinor > 0){
+        const needCount = Math.max(this.form.totalPerson, this.form.unwarnedMinor);
         if(this.form.personList.length !== this.form.totalPerson){
-          this.$message.error(`必须填写${this.form.totalPerson}条身份证信息`);
+          this.$message.error(`必须填写${needCount}条身份证信息`);
           return;
         }
         for(let i=0;i<this.form.personList.length;i++){

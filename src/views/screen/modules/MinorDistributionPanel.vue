@@ -9,6 +9,14 @@ const props = defineProps({
   data: {
     type: Object,
     required: true
+  },
+  unwarnedMinorCount: {
+    type: [Number, String],
+    default: 0
+  },
+  unwarnedMinorRatio: {
+    type: [Number, String],
+    default: ''
   }
 })
 
@@ -72,17 +80,44 @@ onMounted(renderChart)
 
 <template>
   <ScreenPanel title="罪错未成年 (红橙黄蓝黑) 分布">
-    <div class="relative flex-1">
-      <div ref="chartRef" class="size-full" />
-      <div class="pointer-events-none absolute left-[30%] top-[48%] z-10 -translate-x-1/2 -translate-y-1/2 text-center">
+    <div class="relative flex-1 w-full h-full">
+      <div ref="chartRef" class="absolute inset-0 z-10" />
+
+      <!-- 不挡图例：改放左上区域 -->
+      <div
+          class="absolute z-[999] pointer-events-auto rounded-md border border-[#2f80d1]/50 bg-gradient-to-b from-[#124072]/85 to-[#0a2a52]/85 px-2 py-1 shadow-[0_0_10px_rgba(47,128,209,.25)]"
+          style="top:6px; left:calc(80% - 110px);"
+      >
+        <div class="flex items-center gap-2">
+          <span class="text-[12px] text-[#8fb8e6] whitespace-nowrap">非预警未成年人数</span>
+          <AnimatedStatistic
+              :value="props.data.unwarnedMinorCount"
+              class="font-bold"
+              :value-style="{ color: '#ff4d4f', fontSize: '1.25rem', lineHeight: '1.2', fontWeight: 700 }"
+          />
+          <div class="flex items-center gap-1 text-[12px] text-[#a9c6e4]">
+            <span>环比</span>
+            <TrendValue :value="props.data.unwarnedMinorRatio" :up="up"
+                        show-direction
+                        :class="up ? 'font-bold text-chart-red' : 'font-bold text-success'" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 环形中间总人数 -->
+      <div class="pointer-events-none absolute left-[30%] top-[48%] z-20 -translate-x-1/2 -translate-y-1/2 text-center">
         <AnimatedStatistic :value="total" class="font-bold" :value-style="{ color: '#dfe9f0', fontSize: '1.75rem', lineHeight: '1' }" />
         <span class="block text-xs text-muted">总人数</span>
       </div>
     </div>
 
     <div class="flex h-9 shrink-0 items-center justify-center gap-2 border-t border-line-muted/60 bg-black/10 text-sm text-muted">
-      <span>同比</span>
-      <TrendValue :value="data.ratioCompareYesterday" class="font-bold text-2xl text-success" />
+      <span>环比</span>
+      <TrendValue :value="props.data.ratioCompareYesterday" :up="up"
+                  show-direction
+                  :class="up ? 'font-bold text-chart-red' : 'font-bold text-success'" />
+
     </div>
   </ScreenPanel>
 </template>
+

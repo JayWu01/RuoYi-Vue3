@@ -36,10 +36,31 @@ function groupByMonth(list) {
   }
 }
 
-const renderChart = () => {
-  // const rawList = props.data || []
-  // const { xAxis, yAxis } = groupByMonth(rawList)
+/**
+ * 动态计算坐标轴最大值和分割间隔
+ * @param {number[]} values 数据数组
+ * @returns { {max:number, interval:number} }
+ */
+function calcAxisMaxAndInterval(values) {
+  const validValues = values.filter(v => typeof v === 'number')
+  if (!validValues.length) {
+    return { max: 5, interval: 1 }
+  }
+  const maxVal = Math.max(...validValues)
+  if (maxVal === 0) {
+    return { max: 5, interval: 1 }
+  }
+  const pow10 = Math.pow(10, Math.floor(Math.log10(maxVal)))
+  let interval = pow10
+  if (maxVal / pow10 > 5) interval = pow10 * 2
+  else if (maxVal / pow10 > 2) interval = pow10
+  else interval = pow10 / 5
 
+  const max = Math.ceil(maxVal / interval) * interval
+  return { max, interval }
+}
+
+const renderChart = () => {
   const raw = props.data || {}
   let xAxis, yAxis, seriesName = '两抢一盗案件数'
 
@@ -56,16 +77,12 @@ const renderChart = () => {
     yAxis = result.yAxis
   }
 
-  // console.log('原始数据rawList', rawList)
-  // console.log('聚合后 xAxis', xAxis, 'yAxis', yAxis)
-
   // 空数据保护，防止Math.max空数组报错空白
   if (!xAxis.length) {
     setOption({
       xAxis: { type: 'category', data: [] },
       yAxis: { type: 'value' },
       series: [],
-      // ===== 新增：显示“暂无数据” =====
       graphic: {
         type: 'text',
         left: 'center',
@@ -108,8 +125,11 @@ const renderChart = () => {
     }
   ]
 
-  const maxVal = Math.max(...yAxis)
-  const barMax = maxVal + 20
+  // 动态计算x轴最大值、间隔（横向bar用）
+  const { max, interval } = calcAxisMaxAndInterval(yAxis)
+  const dataCount = xAxis.length
+  // 数据大于12条，开启滑动，默认展示12个；少于等于12条全部展示
+  const endPercent = dataCount > 12 ? 100 : (12 / dataCount) * 100
 
   setOption({
     legend: props.chartType === 'line'
@@ -127,25 +147,46 @@ const renderChart = () => {
         ? createDashboardTooltip()
         : createDashboardTooltip('item'),
     grid: props.chartType === 'line'
-        ? { left: 42, right: 18, top: 46, bottom: 32, containLabel: true }
+        ? { left: 42, right: 18, top: 46, bottom: 70, containLabel: true }
         : { left: 70, right: 32, top: 20, bottom: 24, containLabel: true },
+    // dataZoom：只对line模式生效，横向bar不需要滑动
+    dataZoom: props.chartType === 'line' ? [
+      {
+        type: 'slider',
+        show: true,
+        height: 14,
+        bottom: 10,
+        start: 0,
+        end: endPercent,
+        handleStyle: { color: '#6b96e8' },
+        textStyle: { color: '#a8b4c1' }
+      },
+      {
+        type: 'inside'
+      }
+    ] : undefined,
     xAxis: props.chartType === 'line'
         ? {
           data: xAxis,
-          axisLabel: { color: '#a8b4c1' },
+          type: 'category',
+          axisLabel: {
+            color: '#a8b4c1',
+            rotate: 30
+          },
           axisLine: { lineStyle: { color: '#38536a' } }
         }
         : {
           type: 'value',
           min: 0,
-          max: barMax,
-          interval: 30,
+          max: max,
+          interval: interval,
           splitLine: { lineStyle: { color: 'rgba(72,108,132,.25)' } },
           axisLabel: { color: '#a8b4c1' },
           axisLine: { show: false }
         },
     yAxis: props.chartType === 'line'
         ? {
+          type: 'value',
           splitLine: { lineStyle: { color: 'rgba(72,108,132,.25)' } },
           axisLabel: { color: '#a8b4c1' }
         }
@@ -161,9 +202,9 @@ const renderChart = () => {
   })
 }
 
-// watch(() => [props.data, props.chartType], renderChart, { deep: true })
+// 修复监听：监听props.data和图表类型
 watch(
-    () => [props.data?.data, props.chartType],
+    () => [props.data, props.chartType],
     () => renderChart(),
     { deep: true }
 )

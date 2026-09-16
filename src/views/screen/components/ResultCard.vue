@@ -54,7 +54,7 @@ defineProps({
     </div>
     <AnimatedStatistic class="mt-2 block text-3xl leading-9 text-white" :value="value" />
     <div class="mt-1 whitespace-nowrap text-xs text-muted">
-      同比
+      环比
       <TrendValue
         :value="rate"
         :up="up"

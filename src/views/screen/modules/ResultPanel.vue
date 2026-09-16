@@ -35,7 +35,6 @@ const isUp = value => !value?.startsWith('-')
       <ResultCard
         :icon="Medal"
         label="抓获现行"
-        sub="(红标未成年)"
         tone="yellow"
         :value="props.data.currentArrestMinor"
         :rate="props.data.currentArrestMinorRatio"

@@ -17,9 +17,10 @@ export function listPoliceAlarm(queryParams) {
  * 根据id获取单条详情
  * @param {number | Long} id
  */
-export function getPoliceAlarm(id) {
+export function getPoliceAlarm(receiveAlarmNo) {
+  console.log("发起get请求，参数：", receiveAlarmNo)
   return request({
-    url: `/bussiness/policeAlarm/${id}`,
+    url: `/bussiness/policeAlarm/${receiveAlarmNo}`,
     method: 'get'
   })
 }
@@ -52,9 +53,9 @@ export function updatePoliceAlarm(data) {
  * 删除（支持单条/批量）
  * @param {Long | Array<Long>} id
  */
-export function delPoliceAlarm(id) {
+export function delPoliceAlarm(receiveAlarmNo) {
   return request({
-    url: `/bussiness/policeAlarm/${id}`,
+    url: `/bussiness/policeAlarm/${receiveAlarmNo}`,
     method: 'delete'
   })
 }

@@ -37,7 +37,7 @@ defineEmits(['fullscreen', 'export'])
       </div>
       <div class="text-center max-lg:text-left">
         <h1 class="m-0 bg-gradient-to-b from-white via-[#f1fbff] to-[#8fc9ed] bg-clip-text text-[clamp(1.75rem,3vw,2.5rem)] font-extrabold tracking-[0.25rem] text-transparent drop-shadow-[0_0_12px_rgba(81,183,244,0.4)]">
-          街面群防治效
+          街面巡防质效
         </h1>
         <p class="mb-0 mt-1 text-xs tracking-[0.25rem] text-[#78a8c8] max-md:tracking-[0.25rem]">
           POLICE STATION DAILY WORK DATA CENTER
