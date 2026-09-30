@@ -21,6 +21,11 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'submit', 'reset'])
 
+const defaultTime = [
+  new Date(2000, 1, 1, 0, 0, 0),
+  new Date(2000, 1, 1, 23, 59, 59)
+]
+
 const dateRange = computed({
   get: () => [props.modelValue.startDate, props.modelValue.endDate],
   set: (value) => {
@@ -57,14 +62,15 @@ const setUnit = (deptId) => {
       <span class="whitespace-nowrap text-sm text-muted">日期范围</span>
       <el-date-picker
         v-model="dateRange"
-        type="daterange"
-        value-format="YYYY-MM-DD"
+        type="datetimerange"
+        format="YYYY-MM-DD HH:mm:ss"
+        value-format="YYYY-MM-DD HH:mm:ss"
         clearable
         range-separator="~"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
+        start-placeholder="开始时间"
+        end-placeholder="结束时间"
         popper-class="dashboard-popper"
-        class="dashboard-date-picker w-64 flex-none max-lg:w-72 max-md:w-full"
+        class="dashboard-date-picker w-96 flex-none max-md:w-full"
       />
       <span class="whitespace-nowrap text-sm text-muted">基层单位</span>
       <el-select
