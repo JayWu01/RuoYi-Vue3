@@ -9,30 +9,16 @@ export const UNIT_PARENT_IDS = {
   cityBranch: 102 // 全市分局单位
 }
 
-const getLastYearRange = () => {
-  const today = new Date()
-  const year = today.getFullYear()
-  const month = today.getMonth()
-  const monthText = String(month + 1).padStart(2, '0')
-  const day = today.getDate()
-  const startDay = Math.min(day, new Date(year - 1, month + 1, 0).getDate())
-
-  return {
-    startDate: `${year - 1}-${monthText}-${String(startDay).padStart(2, '0')}`,
-    endDate: `${year}-${monthText}-${String(day).padStart(2, '0')}`
-  }
-}
-
 export const getCurrentYearRange = () => {
   const year = new Date().getFullYear()
   return {
-    startDate: `${year}-01-01`,
-    endDate: `${year}-12-31`
+    startDate: `${year}-01-01 00:00:00`,
+    endDate: `${year}-12-31 23:59:59`
   }
 }
 
 export const createInitialQuery = () => ({
-  ...getLastYearRange(),
+  ...getCurrentYearRange(),
   // deptName: '全部单位',
   // deptId: '全部单位',
   statType: 'day'
