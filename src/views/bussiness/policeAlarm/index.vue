@@ -20,9 +20,9 @@
           />
         </el-form-item>
 
-        <el-form-item label="警情类别" prop="policeCategory">
+        <el-form-item label="接警类型" prop="alarmType">
           <el-input
-              v-model="queryParams.policeCategory"
+              v-model="queryParams.alarmType"
               placeholder="请输入警情类别"
               clearable
               style="width:220px"
@@ -30,9 +30,9 @@
           />
         </el-form-item>
 
-        <el-form-item label="处理结果" prop="disposeResult">
+        <el-form-item label="自接警" prop="selfReceiveAlarm">
           <el-input
-              v-model="queryParams.disposeResult"
+              v-model="queryParams.selfReceiveAlarm"
               placeholder="请输入处理结果"
               clearable
               style="width:220px"
@@ -55,7 +55,7 @@
               v-model="dateRange"
               style="width:220px"
               value-format="YYYY-MM-DD HH:mm:ss"
-              type="daterange"
+              type="datetimerange"
               range-separator="-"
               start-placeholder="开始时间"
               end-placeholder="结束时间"
@@ -123,6 +123,17 @@
               v-hasPermi="['bussiness:policeAlarm:import']"
           >导入</el-button>
         </el-col>
+        <!-- ========== 新增转警导入按钮 ========== -->
+        <el-col :span="1.5">
+          <el-button
+              type="warning"
+              plain
+              icon="Upload"
+              size="small"
+              @click="handleImportTrans"
+              v-hasPermi="['bussiness:policeAlarm:importTrans']"
+          >转警导入</el-button>
+        </el-col>
         <el-col :span="1.5">
           <el-button
               type="warning"
@@ -159,13 +170,14 @@
         <el-table-column label="报警内容" prop="alarmContent" align="center" show-overflow-tooltip v-if="columns.alarmContent.visible" />
         <el-table-column label="报警人名称" prop="alarmPersonName" align="center" v-if="columns.alarmPersonName.visible" />
         <el-table-column label="报警电话" prop="alarmPhone" align="center" v-if="columns.alarmPhone.visible" />
+        <el-table-column label="处警单位" prop="disposeUnit" align="center" v-if="columns.disposeUnit.visible" />
+        <el-table-column label="自接警" prop="selfReceiveAlarm" align="center" v-if="columns.selfReceiveAlarm.visible"/>
         <el-table-column label="警情类别" prop="policeCategory" align="center" v-if="columns.policeCategory.visible" />
         <el-table-column label="警情类型" prop="policeType" align="center" v-if="columns.policeType.visible" />
         <el-table-column label="警情细类" prop="policeDetailType" align="center" v-if="columns.policeDetailType.visible" />
         <el-table-column label="警情子类" prop="policeSubType" align="center" v-if="columns.policeSubType.visible" />
         <el-table-column label="接警员" prop="receivePoliceOfficer" align="center" v-if="columns.receivePoliceOfficer.visible" />
         <el-table-column label="管辖单位" prop="jurisdictionUnit" align="center" v-if="columns.jurisdictionUnit.visible" />
-        <el-table-column label="处警单位" prop="disposeUnit" align="center" v-if="columns.disposeUnit.visible" />
         <el-table-column label="出警民警" prop="outPoliceOfficer" align="center" v-if="columns.outPoliceOfficer.visible" />
         <el-table-column label="处置时间" prop="disposeTime" align="center" v-if="columns.disposeTime.visible" />
         <el-table-column label="到场时间" prop="arriveTime" align="center" v-if="columns.arriveTime.visible" />
@@ -184,7 +196,6 @@
         <el-table-column label="自动定位" prop="autoLocation" align="center" show-overflow-tooltip v-if="columns.autoLocation.visible" />
         <el-table-column label="手动定位" prop="manualLocation" align="center" show-overflow-tooltip v-if="columns.manualLocation.visible" />
         <el-table-column label="移动App定位" prop="appLocation" align="center" show-overflow-tooltip v-if="columns.appLocation.visible" />
-        <el-table-column label="自接警" prop="selfReceiveAlarm" align="center" v-if="columns.selfReceiveAlarm.visible"/>
         <el-table-column label="是否回访" prop="isReturnVisit" align="center" v-if="columns.isReturnVisit.visible"/>
         <el-table-column label="操作" align="center" width="160" v-if="columns.operation.visible">
           <template #default="{row}">
@@ -416,19 +427,21 @@
             <!-- 35 自接警 -->
             <el-col :span="8">
               <el-form-item label="自接警" prop="selfReceiveAlarm">
-                <el-select v-model="form.selfReceiveAlarm">
-                  <el-option label="否" value="否"/>
-                  <el-option label="是" value="是"/>
-                </el-select>
+                <el-input v-model="form.selfReceiveAlarm"/>
+<!--                <el-select v-model="form.selfReceiveAlarm">-->
+<!--                  <el-option label="否" value="否"/>-->
+<!--                  <el-option label="是" value="是"/>-->
+<!--                </el-select>-->
               </el-form-item>
             </el-col>
             <!-- 36 是否回访 -->
             <el-col :span="8">
               <el-form-item label="是否回访" prop="isReturnVisit">
-                <el-select v-model="form.isReturnVisit">
-                  <el-option label="否" value="否"/>
-                  <el-option label="是" value="是"/>
-                </el-select>
+                <el-input v-model="form.isReturnVisit"/>
+<!--                <el-select v-model="form.isReturnVisit">-->
+<!--                  <el-option label="否" value="否"/>-->
+<!--                  <el-option label="是" value="是"/>-->
+<!--                </el-select>-->
               </el-form-item>
             </el-col>
           </el-row>
@@ -449,6 +462,17 @@
           update-support-label="是否更新已存在的台账数据"
           @success="getList"
       />
+
+      <!-- ========== 新增：转警导入弹窗【无更新选项】 ========== -->
+      <excel-import-dialog
+          ref="importTransRef"
+          title="转警导入"
+          action="/bussiness/policeAlarm/importTrans"
+          template-action="/bussiness/policeAlarm/importTemplate"
+          template-file-name="转警导入模板"
+          hideUpdate
+          @success="getList"
+      />
     </div>
   </div>
 </template>
@@ -463,6 +487,7 @@ import {
   updatePoliceAlarm
 } from "@/api/bussiness/policeAlarm"
 import ExcelImportDialog from "@/components/ExcelImportDialog"
+import { ElMessageBox } from 'element-plus'
 
 const {proxy} = getCurrentInstance()
 
@@ -480,13 +505,15 @@ const dateRange = ref([])
 const queryFormRef = ref()
 const formRef = ref()
 const importRef = ref()
+// 新增转警导入ref
+const importTransRef = ref()
 
 const queryParams = reactive({
   pageNum: 1,
   pageSize: 10,
   receiveAlarmNo: undefined,
-  policeCategory: undefined,
-  disposeResult: undefined,
+  alarmType: undefined,
+  selfReceiveAlarm: undefined,
   disposeUnit: undefined
 })
 
@@ -505,23 +532,23 @@ const columns = reactive({
   alarmPersonName: { label: "报警人名称", visible: true },
   alarmPhone: { label: "报警电话", visible: true },
   policeCategory: { label: "警情类别", visible: true },
-  policeType: { label: "警情类型", visible: false },
-  policeDetailType: { label: "警情细类", visible: false },
+  policeType: { label: "警情类型", visible: true },
+  policeDetailType: { label: "警情细类", visible: true },
   policeSubType: { label: "警情子类", visible: false },
   receivePoliceOfficer: { label: "接警员", visible: false },
-  jurisdictionUnit: { label: "管辖单位", visible: false },
-  disposeUnit: { label: "处警单位", visible: false },
-  outPoliceOfficer: { label: "出警民警", visible: false },
-  disposeTime: { label: "处置时间", visible: false },
-  arriveTime: { label: "到场时间", visible: false },
+  jurisdictionUnit: { label: "管辖单位", visible: true },
+  disposeUnit: { label: "处警单位", visible: true },
+  outPoliceOfficer: { label: "出警民警", visible: true },
+  disposeTime: { label: "处置时间", visible: true },
+  arriveTime: { label: "到场时间", visible: true },
   siteFeedback: { label: "现场反馈", visible: false },
   feedbackTime: { label: "反馈时间", visible: false },
   feedbackCategory: { label: "反馈类别", visible: false },
   feedbackType: { label: "反馈类型", visible: false },
   feedbackDetailType: { label: "反馈细类", visible: false },
   feedbackSubType: { label: "反馈子类", visible: false },
-  feedbackContent: { label: "反馈内容", visible: false },
-  disposeResult: { label: "处理结果", visible: false },
+  feedbackContent: { label: "反馈内容", visible: true },
+  disposeResult: { label: "处理结果", visible: true },
   villageCommunity: { label: "属地村社", visible: false },
   squadCode: { label: "所属中队代码", visible: false },
   squadName: { label: "所属中队名称", visible: true },
@@ -666,6 +693,23 @@ function handleExport() {
 
 function handleImport() {
   importRef.value.open()
+}
+
+// 新增转警导入打开方法
+function handleImportTrans() {
+  ElMessageBox.confirm(
+      '各警务站只能导入转警数据，自接警和110接警不得自行录至支队巡防系统，确认继续导入吗？',
+      '提示',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
+  ).then(() => {
+    importTransRef.value.open()
+  }).catch(() => {
+    // 取消不执行操作
+  })
 }
 </script>
 

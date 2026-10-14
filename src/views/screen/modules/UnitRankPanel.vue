@@ -210,6 +210,17 @@ watch(
 )
 
 onMounted(renderChart)
+
+import dayjs from 'dayjs'
+
+function formatMonthRange(range) {
+  if (!range || !range.length) return range
+  const [start, end] = range
+  return [
+    start ? dayjs(start).startOf('month').format('YYYY-MM-DD HH:mm:ss') : null,
+    end   ? dayjs(end).endOf('month').format('YYYY-MM-DD HH:mm:ss')   : null
+  ]
+}
 </script>
 
 <template>
@@ -231,7 +242,7 @@ onMounted(renderChart)
           size="small"
           popper-class="dashboard-popper"
           class="dashboard-date-picker min-w-0 flex-1"
-          @update:model-value="emit('change-month-range', $event)"
+          @update:model-value="emit('change-month-range', formatMonthRange($event))"
       />
       <el-select
           popper-class="dashboard-popper"

@@ -4,10 +4,12 @@
       <el-form-item label="打击日期" prop="strikeDate">
         <el-date-picker
             v-model="queryParams.strikeDate"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
             format="YYYY-MM-DD"
             value-format="YYYY-MM-DD"
-            type="date"
-            placeholder="请选择打击日期"
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="所属单位" prop="unitName">
@@ -77,20 +79,21 @@
     >
       <el-table-column type="index" label="序号" width="60" v-show="showColumns.index"></el-table-column>
       <el-table-column label="打击日期" prop="strikeDate" v-show="showColumns.strikeDate"></el-table-column>
+      <el-table-column label="单位名称" prop="unitName" v-show="showColumns.unitName"></el-table-column>
+      <el-table-column label="敲打总人数" prop="totalPerson" v-show="showColumns.totalPerson"></el-table-column>
       <el-table-column label="红色警情" prop="crimeRed" v-show="showColumns.crimeRed"></el-table-column>
       <el-table-column label="橙色警情" prop="crimeOrange" v-show="showColumns.crimeOrange"></el-table-column>
       <el-table-column label="黄色警情" prop="crimeYellow" v-show="showColumns.crimeYellow"></el-table-column>
       <el-table-column label="蓝色警情" prop="crimeBlue" v-show="showColumns.crimeBlue"></el-table-column>
       <el-table-column label="黑色警情" prop="crimeBlack" v-show="showColumns.crimeBlack"></el-table-column>
-      <el-table-column label="总盘查人数" prop="totalPerson" v-show="showColumns.totalPerson"></el-table-column>
       <el-table-column label="非预警未成年人数" prop="unwarnedMinor" v-show="showColumns.unwarnedMinor"></el-table-column>
-      <el-table-column label="检查车辆数" prop="checkCarCount" v-show="showColumns.checkCarCount"></el-table-column>
-      <el-table-column label="拉车门数" prop="openDoorCount" v-show="showColumns.openDoorCount"></el-table-column>
-      <el-table-column label="抓网逃数" prop="netFugitiveCount" v-show="showColumns.netFugitiveCount"></el-table-column>
-      <el-table-column label="抓获团伙数" prop="arrestGroupCount" v-show="showColumns.arrestGroupCount"></el-table-column>
       <el-table-column label="抓获嫌疑人数" prop="arrestSuspectCount" v-show="showColumns.arrestSuspectCount"></el-table-column>
+      <el-table-column label="抓获团伙数" prop="arrestGroupCount" v-show="showColumns.arrestGroupCount"></el-table-column>
+      <el-table-column label="检查车辆数" prop="checkCarCount" v-show="showColumns.checkCarCount"></el-table-column>
+      <el-table-column label="未关车门数" prop="openDoorCount" v-show="showColumns.openDoorCount"></el-table-column>
+      <el-table-column label="检查车内贵重物品（元）" prop="doorPullAmount" v-show="showColumns.doorPullAmount"></el-table-column>
+      <el-table-column label="抓网逃数" prop="netFugitiveCount" v-show="showColumns.netFugitiveCount"></el-table-column>
       <el-table-column label="送矫未成年数量" prop="correctMinorCount" v-show="showColumns.correctMinorCount"></el-table-column>
-      <el-table-column label="单位名称" prop="unitName" v-show="showColumns.unitName"></el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="{ row }">
           <el-button
@@ -165,15 +168,15 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="总人数">
-              <el-input v-model="form.totalPerson" style="width:140px" disabled></el-input>
+            <el-form-item label="非预警未成年数">
+              <el-input-number v-model="form.unwarnedMinor" :min="0" style="width:140px" @change="buildPersonList"></el-input-number>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="非预警未成年数">
-              <el-input-number v-model="form.unwarnedMinor" :min="0" style="width:140px" @change="buildPersonList"></el-input-number>
+            <el-form-item label="敲打总人数">
+              <el-input v-model="form.totalPerson" style="width:140px" disabled></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -224,6 +227,12 @@
               <el-input-number v-model="form.openDoorCount" :min="0" style="width:140px" @change="syncOpenDoorCarRow"></el-input-number>
             </el-form-item>
           </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="检查车内贵重物品（元）">
+              <el-input-number v-model="form.doorPullAmount" :min="0" style="width:140px" @change="syncOpenDoorCarRow"></el-input-number>
+            </el-form-item>
+          </el-col>
         </el-row>
 
         <div v-if="form.openDoorCount > 0">
@@ -256,23 +265,116 @@
           </el-col>
         </el-row>
 
+        <!-- ===================== 【改造抓获现行区块】 ===================== -->
         <el-divider content-position="left">抓获现行</el-divider>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="抓获团伙数">
-              <el-input-number v-model="form.arrestGroupCount" :min="0" style="width:140px"></el-input-number>
+            <el-form-item label="抓获团伙总数" prop="arrestGroupCount">
+              <el-input-number
+                  v-model="form.arrestGroupCount"
+                  :min="0"
+                  style="width:140px"
+                  @change="buildGangList"
+              ></el-input-number>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="抓获嫌疑人数">
-              <el-input-number v-model="form.arrestSuspectCount" :min="0" style="width:140px"></el-input-number>
+            <el-form-item label="普通现行嫌疑人数" prop="arrestNormalCount">
+              <el-input-number
+                  v-model="form.arrestNormalCount"
+                  :min="0"
+                  style="width:140px"
+                  @change="buildNormalSuspectList"
+              ></el-input-number>
             </el-form-item>
           </el-col>
         </el-row>
+
+        <!-- 团伙列表 -->
+        <div v-if="form.arrestGroupCount > 0" style="border:1px solid #dcdcdc;padding:12px;border-radius:6px;margin-bottom:12px">
+          <div
+              v-for="(gang, gIdx) in form.gangList"
+              :key="gIdx"
+              style="margin-bottom:16px;border-bottom:1px dashed #eee;padding-bottom:12px"
+          >
+            <div style="font-weight:bold;margin-bottom:8px">团伙{{ gIdx + 1 }}</div>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="本团伙嫌疑人数">
+                  <el-input-number
+                      v-model="gang.gangSuspectNum"
+                      :min="0"
+                      style="width:140px"
+                      @change="buildGangIdCard(gang)"
+                  ></el-input-number>
+                  <span
+                      v-if="gang.gangSuspectNum >0 && gang.gangSuspectNum <3"
+                      style="color:red;font-size:12px;margin-left:8px"
+                  >单个团伙人数≥3</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <!-- 当前团伙嫌疑人身份证列表 -->
+            <div v-if="gang.gangSuspectNum>0" style="padding-left:10px;margin:8px 0">
+              <div style="color:#666;font-size:12px;margin-bottom:4px">团伙{{gIdx+1}}嫌疑人身份证：</div>
+              <div
+                  v-for="(person,pIdx) in gang.idCardList"
+                  :key="pIdx"
+                  style="display:flex;align-items:center;gap:8px;margin-bottom:6px"
+              >
+                <span style="width:90px">嫌疑人{{pIdx+1}}：</span>
+                <el-input
+                    v-model="person.idCard"
+                    placeholder="请输入身份证"
+                    @blur="checkSingleIdCard(person)"
+                ></el-input>
+                <span v-if="person.idCardError" style="color:red;font-size:12px">{{person.idCardError}}</span>
+              </div>
+            </div>
+            <!-- 团伙案情：1团伙1条 -->
+            <el-form-item :label="`团伙${gIdx + 1}案情经过`">
+              <el-input
+                  v-model="gang.gangCase"
+                  type="textarea"
+                  rows="2"
+                  placeholder="填写本团伙案情"
+              ></el-input>
+            </el-form-item>
+          </div>
+        </div>
+
+        <!-- 普通现行嫌疑人子区域 -->
+        <div v-if="form.arrestNormalCount>0" style="border:1px solid #dcdcdc;padding:12px;border-radius:6px;margin-bottom:12px">
+          <div
+              v-for="(item,idx) in form.normalSuspectList"
+              :key="idx"
+              style="margin-bottom:12px;border-bottom:1px dashed #eee;padding-bottom:8px"
+          >
+            <div style="font-weight:bold">普通嫌疑人{{idx+1}}</div>
+            <el-form-item label="身份证号">
+              <el-input
+                  v-model="item.idCard"
+                  placeholder="请输入身份证"
+                  @blur="checkSingleIdCard(item)"
+              ></el-input>
+              <span v-if="item.idCardError" style="color:red;font-size:12px">{{item.idCardError}}</span>
+            </el-form-item>
+            <el-form-item label="个案案情">
+              <el-input
+                  v-model="item.caseContent"
+                  type="textarea"
+                  rows="2"
+                  placeholder="填写该嫌疑人案情"
+              ></el-input>
+            </el-form-item>
+          </div>
+        </div>
+
+        <!--抓获嫌疑人数【自动合计，只读】 -->
         <el-row>
-          <el-col :span="24">
-            <el-form-item label="案情" prop="arrestCase">
-              <el-input v-model="form.arrestCase" type="textarea" rows="2"></el-input>
+          <el-col :span="12">
+            <el-form-item label="抓获嫌疑人数（自动合计）" prop="arrestSuspectCount">
+              <el-input v-model="form.arrestSuspectCount" disabled style="width:140px"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -367,9 +469,10 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, getCurrentInstance, watch, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { listStrikeCurrent, getStrikeCurrent, addStrikeCurrent, updateStrikeCurrent, delStrikeCurrent } from "@/api/bussiness/strikeCurrent";
+const {proxy} = getCurrentInstance()
 
 const showSearch = ref(true)
 const loading = ref(false)
@@ -385,7 +488,9 @@ const uploadRef = ref(null)
 const queryParams = reactive({
   pageNum: 1,
   pageSize: 10,
-  strikeDate: null,
+  strikeDate: [],
+  beginTime: null,
+  endTime: null,
   unitName: null
 })
 
@@ -401,6 +506,7 @@ const showColumns = reactive({
   unwarnedMinor:true,
   checkCarCount:true,
   openDoorCount:true,
+  doorPullAmount:true,
   netFugitiveCount:true,
   correctMinorCount:true,
   unitName:true
@@ -421,32 +527,122 @@ const defaultFormState = () => ({
   unwarnedMinor:0,
   checkCarCount:0,
   openDoorCount:0,
+  doorPullAmount:0,
   netFugitiveCount:0,
   netFugitiveCase:"",
+
   arrestGroupCount:0,
+  gangList: [],
+  arrestNormalCount:0,
+  normalSuspectList:[],
   arrestSuspectCount:0,
-  arrestCase:"",
+
   correctMinorCount:0,
   correctMinorCase:"",
   remark:"",
-  personList: [], // {idCard:'',personType:'',idCardError:''}
+  personList: [],
   doorCarList: []
 })
 
 const form = reactive(defaultFormState())
 
+// ========== 新增计算属性：团伙嫌疑人总和 ==========
+const totalGangSuspect = computed(()=>{
+  return form.gangList.reduce((sum,gang)=> sum + Number(gang.gangSuspectNum||0),0)
+})
+//监听自动计算抓获嫌疑人数
+watch([totalGangSuspect, ()=>form.arrestNormalCount],()=>{
+  form.arrestSuspectCount = totalGangSuspect.value + Number(form.arrestNormalCount ||0)
+})
+
+// 根据团伙数量生成团伙数组，保留原有填写数据
+const buildGangList = () => {
+  const count = form.arrestGroupCount
+  const oldList = [...form.gangList]
+  form.gangList = []
+  for (let i = 0; i < count; i++) {
+    if (oldList[i]) {
+      form.gangList.push({ ...oldList[i] })
+    } else {
+      form.gangList.push({
+        gangSuspectNum: 0,
+        idCardList: [],
+        gangCase: ''
+      })
+    }
+  }
+}
+
+//单个团伙修改嫌疑人数，自动生成身份证+姓名列表
+const buildGangIdCard = (gang) => {
+  const num = gang.gangSuspectNum
+  const oldCards = [...gang.idCardList]
+  gang.idCardList = []
+  for (let i = 0; i < num; i++) {
+    gang.idCardList.push({
+      name: oldCards[i]?.name ?? '',
+      idCard: oldCards[i]?.idCard ?? '',
+      idCardError:''
+    })
+  }
+}
+
+//普通现行人数变更，生成N套【姓名+身份证+案情】
+const buildNormalSuspectList = () => {
+  const num = form.arrestNormalCount
+  const oldList = [...form.normalSuspectList]
+  form.normalSuspectList = []
+  for (let i = 0; i < num; i++) {
+    form.normalSuspectList.push({
+      name: oldList[i]?.name ?? '',
+      idCard: oldList[i]?.idCard ?? '',
+      idCardError:'',
+      caseContent: oldList[i]?.caseContent ?? ''
+    })
+  }
+}
+
+//单条身份证校验（团伙+普通现行共用）
+const checkSingleIdCard = (person) => {
+  person.idCardError = ""
+  const val = person.idCard?.trim()
+  if (!val) {
+    person.idCardError = "身份证不能为空"
+    return false
+  }
+  if (!checkIdCard(val)) {
+    person.idCardError = "身份证格式错误"
+    return false
+  }
+  return true
+}
+
+// 团伙业务校验：每个团伙嫌疑人数 >=3
+const validateGangRule = () => {
+  const a = form.arrestGroupCount
+  if (a <=0) return true
+  for(const gang of form.gangList){
+    const n = Number(gang.gangSuspectNum ||0)
+    if(n <3){
+      ElMessage.error(`团伙【${form.gangList.indexOf(gang)+1}】嫌疑人数不能少于3人，当前${n}人`)
+      return false
+    }
+  }
+  return true
+}
+
 //表单校验规则
 const rules = {
+  arrestGroupCount: [
+    { required: true, message: '请填写抓获团伙数', trigger: 'blur' }
+  ],
+  arrestNormalCount: [
+    { required: true, message: '请填写普通现行嫌疑人数', trigger: 'blur' }
+  ],
   strikeDate:[{required:true,message:"打击日期不能为空",trigger:"blur"}],
   netFugitiveCase:[
     {validator:(rule,value,callback)=>{
         if(form.netFugitiveCount>0 && !value) callback(new Error("追网逃有数据时案情必填"));
-        else callback();
-      },trigger:"blur"}
-  ],
-  arrestCase:[
-    {validator:(rule,value,callback)=>{
-        if(form.arrestSuspectCount>0 && !value) callback(new Error("抓获现行有数据时案情必填"));
         else callback();
       },trigger:"blur"}
   ],
@@ -483,7 +679,7 @@ const getPersonTypeName = (type) => {
  * 构建personList，自动计算totalPerson，保留已填身份证，每条携带personType
  */
 const buildPersonList = () => {
-  form.totalPerson = form.crimeRed + form.crimeOrange + form.crimeYellow + form.crimeBlue + form.crimeBlack
+  form.totalPerson = form.crimeRed + form.crimeOrange + form.crimeYellow + form.crimeBlue + form.crimeBlack+ form.unwarnedMinor
   //旧数据按personType分组保存已录入身份证
   const group = {}
   form.personList.forEach(item=>{
@@ -565,9 +761,22 @@ const syncOpenDoorCarRow = () => {
   }
 }
 
+//监听日期范围数组，自动拆成 beginTime / endTime
+watch(()=>queryParams.strikeDate,(newVal)=>{
+  if(newVal && newVal.length === 2){
+    queryParams.beginTime = newVal[0]
+    queryParams.endTime = newVal[1]
+  }else{
+    queryParams.beginTime = null
+    queryParams.endTime = null
+  }
+})
+
 const getList = async () => {
   loading.value = true
-  const res = await listStrikeCurrent(queryParams)
+  const reqParams = {...queryParams}
+  delete reqParams.strikeDate
+  const res = await listStrikeCurrent(reqParams)
   tableData.value = res.rows
   total.value = res.total
   loading.value = false
@@ -580,6 +789,9 @@ const handleQuery = () => {
 
 const resetQuery = () => {
   queryFormRef.value?.resetFields()
+  queryParams.strikeDate = []
+  queryParams.beginTime = null
+  queryParams.endTime = null
   handleQuery()
 }
 
@@ -598,10 +810,41 @@ const handleUpdate = async (row) => {
   resetForm()
   const res = await getStrikeCurrent(row.id)
   Object.assign(form, res.data)
-  //回显初始化错误字段
+
+  //后端嵌套结构 转前端页面gangList模型
+  const backendGangList = res.data.gangList || []
+  form.gangList = backendGangList.map(gang => {
+    return {
+      gangSuspectNum: gang.gangSuspectList?.length || 0,
+      gangCase: gang.gangCaseContent,
+      idCardList: gang.gangSuspectList?.map(sus => {
+        return {
+          name: sus.suspectName,
+          idCard: sus.idCard,
+          idCardError: ""
+        }
+      }) || []
+    }
+  })
+
+  //后端普通嫌疑人转前端
+  const backendNormalList = res.data.normalSuspectList || []
+  form.normalSuspectList = backendNormalList.map(sus => {
+    return {
+      name: sus.suspectName,
+      idCard: sus.idCard,
+      caseContent: sus.singleCaseContent,
+      idCardError: ""
+    }
+  })
+
+  form.arrestNormalCount = form.normalSuspectList.length
+  form.arrestGroupCount = form.gangList.length
+
   if(form.personList){
     form.personList = form.personList.map(p=> ({...p, idCardError:''}))
   }
+  form.arrestSuspectCount = totalGangSuspect.value + Number(form.arrestNormalCount || 0)
   title.value = "修改警务站打击现行数据"
   open.value = true
 }
@@ -619,8 +862,11 @@ const submitForm = async () => {
   }catch(e){
     return
   }
+
+  if(!validateGangRule()) return
+
   let hasError = false
-  //校验身份证
+  //校验敲打未成年身份证
   if(form.personList.length > 0){
     form.personList.forEach(item=>{
       item.idCardError = ''
@@ -634,10 +880,47 @@ const submitForm = async () => {
       }
     })
     if(hasError){
-      ElMessage.error('请检查身份证填写')
+      ElMessage.error('请检查敲打未成年身份证填写')
       return
     }
   }
+
+  //校验团伙子表：姓名、案情、身份证
+  for(const gang of form.gangList){
+    if(!gang.gangCase?.trim()){
+      ElMessage.error(`团伙【${form.gangList.indexOf(gang)+1}】案情经过不能为空`)
+      return
+    }
+    for(const p of gang.idCardList){
+      // if(!p.name?.trim()){
+      //   ElMessage.error(`团伙【${form.gangList.indexOf(gang)+1}】嫌疑人姓名不能为空`)
+      //   hasError=true;
+      // }
+      checkSingleIdCard(p)
+      if(p.idCardError) hasError = true
+    }
+  }
+  if(hasError){
+    ElMessage.error("团伙嫌疑人身份证存在错误，请检查！")
+    return
+  }
+
+  //校验普通现行嫌疑人：姓名、身份证、个案案情
+  for(const p of form.normalSuspectList){
+    // if(!p.name?.trim()){
+    //   ElMessage.error("普通现行嫌疑人姓名不能为空");
+    //   hasError = true
+    // }
+    checkSingleIdCard(p)
+    if(p.idCardError || !p.caseContent?.trim()){
+      hasError = true
+    }
+  }
+  if(hasError){
+    ElMessage.error("普通现行嫌疑人身份证/个案案情不能为空，请检查！")
+    return
+  }
+
   //校验车牌
   if(form.openDoorCount > 0){
     if(form.doorCarList.length !== form.openDoorCount){
@@ -681,14 +964,38 @@ const confirmCar = () => {
 
 const doSave = async () => {
   const params = { ...form }
-  //提交只保留 idCard、personType；剔除前端idCardError
+
   params.personList = form.personList.map(({ idCard, personType }) => ({ idCard, personType }))
   params.doorCarList = form.doorCarList
 
-  if(form.id != null){
+  //团伙列表映射为后端嵌套实体
+  params.gangList = form.gangList.map((gang, gIndex) => {
+    return {
+      gangIndex: gIndex + 1,
+      gangCaseContent: gang.gangCase,
+      gangSuspectList: gang.idCardList.map(cardItem => {
+        return {
+          suspectName: cardItem.name,
+          idCard: cardItem.idCard,
+          singleCaseContent: gang.gangCase
+        }
+      })
+    }
+  })
+
+  //普通嫌疑人映射后端
+  params.normalSuspectList = form.normalSuspectList.map(item => {
+    return {
+      suspectName: item.name,
+      idCard: item.idCard,
+      singleCaseContent: item.caseContent
+    }
+  })
+
+  if (form.id != null) {
     await updateStrikeCurrent(params)
     ElMessage.success("修改成功")
-  }else{
+  } else {
     await addStrikeCurrent(params)
     ElMessage.success("新增成功")
   }
@@ -713,8 +1020,8 @@ const handleBatchDelete = () => {
 }
 
 const handleExport = () => {
-  // 项目下载工具自行适配
   console.log('export',queryParams)
+  proxy.download("police/strikeCurrent/export", {...queryParams}, `打击现行台账_${new Date().getTime()}.xlsx`)
 }
 
 const handleImport = () => {
@@ -737,3 +1044,4 @@ const uploadError = () => {
 
 getList()
 </script>
+

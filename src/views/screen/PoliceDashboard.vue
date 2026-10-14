@@ -11,7 +11,7 @@ import AlarmTrendPanel from './modules/AlarmTrendPanel.vue'
 import FugitiveTrendPanel from './modules/FugitiveTrendPanel.vue'
 import JuvenileTrendPanel from './modules/JuvenileTrendPanel.vue'
 import MinorDistributionPanel from './modules/MinorDistributionPanel.vue'
-import ResultPanel from './modules/ResultPanel.vue'
+import ResultPanelVue from './modules/ResultPanel.vue'
 import UnitRankPanel from './modules/UnitRankPanel.vue'
 
 const { isFullscreen, toggle } = useFullscreen(undefined, { autoExit: true })
@@ -29,8 +29,8 @@ const alarmChartType = shallowRef('line')
 const rankChartType = shallowRef('line')
 const juvenileChartType = shallowRef('line')
 const createInitialMonthRange = () => [
-  query.value.startDate.slice(0, 7),
-  query.value.endDate.slice(0, 7)
+  // query.value.startDate.slice(0, 7),
+  // query.value.endDate.slice(0, 7)
 ]
 const rankFilter = shallowRef({
   monthRange: createInitialMonthRange()
@@ -217,7 +217,7 @@ onMounted(reloadAll)
       >
         <div class="grid min-h-0 grid-rows-layout-mobile-left gap-3 lg:row-span-2 lg:grid-rows-layout-left xl:row-span-1">
           <AlarmKpiPanel :data="dashboard.alarmKpi" />
-          <ResultPanel :data="dashboard.result" />
+          <ResultPanelVue :data="dashboard.result" />
           <MinorDistributionPanel :data="dashboard.pie" />
         </div>
 

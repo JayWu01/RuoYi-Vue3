@@ -9,11 +9,31 @@ export const UNIT_PARENT_IDS = {
   cityBranch: 102 // 全市分局单位
 }
 
+// export const getCurrentYearRange = () => {
+//   const year = new Date().getFullYear()
+//   return {
+//     startDate: `${year}-01-01 00:00:00`,
+//     endDate: `${year}-12-31 23:59:59`
+//   }
+// }
+
+// 近一周
+// import dayjs from 'dayjs'
+// export const getCurrentYearRange = () => {
+//   return {
+//     startDate: dayjs().subtract(6, 'day').startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+//     endDate: dayjs().endOf('day').format('YYYY-MM-DD HH:mm:ss')
+//   }
+// }
+
+// 本年1月1日至今
+import dayjs from 'dayjs'
 export const getCurrentYearRange = () => {
-  const year = new Date().getFullYear()
   return {
-    startDate: `${year}-01-01 00:00:00`,
-    endDate: `${year}-12-31 23:59:59`
+    // 当年1月1日 00:00:00
+    startDate: dayjs().startOf('year').format('YYYY-MM-DD HH:mm:ss'),
+    // 当前时间（此刻，不是当日结束）
+    endDate: dayjs().format('YYYY-MM-DD HH:mm:ss')
   }
 }
 

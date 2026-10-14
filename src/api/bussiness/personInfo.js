@@ -57,8 +57,26 @@ export function getDuplicateList(params) {
 export function getPersonWarningList(query) {
     return request({
         url: '/screen/personInfo/warninglist',
-        method: 'get',
-        params: query
+        method: 'post',
+        data:params
+    })
+}
+
+// 重复线索预警分页列表
+export function getWarningList(params) {
+    return request({
+        url: '/screen/personInfo/warningList',
+        method: 'post',
+        data:params
+    })
+}
+
+// 获取本组全部警情（弹窗对比）
+export function getGroupPersonByAlarmIds(params) {
+    return request({
+        url: '/screen/personInfo/getGroupPersonByAlarmIds',
+        method: 'post',
+        data:params
     })
 }
 

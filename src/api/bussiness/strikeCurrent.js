@@ -37,3 +37,16 @@ export function delStrikeCurrent(ids) {
     method: 'delete'
   })
 }
+
+/**
+ * 导出
+ * @param {object} params
+ */
+export function exportStrikeCurrent(params) {
+  return request({
+    url: '/police/strikeCurrent/export',
+    method: 'get',
+    params,
+    responseType: 'blob'// 必须加，否则二进制乱码
+  })
+}
