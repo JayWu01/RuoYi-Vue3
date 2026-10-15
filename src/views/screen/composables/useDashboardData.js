@@ -5,9 +5,10 @@ import {
   getFugitiveTrend,
   getJuvenileTrend,
   getMinorPie,
+  getRankList,
   getResultKpi,
   getUnitOptions,
-  getUnitRank
+  getTwoRob
 } from '../api/policeDashboard'
 import { createEmptyDashboard, UNIT_PARENT_IDS } from '../constant'
 
@@ -18,6 +19,7 @@ const moduleLabels = {
   lineFugitive: '网逃数据趋势',
   lineAlarm: '接处警趋势',
   rank: '抢盗窃数据趋势',
+  rankData: '警务站排名',
   juvenile: '未成年人数据趋势',
   specialPoliceUnits: '特警支队单位',
   cityBranchUnits: '全市分局单位'
@@ -30,6 +32,7 @@ const createModuleState = () => ({
   lineFugitive: false,
   lineAlarm: false,
   rank: false,
+  rankData: false,
   juvenile: false,
   specialPoliceUnits: false,
   cityBranchUnits: false
@@ -82,12 +85,16 @@ export function useDashboardData() {
   const loadLineAlarm = params => loadModule('lineAlarm', () => getAlarmTrend(params), lineAlarm => ({ lineAlarm }))
 
   // 单位排名
-  const loadRank = params => loadModule('rank', () => getUnitRank(params), rank => ({ rank }))
+  const loadRank = params => loadModule('rank', () => getTwoRob(params), rank => ({ rank }))
+
+  // 警务站排名（顶部分类 + 单位横向柱状图）
+  const loadRankData = params => loadModule('rankData', () => getRankList(params), rankData => ({ rankData }))
 
   // 青少年数据趋势
   const loadJuvenile = params => loadModule('juvenile', () => getJuvenileTrend(params), juvenile => ({ juvenile }))
 
   const reloadRank = params => loadRank(params)
+  const reloadRankData = params => loadRankData(params)
   const reloadJuvenile = params => loadJuvenile(params)
 
   // 特警单位列表
@@ -104,6 +111,7 @@ export function useDashboardData() {
     void loadLineFugitive(params)
     void loadLineAlarm(params)
     void reloadRank(panelParams.rank || params)
+    void reloadRankData(panelParams.rankData || panelParams.rank || params)
     void reloadJuvenile(panelParams.juvenile || params)
   }
 
@@ -121,6 +129,7 @@ export function useDashboardData() {
     reload,
     reloadJuvenile,
     reloadMetrics,
-    reloadRank
+    reloadRank,
+    reloadRankData
   }
 }

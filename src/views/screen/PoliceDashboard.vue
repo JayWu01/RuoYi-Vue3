@@ -12,6 +12,7 @@ import FugitiveTrendPanel from './modules/FugitiveTrendPanel.vue'
 import JuvenileTrendPanel from './modules/JuvenileTrendPanel.vue'
 import MinorDistributionPanel from './modules/MinorDistributionPanel.vue'
 import ResultPanelVue from './modules/ResultPanel.vue'
+import TowRob from './modules/TowRob.vue'
 import UnitRankPanel from './modules/UnitRankPanel.vue'
 
 const { isFullscreen, toggle } = useFullscreen(undefined, { autoExit: true })
@@ -21,13 +22,16 @@ const {
   reload,
   reloadJuvenile,
   reloadMetrics,
-  reloadRank
+  reloadRank,
+  reloadRankData
 } = useDashboardData()
 
 const query = shallowRef(createInitialQuery())
 const alarmChartType = shallowRef('line')
 const rankChartType = shallowRef('line')
 const juvenileChartType = shallowRef('line')
+// 警务站排名统计类型：callPolice 接处警 / netFugitive 追网逃 / minorBeat 敲打未成年 / pullCarDoor 拉车门
+const rankType = shallowRef('callPolice')
 const createInitialMonthRange = () => [
   // query.value.startDate.slice(0, 7),
   // query.value.endDate.slice(0, 7)
@@ -54,9 +58,10 @@ const toMonthDateRange = (monthRange) => {
   const [startMonth, endMonth] = monthRange
   const [year, monthNumber] = endMonth.split('-').map(Number)
   const lastDay = new Date(year, monthNumber, 0).getDate()
+  // 后端 PoliceStatQueryDTO 用 @JsonFormat("yyyy-MM-dd HH:mm:ss") 解析，必须带时间部分
   return {
-    startDate: `${startMonth}-01`,
-    endDate: `${endMonth}-${String(lastDay).padStart(2, '0')}`
+    startDate: `${startMonth}-01 00:00:00`,
+    endDate: `${endMonth}-${String(lastDay).padStart(2, '0')} 23:59:59`
   }
 }
 
@@ -71,7 +76,7 @@ const createPanelQuery = filter => ({
 })
 
 const getPanelParams = () => ({
-  rank: createPanelQuery(rankFilter.value),
+  rank: { ...createPanelQuery(rankFilter.value), rankType: rankType.value },
   juvenile: createPanelQuery(juvenileFilter.value)
 })
 
@@ -94,19 +99,34 @@ const updatePanelUnit = (filter, deptId, unitOptions, reloadPanel) => {
   void reloadPanel(createPanelQuery(nextFilter))
 }
 
+// 抢盗窃趋势 + 警务站排名共用 rankFilter，两个面板需要一起刷新
+const reloadRankPanels = (filter) => {
+  const params = { ...createPanelQuery(filter), rankType: rankType.value }
+  void reloadRank(params)
+  void reloadRankData(params)
+}
+
 const updateRankMonthRange = (monthRange) => {
   if (monthRange == null) {
-    updatePanelFilter(rankFilter, 'monthRange', null, reloadRank)
+    rankFilter.value = { ...rankFilter.value, monthRange: null }
+    reloadRankPanels(rankFilter.value)
     return
   }
 
   if (monthRange.length === 2 && monthRange.every(Boolean)) {
-    updatePanelFilter(rankFilter, 'monthRange', monthRange, reloadRank)
+    rankFilter.value = { ...rankFilter.value, monthRange }
+    reloadRankPanels(rankFilter.value)
   }
 }
 
 const updateRankUnit = (deptId) => {
-  updatePanelUnit(rankFilter, deptId, cityBranchUnitOptions, reloadRank)
+  const selectedUnit = cityBranchUnitOptions.value.find(unit => unit.deptId === deptId)
+  rankFilter.value = {
+    ...rankFilter.value,
+    deptId,
+    deptName: selectedUnit?.deptName
+  }
+  reloadRankPanels(rankFilter.value)
 }
 
 const updateJuvenileMonthRange = (monthRange) => {
@@ -187,6 +207,11 @@ const exportData = () => {
   const csv = `\ufeff${rows.map(row => row.map(escapeCsvValue).join(',')).join('\n')}`
   saveAs(new Blob([csv], { type: 'text/csv;charset=utf-8' }), '警务站大屏数据.csv')
 }
+// 父script，切换选项卡触发，切换统计维度后重新拉取排名数据
+const onChangeRankType = (type) => {
+  rankType.value = type
+  void reloadRankData({ ...createPanelQuery(rankFilter.value), rankType: type })
+}
 
 onMounted(reloadAll)
 </script>
@@ -222,37 +247,52 @@ onMounted(reloadAll)
         </div>
 
         <section class="grid min-h-0 grid-rows-layout-mobile-stack gap-3 lg:grid-rows-layout-stack">
-          <FugitiveTrendPanel :data="dashboard.lineFugitive" />
+<!--          <FugitiveTrendPanel :data="dashboard.lineFugitive" />-->
           <AlarmTrendPanel
-            :data="dashboard.lineAlarm"
-            :chart-type="alarmChartType"
-            @change-chart="alarmChartType = $event"
+              :data="dashboard.lineAlarm"
+              :chart-type="alarmChartType"
+              @change-chart="alarmChartType = $event"
           />
+          <div class="grid grid-cols-2 min-h-0 gap-3">
+            <TowRob
+                :data="dashboard.rank"
+                :month-range="rankFilter.monthRange"
+                :unit-options="cityBranchUnitOptions"
+                :dept-id="rankFilter.deptId"
+                :chart-type="rankChartType"
+                @update-unit="updateRankUnit"
+                @change-month-range="updateRankMonthRange"
+                @change-chart="rankChartType = $event"
+            />
+
+            <JuvenileTrendPanel
+                :data="dashboard.juvenile"
+                :month-range="juvenileFilter.monthRange"
+                :chart-type="juvenileChartType"
+                :unit-options="cityBranchUnitOptions"
+                :dept-id="juvenileFilter.deptId"
+                @change-month-range="updateJuvenileMonthRange"
+                @change-chart="juvenileChartType = $event"
+                @update-unit="updateJuvenileUnit"
+            />
+          </div>
         </section>
 
-        <div class="grid min-h-0 grid-rows-layout-mobile-stack gap-3 lg:grid-rows-layout-stack">
+        <div class="grid min-h-0">
           <UnitRankPanel
-            :data="dashboard.rank"
-            :month-range="rankFilter.monthRange"
-            :unit-options="cityBranchUnitOptions"
-            :dept-id="rankFilter.deptId"
-            :chart-type="rankChartType"
-            @update-unit="updateRankUnit"
-            @change-month-range="updateRankMonthRange"
-            @change-chart="rankChartType = $event"
-          />
-
-          <JuvenileTrendPanel
-            :data="dashboard.juvenile"
-            :month-range="juvenileFilter.monthRange"
-            :chart-type="juvenileChartType"
-            :unit-options="cityBranchUnitOptions"
-            :dept-id="juvenileFilter.deptId"
-            @change-month-range="updateJuvenileMonthRange"
-            @change-chart="juvenileChartType = $event"
-            @update-unit="updateJuvenileUnit"
+              :data="dashboard.rankData"
+              :rank-type="rankType"
+              :month-range="rankFilter.monthRange"
+              :unit-options="cityBranchUnitOptions"
+              :dept-id="rankFilter.deptId"
+              :chart-type="rankChartType"
+              @change-chart="rankChartType = $event"
+              @change-month-range="updateRankMonthRange"
+              @update-unit="updateRankUnit"
+              @change-rank-type="onChangeRankType"
           />
         </div>
+
       </main>
     </div>
   </div>

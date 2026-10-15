@@ -1,43 +1,42 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
-import ChartTypeToggle from '../components/ChartTypeToggle.vue'
+import * as echarts from 'echarts'
 import ScreenPanel from '../components/ScreenPanel.vue'
 import { createDashboardTooltip, useECharts } from '../composables/useECharts'
 
 const props = defineProps({
-  data: { type: Object, required: true },
-  monthRange: { type: Array, default: null },
-  unitOptions: { type: Array, default: () => [] },
-  deptId: { type: [String, Number], default: null },
-  chartType: { type: String, required: true }
+  data: { type: Object, required: true, default: () => ({}) },
+  rankType: { type: String, default: 'callPolice' },
+  monthRange: { type: String },
+  unitOptions: { type: Array },
+  deptId: { type: [String, Number] },
+  chartType: { type: String, default: 'bar' }
 })
 
-const emit = defineEmits(['update-unit', 'change-month-range', 'change-chart'])
+const emit = defineEmits([
+  'change-chart',
+  'change-month-range',
+  'update-unit',
+  'change-rank-type'
+])
+
 const chartRef = ref(null)
 const { setOption } = useECharts(chartRef)
 
-/**
- * 按月分组求和
- * @param {Array} list 后端原始data数组
- * @returns {{xAxis: string[], yAxis: number[]}}
- */
-function groupByMonth(list) {
-  const map = {}
-  list.forEach(item => {
-    const date = item.statDate
-    const val = Number(item.monthTotal) || 0
-    if (!map[date]) map[date] = 0
-    map[date] += val
-  })
-  const sortedKeys = Object.keys(map).sort()
-  return {
-    xAxis: sortedKeys,
-    yAxis: sortedKeys.map(k => map[k])
-  }
+const rankTabList = ref([
+  { label: '接处警', value: 'callPolice' },
+  { label: '追网逃', value: 'netFugitive' },
+  { label: '敲打未成年', value: 'minorBeat' },
+  { label: '拉车门', value: 'pullCarDoor' }
+])
+
+function handleTabChange(val) {
+  console.log('切换排名类型：', val)
+  emit('change-rank-type', val)
 }
 
 /**
- * 动态计算坐标轴最大值和分割间隔
+ * 动态计算坐标轴最大值和分割间隔，和另外两个图表保持一致
  * @param {number[]} values 数据数组
  * @returns { {max:number, interval:number} }
  */
@@ -61,27 +60,14 @@ function calcAxisMaxAndInterval(values) {
 }
 
 const renderChart = () => {
-  const raw = props.data || {}
-  let xAxis, yAxis, seriesName = '两抢一盗案件数'
+  const yAxisData = props.data?.yAxis || []
+  // 后端 SUM/COUNT 可能返回数字字符串，统一转成 Number，避免坐标轴计算失效
+  const seriesData = (props.data?.series || []).map(v => Number(v) || 0)
 
-  if (raw && raw.seriesList && Array.isArray(raw.seriesList) && raw.xAxis) {
-    const first = raw.seriesList[0] || { data: [], name: '两抢一盗案件数' }
-    xAxis = raw.xAxis.slice()
-    yAxis = first.data ? first.data.slice() : []
-    while (yAxis.length < xAxis.length) yAxis.push(0)
-    seriesName = first.name || '两抢一盗案件数'
-  } else {
-    const list = Array.isArray(raw) ? raw : []
-    const result = groupByMonth(list)
-    xAxis = result.xAxis
-    yAxis = result.yAxis
-  }
-
-  // 空数据保护，防止Math.max空数组报错空白
-  if (!xAxis.length) {
+  if (!yAxisData.length) {
     setOption({
-      xAxis: { type: 'category', data: [] },
-      yAxis: { type: 'value' },
+      yAxis: { type: 'category', data: [] },
+      xAxis: { type: 'value' },
       series: [],
       graphic: {
         type: 'text',
@@ -99,165 +85,117 @@ const renderChart = () => {
     return
   }
 
-  const colors = ['#6b96e8', '#86c75b']
+  const allValues = [...seriesData]
+  const { max, interval } = calcAxisMaxAndInterval(allValues)
 
-  const lineChartData = [
-    {
-      name: '两抢一盗案件数',
-      type: 'line',
-      smooth: true,
-      symbol: 'circle',
-      symbolSize: 12,
-      data: yAxis,
-      lineStyle: { width: 5, color: colors[0] },
-      itemStyle: { color: colors[0] }
+  // ========== 核心：按排名设置不同柱子渐变色，区分单位 ==========
+  const barColorList = seriesData.map((_, index) => {
+    if (index === 0) {
+      // 第1名 橙红
+      return new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+        { offset: 0, color: '#ff4c3b' },
+        { offset: 1, color: '#ff9547' }
+      ])
+    } else if (index === 1) {
+      // 第2名 橙色
+      return new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+        { offset: 0, color: '#ff7b26' },
+        { offset: 1, color: '#ffc048' }
+      ])
+    } else if (index === 2) {
+      // 第3名 黄色
+      return new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+        { offset: 0, color: '#f8c220' },
+        { offset: 1, color: '#ffe470' }
+      ])
+    } else {
+      // 第4名往后 蓝色渐变
+      return new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+        { offset: 0, color: '#318bff' },
+        { offset: 1, color: '#64c7ff' }
+      ])
     }
-  ]
-
-  const barChartData = [
-    {
-      name: '两抢一盗案件数',
-      type: 'bar',
-      data: yAxis,
-      barWidth: 12,
-      label: { show: true, position: 'right', color: '#cbd7df' },
-      itemStyle: { color: colors[0] }
-    }
-  ]
-
-  // 动态计算x轴最大值、间隔（横向bar用）
-  const { max, interval } = calcAxisMaxAndInterval(yAxis)
-  const dataCount = xAxis.length
-  // 数据大于12条，开启滑动，默认展示12个；少于等于12条全部展示
-  const endPercent = dataCount > 12 ? 100 : (12 / dataCount) * 100
+  })
 
   setOption({
-    legend: props.chartType === 'line'
-        ? {
-          top: 8,
-          left: 12,
-          itemWidth: 18,
-          itemHeight: 4,
-          itemGap: 18,
-          icon: 'roundRect',
-          textStyle: { color: '#a8b4c1', fontSize: 12 }
-        }
-        : undefined,
-    tooltip: props.chartType === 'line'
-        ? createDashboardTooltip()
-        : createDashboardTooltip('item'),
-    grid: props.chartType === 'line'
-        ? { left: 42, right: 18, top: 46, bottom: 70, containLabel: true }
-        : { left: 70, right: 32, top: 20, bottom: 24, containLabel: true },
-    // dataZoom：只对line模式生效，横向bar不需要滑动
-    dataZoom: props.chartType === 'line' ? [
-      {
-        type: 'slider',
-        show: true,
-        height: 14,
-        bottom: 10,
-        start: 0,
-        end: endPercent,
-        handleStyle: { color: '#6b96e8' },
-        textStyle: { color: '#a8b4c1' }
+    backgroundColor: 'transparent',
+    tooltip: createDashboardTooltip(),
+    grid: {
+      left: 140, // 加宽左侧，放【排名 + 警务站名称】
+      right: 30,
+      top: 60,
+      bottom: 16,
+      containLabel: true
+    },
+    xAxis: {
+      type: 'value',
+      min: 0,
+      max: max,
+      interval: interval,
+      splitLine: {
+        lineStyle: { color: 'rgba(72,108,132,.28)', type: 'dashed' }
       },
+      axisLabel: { color: '#a8b4c1' },
+      axisLine: { show: false },
+      axisTick: { show: false }
+    },
+    yAxis: {
+      type: 'category',
+      // Y轴文字拼接【排名 警务站名称】，例如：1  八一广场警务站
+      data: yAxisData.map((name, idx) => `${idx + 1}　${name}`),
+      axisLine: { lineStyle: { color: '#38536a' } },
+      axisLabel: {
+        color: '#a8b4c1',
+        align: 'right',
+        fontSize: 12,
+        lineHeight: 22
+      },
+      axisTick: { show: false }
+    },
+    series: [
       {
-        type: 'inside'
+        name: '数量',
+        type: 'bar',
+        barWidth: 22,
+        data: seriesData,
+        itemStyle: {
+          color: function (params) {
+            return barColorList[params.dataIndex]
+          }
+        },
+        label: {
+          show: true,
+          position: 'right',
+          color: '#ffffff',
+          fontSize:12
+        }
       }
-    ] : undefined,
-    xAxis: props.chartType === 'line'
-        ? {
-          data: xAxis,
-          type: 'category',
-          axisLabel: {
-            color: '#a8b4c1',
-            rotate: 30
-          },
-          axisLine: { lineStyle: { color: '#38536a' } }
-        }
-        : {
-          type: 'value',
-          min: 0,
-          max: max,
-          interval: interval,
-          splitLine: { lineStyle: { color: 'rgba(72,108,132,.25)' } },
-          axisLabel: { color: '#a8b4c1' },
-          axisLine: { show: false }
-        },
-    yAxis: props.chartType === 'line'
-        ? {
-          type: 'value',
-          splitLine: { lineStyle: { color: 'rgba(72,108,132,.25)' } },
-          axisLabel: { color: '#a8b4c1' }
-        }
-        : {
-          type: 'category',
-          inverse: true,
-          data: xAxis,
-          axisLabel: { color: '#c1ccd6' },
-          axisLine: { show: false },
-          axisTick: { show: false }
-        },
-    series: props.chartType === 'line' ? lineChartData : barChartData
+    ]
   })
 }
 
-// 修复监听：监听props.data和图表类型
-watch(
-    () => [props.data, props.chartType],
-    () => renderChart(),
-    { deep: true }
-)
-
+watch(() => props.data, renderChart, { deep: true })
 onMounted(renderChart)
-
-import dayjs from 'dayjs'
-
-function formatMonthRange(range) {
-  if (!range || !range.length) return range
-  const [start, end] = range
-  return [
-    start ? dayjs(start).startOf('month').format('YYYY-MM-DD HH:mm:ss') : null,
-    end   ? dayjs(end).endOf('month').format('YYYY-MM-DD HH:mm:ss')   : null
-  ]
-}
 </script>
 
 <template>
-  <ScreenPanel title="抢盗窃数据趋势" unit="(单位：起)">
-    <template #actions>
-      <ChartTypeToggle :model-value="chartType" @update:model-value="emit('change-chart', $event)" />
-    </template>
-
-    <div class="flex min-w-0 items-center justify-end gap-2 px-4">
-      <el-date-picker
-          :model-value="monthRange"
-          type="monthrange"
-          format="YYYY-MM"
-          value-format="YYYY-MM"
-          range-separator="~"
-          start-placeholder="开始月份"
-          end-placeholder="结束月份"
-          clearable
-          size="small"
-          popper-class="dashboard-popper"
-          class="dashboard-date-picker min-w-0 flex-1"
-          @update:model-value="emit('change-month-range', formatMonthRange($event))"
-      />
-      <el-select
-          popper-class="dashboard-popper"
-          class="dashboard-select min-w-0 flex-1"
-          :model-value="deptId"
-          clearable
-          size="small"
-          placeholder="全部单位"
-          @update:model-value="emit('update-unit', $event)"
-      >
-        <el-option label="全部单位" :value="null"/>
-        <el-option v-for="unit in unitOptions" :key="unit.deptId" :label="unit.deptName" :value="unit.deptId" />
-      </el-select>
+  <ScreenPanel title="警务站排名" unit="(单位：起)">
+    <div class="flex flex-col min-h-0 h-full">
+      <!-- 美化选项卡，加z-index，hover效果，解决点不动问题 -->
+      <div class="flex gap-2 mb-3 shrink-0">
+        <div
+            v-for="tab in rankTabList"
+            :key="tab.value"
+            @click="handleTabChange(tab.value)"
+            class="px-3 py-1.5 rounded cursor-pointer text-sm relative z-10 transition-all duration-200 border"
+            :class="rankType === tab.value
+      ? 'border-[#3498ff] bg-gradient-to-r from-[#185299] to-[#2470cc] text-white shadow-[0_0_8px_rgba(52,152,255,0.35)]'
+      : 'border-slate-700 bg-slate-900/60 text-slate-300 hover:border-slate-500 hover:text-white hover:bg-slate-800'"
+        >
+          {{ tab.label }}
+        </div>
+      </div>
+      <div ref="chartRef" class="flex-1 w-full min-h-0" />
     </div>
-
-    <div ref="chartRef" class="min-h-0 flex-1 w-full"></div>
   </ScreenPanel>
 </template>

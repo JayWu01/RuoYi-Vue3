@@ -62,6 +62,8 @@ export const createEmptyDashboard = () => ({
     seriesList: []
   },
   rank: { data: [] },
+  // 警务站排名（接口 /policeScreen/getRankList 返回 yAxis + series）
+  rankData: { yAxis: [], series: [] },
   juvenile: { data: [] },
   specialPoliceUnits: [],
   cityBranchUnits: []

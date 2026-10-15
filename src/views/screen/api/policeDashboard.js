@@ -6,7 +6,7 @@ import {
   getJuvenileTrend as requestJuvenileTrend,
   getMinorPie as requestMinorPie,
   getResultKpi as requestResultKpi,
-  getUnitRank as requestUnitRank
+  getTwoRob as requestUnitRank
 } from './generated/services/general'
 
 /** @typedef {import('./generated/components').PoliceStatQueryDTO} PoliceStatQueryDTO */
@@ -59,9 +59,17 @@ export function getAlarmTrend(params) {
 /**
  * 获取两抢一盗案件趋势数据。
  * @param {PoliceStatQueryDTO} params 查询条件
- * @returns {ReturnType<typeof requestUnitRank>} 趋势数据
+ * @returns {ReturnType<typeof requestTwoRob>} 趋势数据
  */
-export function getUnitRank(params) {
+// export function getTwoRob(params) {
+//   return requestTwoRob({ data: params })
+// }
+/**
+ * 获取两抢一盗案件趋势数据。
+ * @param {PoliceStatQueryDTO} params 查询条件
+ * @returns {ReturnType<typeof requestTwoRob>} 趋势数据
+ */
+export function getTwoRob(params) {
   return requestUnitRank({ data: params })
 }
 
@@ -72,6 +80,19 @@ export function getUnitRank(params) {
  */
 export function getJuvenileTrend(params) {
   return requestJuvenileTrend({ data: params })
+}
+
+/**
+ * 获取警务站排名数据（接处警 / 追网逃 / 敲打未成年 / 拉车门）。
+ * @param {PoliceStatQueryDTO & { rankType: string }} params 查询条件，rankType 决定统计维度
+ * @returns {Promise<{ yAxis: string[], series: number[] }>} 排名数据
+ */
+export function getRankList(params) {
+  return request({
+    url: '/policeScreen/getRankList',
+    method: 'post',
+    data: params
+  }).then(response => response.data)
 }
 
 /**

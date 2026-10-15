@@ -29,7 +29,7 @@ const generalDefaultConfig = resolveTagDefaultConfig(defaultConfig, 'generalDefa
  *
  * [POST] 抢盗窃案件趋势
  *
- * **path:** /policeScreen/getUnitRank
+ * **path:** /policeScreen/getTwoRob
  *
  * ---
  *
@@ -65,12 +65,12 @@ const generalDefaultConfig = resolveTagDefaultConfig(defaultConfig, 'generalDefa
  * ```
  *
  */
-export function getUnitRank(config = {}) {
+export function getTwoRob(config = {}) {
   const { url, mergedConfig } = buildPayload(
-    '/policeScreen/getUnitRank',
-    generalDefaultConfig,
-    getUnitRank.name,
-    config
+      '/policeScreen/getTwoRob',
+      generalDefaultConfig,
+      getTwoRob.name,
+      config
   );
   return axiosInstance({
     method: 'POST',
@@ -124,10 +124,10 @@ export function getUnitRank(config = {}) {
  */
 export function getJuvenileTrend(config = {}) {
   const { url, mergedConfig } = buildPayload(
-    '/policeScreen/getJuvenileTrend',
-    generalDefaultConfig,
-    getJuvenileTrend.name,
-    config
+      '/policeScreen/getJuvenileTrend',
+      generalDefaultConfig,
+      getJuvenileTrend.name,
+      config
   );
   return axiosInstance({
     method: 'POST',
@@ -260,10 +260,10 @@ export function getJuvenileTrend(config = {}) {
  */
 export function getAlarmKpi(config = {}) {
   const { url, mergedConfig } = buildPayload(
-    '/policeScreen/getAlarmKpi',
-    generalDefaultConfig,
-    getAlarmKpi.name,
-    config
+      '/policeScreen/getAlarmKpi',
+      generalDefaultConfig,
+      getAlarmKpi.name,
+      config
   );
   return axiosInstance({
     method: 'POST',
@@ -318,10 +318,10 @@ export function getAlarmKpi(config = {}) {
  */
 export function getResultKpi(config = {}) {
   const { url, mergedConfig } = buildPayload(
-    '/policeScreen/getResultKpi',
-    generalDefaultConfig,
-    getResultKpi.name,
-    config
+      '/policeScreen/getResultKpi',
+      generalDefaultConfig,
+      getResultKpi.name,
+      config
   );
   return axiosInstance({
     method: 'POST',
@@ -379,10 +379,10 @@ export function getResultKpi(config = {}) {
  */
 export function getMinorPie(config = {}) {
   const { url, mergedConfig } = buildPayload(
-    '/policeScreen/getMinorPie',
-    generalDefaultConfig,
-    getMinorPie.name,
-    config
+      '/policeScreen/getMinorPie',
+      generalDefaultConfig,
+      getMinorPie.name,
+      config
   );
   return axiosInstance({
     method: 'POST',
@@ -440,10 +440,10 @@ export function getMinorPie(config = {}) {
  */
 export function getFugitiveTrend(config = {}) {
   const { url, mergedConfig } = buildPayload(
-    '/policeScreen/getFugitiveTrend',
-    generalDefaultConfig,
-    getFugitiveTrend.name,
-    config
+      '/policeScreen/getFugitiveTrend',
+      generalDefaultConfig,
+      getFugitiveTrend.name,
+      config
   );
   return axiosInstance({
     method: 'POST',
@@ -501,10 +501,10 @@ export function getFugitiveTrend(config = {}) {
  */
 export function getAlarmTrend(config = {}) {
   const { url, mergedConfig } = buildPayload(
-    '/policeScreen/getAlarmTrend',
-    generalDefaultConfig,
-    getAlarmTrend.name,
-    config
+      '/policeScreen/getAlarmTrend',
+      generalDefaultConfig,
+      getAlarmTrend.name,
+      config
   );
   return axiosInstance({
     method: 'POST',

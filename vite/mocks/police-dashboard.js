@@ -136,7 +136,8 @@ const mockPaths = new Set([
   '/policeScreen/getMinorPie',
   '/policeScreen/getFugitiveTrend',
   '/policeScreen/getAlarmTrend',
-  '/policeScreen/getUnitRank',
+  '/policeScreen/getTwoRob',
+  '/policeScreen/getTwoRob',
   '/policeScreen/getJuvenileTrend',
   '/system/dept/listByParentId'
 ])
@@ -153,7 +154,7 @@ const getMockData = (path, query) => {
       return createFugitiveTrend(query)
     case '/policeScreen/getAlarmTrend':
       return createAlarmTrend(query)
-    case '/policeScreen/getUnitRank':
+    case '/policeScreen/getTwoRob':
       return createRank(query)
     case '/policeScreen/getJuvenileTrend':
       return createJuvenile(query)

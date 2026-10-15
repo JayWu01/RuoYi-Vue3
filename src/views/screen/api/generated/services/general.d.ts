@@ -1,7 +1,7 @@
 import type { AxiosRequestConfig } from 'axios';
 import type * as ComponentTypes from '../components';
 
-type getUnitRankResponse = {
+type getTwoRobResponse = {
   /**
    * 未成年犯罪月度统计列表
    */
@@ -19,7 +19,7 @@ type getUnitRankResponse = {
     monthTotal?: number;
   }>;
 };
-type getUnitRankExtraConfig = Omit<AxiosRequestConfig, 'data' | 'params'> & {
+type getTwoRobExtraConfig = Omit<AxiosRequestConfig, 'data' | 'params'> & {
   data: ComponentTypes.PoliceStatQueryDTO;
 };
 /**
@@ -27,7 +27,7 @@ type getUnitRankExtraConfig = Omit<AxiosRequestConfig, 'data' | 'params'> & {
  *
  * [POST] 抢盗窃案件趋势
  *
- * **path:** /policeScreen/getUnitRank
+ * **path:** /policeScreen/getTwoRob
  *
  * ---
  *
@@ -63,7 +63,7 @@ type getUnitRankExtraConfig = Omit<AxiosRequestConfig, 'data' | 'params'> & {
  * ```
  *
  */
-export declare function getUnitRank(config: getUnitRankExtraConfig): Promise<getUnitRankResponse>;
+export declare function getTwoRob(config: getTwoRobExtraConfig): Promise<getTwoRobResponse>;
 
 type getJuvenileTrendResponse = {
   /**
