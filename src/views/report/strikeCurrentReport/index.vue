@@ -13,13 +13,13 @@
             value-format="YYYY-MM-DD"
         />
       </el-form-item>
-      <el-form-item label="警务站">
-        <el-select v-model="queryParams.deptId" placeholder="全部警务站" clearable>
-          <el-option label="八一广场警务站" value="1001"/>
-          <el-option label="滕王阁警务站" value="1002"/>
-          <el-option label="福州路警务站" value="1003"/>
-        </el-select>
-      </el-form-item>
+<!--      <el-form-item label="警务站">-->
+<!--        <el-select v-model="queryParams.deptId" placeholder="全部警务站" clearable>-->
+<!--          <el-option label="八一广场警务站" value="1001"/>-->
+<!--          <el-option label="滕王阁警务站" value="1002"/>-->
+<!--          <el-option label="福州路警务站" value="1003"/>-->
+<!--        </el-select>-->
+<!--      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -57,6 +57,8 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
+import dayjs from 'dayjs'
+import { ElMessage } from 'element-plus'
 // 引入独立api
 import { getStrikeReportList, exportStrikeReport } from '@/api/report/strikeCurrentReport'
 // Ruoyi 下载blob工具
@@ -68,10 +70,15 @@ const loading = ref(false)
 const tableData = ref([])
 const total = ref(0)
 
+
 const queryParams = reactive({
   pageNum: 1,
   pageSize: 100,
-  strikeDate: [],
+  // 【修改】默认选中上一个月（第一天 到 最后一天）
+  strikeDate: [
+    dayjs().subtract(1, 'month').startOf('month').format('YYYY-MM-DD'),
+    dayjs().subtract(1, 'month').endOf('month').format('YYYY-MM-DD')
+  ],
   startDate: '',
   endDate: '',
   deptId: null
@@ -104,8 +111,7 @@ const resetQuery = () => {
 }
 
 
-import dayjs from 'dayjs'
-import { ElMessage } from 'element-plus'
+
 
 const handleExport = async () => {
   if (queryParams.strikeDate?.length === 2) {
@@ -144,7 +150,5 @@ const handleExport = async () => {
   URL.revokeObjectURL(a.href)
   document.body.removeChild(a)
 }
-
-
-
+handleQuery()
 </script>

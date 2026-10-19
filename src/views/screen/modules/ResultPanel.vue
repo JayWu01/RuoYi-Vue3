@@ -16,7 +16,7 @@ const isUp = value => !value?.startsWith('-')
 
 <template>
   <ScreenPanel title="战果类数据">
-    <div class="grid h-full min-h-0 grid-cols-3 gap-2 p-2 max-sm:grid-cols-2">
+    <div class="grid h-full min-h-0 grid-cols-3 grid-rows-2 gap-2 p-2 max-sm:grid-cols-2">
       <ResultCard
         :icon="Target"
         label="抓获网逃数"

@@ -36,7 +36,7 @@ defineProps({
 
 <template>
   <article
-    class="flex h-full min-h-0 min-w-0 flex-col items-center justify-center overflow-hidden rounded-md border border-line-muted bg-surface-kpi px-2 py-3 text-center shadow-[inset_0_0_1rem_rgba(39,137,211,0.08)]"
+    class="flex h-full min-h-0 min-w-0 flex-col items-center justify-center gap-1 overflow-hidden rounded-md border border-line-muted bg-surface-kpi px-2 py-1.5 text-center shadow-[inset_0_0_1rem_rgba(39,137,211,0.08)]"
   >
     <div
       :class="{
@@ -44,15 +44,15 @@ defineProps({
         'text-chart-orange': tone === 'orange',
         'text-chart-yellow': tone === 'yellow',
       }"
-      class="mx-auto grid h-12 w-12 place-items-center rounded-full bg-[radial-gradient(circle,_#174b69,_#103246)] text-2xl shadow-[0_0_1rem_rgba(31,172,235,0.18)]"
+      class="mx-auto grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[radial-gradient(circle,_#174b69,_#103246)] text-base shadow-[0_0_1rem_rgba(31,172,235,0.18)]"
     >
-      <component :is="icon" class="h-6 w-6" />
+      <component :is="icon" class="h-4 w-4" />
     </div>
-    <div class="mt-3 min-h-10 text-sm leading-5 text-slate-300">
+    <div class="min-h-0 text-xs leading-4 text-slate-300">
       {{ label }}
-      <small v-if="sub" class="block text-xl text-muted">{{ sub }}</small>
+      <small v-if="sub" class="block text-base text-muted">{{ sub }}</small>
     </div>
-    <AnimatedStatistic class="mt-2 block text-xl leading-9 text-white" :value="value" />
+    <AnimatedStatistic class="block text-lg leading-6 text-white" :value="value" />
 <!--    <div class="mt-1 whitespace-nowrap text-xs text-muted">-->
 <!--      环比-->
 <!--      <TrendValue-->

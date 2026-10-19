@@ -35,6 +35,7 @@ function handleTabChange(val) {
   emit('change-rank-type', val)
 }
 
+
 /**
  * 动态计算坐标轴最大值和分割间隔，和另外两个图表保持一致
  * @param {number[]} values 数据数组
@@ -117,18 +118,24 @@ const renderChart = () => {
     }
   })
 
+  // 数据条数少时加大柱宽，避免面板被少数几根细柱衬得空旷
+  const barWidth = yAxisData.length <= 3 ? 30 : yAxisData.length <= 6 ? 24 : 16
+
   setOption({
     backgroundColor: 'transparent',
     tooltip: createDashboardTooltip(),
     grid: {
       left: 140, // 加宽左侧，放【排名 + 警务站名称】
       right: 30,
-      top: 60,
-      bottom: 16,
+      // 无图例，顶部只留极小边距，避免柱区上方出现大片空白
+      top: 14,
+      bottom: 8,
       containLabel: true
     },
     xAxis: {
       type: 'value',
+      boundaryGap: [0, 0.01],
+      // 核心：强制整数刻度
       min: 0,
       max: max,
       interval: interval,
@@ -143,11 +150,12 @@ const renderChart = () => {
       type: 'category',
       // Y轴文字拼接【排名 警务站名称】，例如：1  八一广场警务站
       data: yAxisData.map((name, idx) => `${idx + 1}　${name}`),
+      inverse: true, // ✅ 数组第0项渲染在图表最上方
       axisLine: { lineStyle: { color: '#38536a' } },
       axisLabel: {
         color: '#a8b4c1',
         align: 'right',
-        fontSize: 12,
+        fontSize: 15,
         lineHeight: 22
       },
       axisTick: { show: false }
@@ -156,7 +164,7 @@ const renderChart = () => {
       {
         name: '数量',
         type: 'bar',
-        barWidth: 22,
+        barWidth: barWidth,
         data: seriesData,
         itemStyle: {
           color: function (params) {
@@ -181,13 +189,13 @@ onMounted(renderChart)
 <template>
   <ScreenPanel title="警务站排名" unit="(单位：起)">
     <div class="flex flex-col min-h-0 h-full">
-      <!-- 美化选项卡，加z-index，hover效果，解决点不动问题 -->
-      <div class="flex gap-2 mb-3 shrink-0">
+      <!-- 紧凑选项卡：贴近面板头部，少占高度，把空间让给图表 -->
+      <div class="mb-4 flex shrink-0 gap-1.5">
         <div
             v-for="tab in rankTabList"
             :key="tab.value"
             @click="handleTabChange(tab.value)"
-            class="px-3 py-1.5 rounded cursor-pointer text-sm relative z-10 transition-all duration-200 border"
+            class="relative z-10 cursor-pointer whitespace-nowrap rounded border text-sm px-3 py-1.5 transition-all duration-200"
             :class="rankType === tab.value
       ? 'border-[#3498ff] bg-gradient-to-r from-[#185299] to-[#2470cc] text-white shadow-[0_0_8px_rgba(52,152,255,0.35)]'
       : 'border-slate-700 bg-slate-900/60 text-slate-300 hover:border-slate-500 hover:text-white hover:bg-slate-800'"
