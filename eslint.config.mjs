@@ -10,7 +10,7 @@ export default antfu(
       quotes: 'single',
       semi: false
     },
-    ignores: ['dist/**', 'output/**', 'node_modules/**', '**/*.md'],
+    ignores: ['dist/**', 'output/**', 'node_modules/**', '**/*.md', 'src/views/screen/api/generated/**'],
     rules: {
       'style/comma-dangle': ['error', 'never']
     }
