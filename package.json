@@ -2,7 +2,8 @@
   "name": "dashboard",
   "type": "module",
   "version": "0.0.1",
-  "license": "MIT",
+  "description": "数智巡防管理系统前端",
+  "author": "JayWu01 <https://github.com/JayWu01>",
   "scripts": {
     "dev": "vite",
     "build:prod": "vite build",
