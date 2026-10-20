@@ -1,122 +1,210 @@
+<h1 align="center">数智巡防管理系统</h1>
+
+<p align="center">面向街面警务站的巡防业务管理与数据可视化平台</p>
+
 <p align="center">
-	<img alt="logo" src="https://oscimg.oschina.net/oscnet/up-d3d0a9303e11d522a06cd263f3079027715.png">
-</p>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">RuoYi v3.9.2</h1>
-<h4 align="center">基于SpringBoot+Vue3前后端分离的Java快速开发框架</h4>
-<p align="center">
-	<a href="https://gitee.com/y_project/RuoYi-Vue/stargazers"><img src="https://gitee.com/y_project/RuoYi-Vue/badge/star.svg?theme=dark"></a>
-	<a href="https://gitee.com/y_project/RuoYi-Vue"><img src="https://img.shields.io/badge/RuoYi-v3.9.2-brightgreen.svg"></a>
-	<a href="https://gitee.com/y_project/RuoYi-Vue/blob/master/LICENSE"><img src="https://img.shields.io/github/license/mashape/apistatus.svg"></a>
+  <img alt="Vue" src="https://img.shields.io/badge/Vue-3.5-42b883?logo=vue.js&logoColor=white">
+  <img alt="Vite" src="https://img.shields.io/badge/Vite-6-646cff?logo=vite&logoColor=white">
+  <img alt="Element Plus" src="https://img.shields.io/badge/Element%20Plus-2.13-409eff?logo=element&logoColor=white">
+  <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind%20CSS-3.4-06b6d4?logo=tailwindcss&logoColor=white">
 </p>
 
-## 平台简介
+> 本项目基于 [RuoYi-Vue3](https://gitcode.com/yangzongzhuan/RuoYi-Vue3) v3.9.2 二次开发。仓库仅包含前端工程，需配合包含巡防业务模块的 RuoYi-Vue（Spring Boot）后端使用。
 
-* 本仓库为前端技术栈 [Vue3](https://v3.cn.vuejs.org) + [Element Plus](https://element-plus.org/zh-CN) + [Vite](https://cn.vitejs.dev) 版本。
-* 配套后端代码仓库地址[RuoYi-Vue](https://gitee.com/y_project/RuoYi-Vue) 或 [RuoYi-Vue-fast](https://gitcode.com/yangzongzhuan/RuoYi-Vue-fast) 版本。
-* 阿里云折扣场：[点我进入](http://aly.ruoyi.vip)，腾讯云秒杀场：[点我进入](http://txy.ruoyi.vip)&nbsp;&nbsp;
+## 项目简介
 
-# 版本对比
+数智巡防管理系统围绕街面警务站的日常巡防业务构建，在 RuoYi 的用户、角色、菜单、权限、日志、代码生成等基础能力之上，扩展了接处警台账、警单人员、重复线索预警、未成年人违法犯罪、两抢一盗、打击现行等业务管理能力，并提供报表导出与「街面巡防质效」数据大屏。
 
-RuoYi-Vue 前端项目的三个主要演进版本，方便你直观对比其技术栈差异（并行开发维护）。
+- 管理端入口：`/index`
+- 数据大屏：`/screen`（独立全屏页面，可在新窗口直接打开）
+- 默认后端地址：`http://localhost:8080`
 
-| 项目名称      | **RuoYi-Vue2** | **RuoYi-Vue3** | **RuoYi-Vue3-TypeScript**   |
-| :---          | :---           | :---           | :---                        |
-| **前端框架**  | Vue 2         | Vue 3          | Vue 3                       |
-| **脚本语言**  | JavaScript    | JavaScript     | TypeScript                  |
-| **构建工具**  | Vue CLI       | Vite           | Vite                        |
-| **UI 组件库** | Element UI    | Element Plus   | Element Plus                |
-| **状态管理**  | Vuex          | Pinia          | Pinia                       |
-| **路由管理**  | Vue Router 3  | Vue Router 4   | Vue Router 4                |
-| **核心特点**  | 1. 技术栈经典稳定<br>2. 社区资料丰富<br>3. 当前维护重心已转移 | 1. 现代前端技术栈<br>2. 开发体验与性能更优<br>3. 官方主推的活跃版本 | 1. 类型加持，减少沟通成本<br>2. 开发时有提示，效率更高<br>3. 多人协作企业级开发项目 |
-| **仓库地址**  | [RuoYi-Vue2](https://gitcode.com/yangzongzhuan/RuoYi-Vue2) | [RuoYi-Vue3](https://gitcode.com/yangzongzhuan/RuoYi-Vue3) | [RuoYi-Vue3-TypeScript](https://gitcode.com/yangzongzhuan/RuoYi-Vue3/tree/typescript) |
+## 技术栈
 
-## 前端运行
+| 分类      | 技术                                                                               |
+| --------- | ---------------------------------------------------------------------------------- |
+| 基础框架  | RuoYi-Vue3 v3.9.2                                                                  |
+| 前端框架  | Vue 3.5                                                                            |
+| 构建工具  | Vite 6                                                                             |
+| UI 组件库 | Element Plus 2.13、@element-plus/icons-vue、Lucide                                 |
+| 状态管理  | Pinia 3                                                                            |
+| 路由      | Vue Router 4                                                                       |
+| 样式方案  | Tailwind CSS 3.4、Sass                                                             |
+| 图表      | ECharts 5.6                                                                        |
+| HTTP 请求 | Axios                                                                              |
+| 常用工具  | VueUse、dayjs、file-saver、js-cookie、jsencrypt、fuse.js、SortableJS、vuedraggable |
+| 代码规范  | ESLint（@antfu/eslint-config）                                                     |
 
-```bash
-# 克隆项目
-git clone https://github.com/yangzongzhuan/RuoYi-Vue3.git
+## 功能模块
 
-# 进入项目目录
-cd RuoYi-Vue3
+### 街面巡防质效大屏
 
-# 安装依赖
-yarn --registry=https://registry.npmmirror.com
+独立路由 `/screen`，面向指挥室 / 值班室的大屏展示场景，数据来源于后端 `/policeScreen/*` 统计接口。
 
-# 启动服务
-yarn dev
+- **筛选条件**：日期时间范围、统计周期（日 / 周 / 月）、基层单位（特警支队下属警务站、市局各分局）
+- **数据面板**：
+  - 接处警数据（警情 KPI）
+  - 接处警趋势变化
+  - 战果类数据
+  - 抢盗窃数据趋势
+  - 网逃数据趋势变化
+  - 未成年人数趋势
+  - 罪错未成年（红、橙、黄、蓝、黑）分布
+  - 警务站排名（接处警 / 追网逃 / 敲打未成年 / 拉车门）
+- **交互能力**：折线图 / 柱状图切换、全屏展示、数据刷新、CSV 导出
 
-# 构建测试环境 yarn build:stage
-# 构建生产环境 yarn build:prod
-# 前端访问地址 http://localhost:80
+### 巡防业务
+
+| 模块                 | 代码位置                                           | 主要功能                                                        |
+| -------------------- | -------------------------------------------------- | --------------------------------------------------------------- |
+| 接处警台账           | `src/views/bussiness/policeAlarm`                  | 接处警记录增删改查、Excel 导入、转警导入、导出                  |
+| 警单人员信息         | `src/views/bussiness/personInfo`                   | 警单人员维护、批量删除                                          |
+| 重复线索预警         | `src/views/bussiness/personInfo/warningPerson.vue` | 重复人员线索预警、警情对比                                      |
+| 未成年人违法犯罪统计 | `src/views/bussiness/policeMinorCrime`             | 按分局、统计月份维护未成年人违法犯罪数据                        |
+| 两抢一盗发案数统计   | `src/views/bussiness/policeTwoRob`                 | 按分局、统计月份维护两抢一盗发案数据                            |
+| 警务站打击现行数据   | `src/views/bussiness/strikeCurrent`                | 打击现行数据增删改查、Excel 导入导出                            |
+| 接处警报表           | `src/views/report/alarmReport`                     | 按日期、警务站查询，大队列合并、合计行，导出双层表头 Excel 报表 |
+| 打击现行报表         | `src/views/report/strikeCurrentReport`             | 全市警务站打击现行工作数据统计、双层表头报表导出                |
+
+### 系统管理（RuoYi 内置）
+
+包含用户、部门、岗位、菜单、角色、字典、参数、通知公告、操作日志、登录日志、在线用户、定时任务、代码生成、系统接口、服务监控、缓存监控、连接池监视、表单构建等能力，并扩展了「动态映射」模块用于维护来源文本与目标部门的映射规则。
+
+## 目录结构
+
+```text
+.
+├── src/
+│   ├── api/                  # 接口封装（bussiness / report / system / monitor / tool）
+│   ├── assets/               # 静态资源、图标、样式
+│   ├── components/           # 通用组件（文件上传、Excel 导入、分页、编辑器等）
+│   ├── directive/            # 自定义指令（权限、复制等）
+│   ├── layout/               # 管理端整体布局
+│   ├── plugins/              # 全局插件（下载、缓存等）
+│   ├── router/               # 路由配置（/screen 为大屏独立路由）
+│   ├── store/                # Pinia 状态管理
+│   ├── utils/                # 请求、权限、下载等工具
+│   └── views/
+│       ├── bussiness/        # 巡防业务模块
+│       ├── report/           # 报表模块
+│       ├── screen/           # 街面巡防质效大屏
+│       ├── system/           # 系统管理
+│       ├── monitor/          # 系统监控
+│       └── tool/             # 系统工具
+├── vite/
+│   ├── mocks/                # 大屏本地 Mock 数据
+│   └── plugins/              # Vite 插件配置
+├── docs/                     # 项目文档
+├── public/                   # 公共资源
+├── .env.development          # 开发环境变量
+├── .env.staging              # 测试环境变量
+├── .env.production           # 生产环境变量
+├── vite.config.js            # Vite 配置
+└── package.json
 ```
 
-## 内置功能
+## 快速开始
 
-1.  用户管理：用户是系统操作者，该功能主要完成系统用户配置。
-2.  部门管理：配置系统组织机构（公司、部门、小组），树结构展现支持数据权限。
-3.  岗位管理：配置系统用户所属担任职务。
-4.  菜单管理：配置系统菜单，操作权限，按钮权限标识等。
-5.  角色管理：角色菜单权限分配、设置角色按机构进行数据范围权限划分。
-6.  字典管理：对系统中经常使用的一些较为固定的数据进行维护。
-7.  参数管理：对系统动态配置常用参数。
-8.  通知公告：系统通知公告信息发布维护。
-9.  操作日志：系统正常操作日志记录和查询；系统异常信息日志记录和查询。
-10. 登录日志：系统登录日志记录查询包含登录异常。
-11. 在线用户：当前系统中活跃用户状态监控。
-12. 定时任务：在线（添加、修改、删除)任务调度包含执行结果日志。
-13. 代码生成：前后端代码的生成（java、html、xml、sql）支持CRUD下载 。
-14. 系统接口：根据业务代码自动生成相关的api接口文档。
-15. 服务监控：监视当前系统CPU、内存、磁盘、堆栈等相关信息。
-16. 缓存监控：对系统的缓存信息查询，命令统计等。
-17. 在线构建器：拖动表单元素生成相应的HTML代码。
-18. 连接池监视：监视当前系统数据库连接池状态，可进行分析SQL找出系统性能瓶颈。
+### 环境要求
 
-## 在线体验
+- Node.js >= 18（推荐 20 LTS 及以上）
+- pnpm >= 9（仓库使用 `pnpm-lock.yaml`）
+- 可访问的 RuoYi-Vue 后端服务
 
-- admin/admin123  
-- 陆陆续续收到一些打赏，为了更好的体验已用于演示服务器升级。谢谢各位小伙伴。
+### 安装与启动
 
-演示地址：http://vue.ruoyi.vip  
-文档地址：http://doc.ruoyi.vip
+```bash
+# 安装依赖
+pnpm install
 
-## 演示图
+# 启动开发服务，默认访问 http://localhost:80
+pnpm dev
+```
 
-<table>
-    <tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/cd1f90be5f2684f4560c9519c0f2a232ee8.jpg"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/1cbcf0e6f257c7d3a063c0e3f2ff989e4b3.jpg"/></td>
-    </tr>
-    <tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-8074972883b5ba0622e13246738ebba237a.png"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-9f88719cdfca9af2e58b352a20e23d43b12.png"/></td>
-    </tr>
-    <tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-39bf2584ec3a529b0d5a3b70d15c9b37646.png"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-936ec82d1f4872e1bc980927654b6007307.png"/></td>
-    </tr>
-	<tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-b2d62ceb95d2dd9b3fbe157bb70d26001e9.png"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-d67451d308b7a79ad6819723396f7c3d77a.png"/></td>
-    </tr>	 
-    <tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/5e8c387724954459291aafd5eb52b456f53.jpg"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/644e78da53c2e92a95dfda4f76e6d117c4b.jpg"/></td>
-    </tr>
-	<tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-8370a0d02977eebf6dbf854c8450293c937.png"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-49003ed83f60f633e7153609a53a2b644f7.png"/></td>
-    </tr>
-	<tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-d4fe726319ece268d4746602c39cffc0621.png"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-c195234bbcd30be6927f037a6755e6ab69c.png"/></td>
-    </tr>
-    <tr>
-        <td><img src="https://oscimg.oschina.net/oscnet/b6115bc8c31de52951982e509930b20684a.jpg"/></td>
-        <td><img src="https://oscimg.oschina.net/oscnet/up-5e4daac0bb59612c5038448acbcef235e3a.png"/></td>
-    </tr>
-</table>
+开发服务器端口在 `vite.config.js` 的 `server.port` 中配置。开发环境下，`/dev-api` 开头的请求会被代理到 `.env.development` 中的 `VITE_BACKEND_URL`，并在转发时去掉 `/dev-api` 前缀。
 
+```ini
+# .env.development
+VITE_BACKEND_URL = 'http://localhost:8080'
+```
 
-## 数智巡防前后端分离交流群
+### 本地 Mock 大屏（可选）
 
-QQ群： [![加入QQ群](https://img.shields.io/badge/已满-937441-blue.svg)](https://jq.qq.com/?_wv=1027&k=5bVB1og) [![加入QQ群](https://img.shields.io/badge/已满-887144332-blue.svg)](https://jq.qq.com/?_wv=1027&k=5eiA4DH) [![加入QQ群](https://img.shields.io/badge/已满-180251782-blue.svg)](https://jq.qq.com/?_wv=1027&k=5AxMKlC) [![加入QQ群](https://img.shields.io/badge/已满-104180207-blue.svg)](https://jq.qq.com/?_wv=1027&k=51G72yr) [![加入QQ群](https://img.shields.io/badge/已满-186866453-blue.svg)](https://jq.qq.com/?_wv=1027&k=VvjN2nvu) [![加入QQ群](https://img.shields.io/badge/已满-201396349-blue.svg)](https://jq.qq.com/?_wv=1027&k=5vYAqA05) [![加入QQ群](https://img.shields.io/badge/已满-101456076-blue.svg)](https://jq.qq.com/?_wv=1027&k=kOIINEb5) [![加入QQ群](https://img.shields.io/badge/已满-101539465-blue.svg)](https://jq.qq.com/?_wv=1027&k=UKtX5jhs) [![加入QQ群](https://img.shields.io/badge/已满-264312783-blue.svg)](https://jq.qq.com/?_wv=1027&k=EI9an8lJ) [![加入QQ群](https://img.shields.io/badge/已满-167385320-blue.svg)](https://jq.qq.com/?_wv=1027&k=SWCtLnMz) [![加入QQ群](https://img.shields.io/badge/已满-104748341-blue.svg)](https://jq.qq.com/?_wv=1027&k=96Dkdq0k) [![加入QQ群](https://img.shields.io/badge/已满-160110482-blue.svg)](https://jq.qq.com/?_wv=1027&k=0fsNiYZt) [![加入QQ群](https://img.shields.io/badge/已满-170801498-blue.svg)](https://jq.qq.com/?_wv=1027&k=7xw4xUG1) [![加入QQ群](https://img.shields.io/badge/已满-108482800-blue.svg)](https://jq.qq.com/?_wv=1027&k=eCx8eyoJ) [![加入QQ群](https://img.shields.io/badge/已满-101046199-blue.svg)](https://jq.qq.com/?_wv=1027&k=SpyH2875) [![加入QQ群](https://img.shields.io/badge/已满-136919097-blue.svg)](https://jq.qq.com/?_wv=1027&k=tKEt51dz) [![加入QQ群](https://img.shields.io/badge/已满-143961921-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=0vBbSb0ztbBgVtn3kJS-Q4HUNYwip89G&authKey=8irq5PhutrZmWIvsUsklBxhj57l%2F1nOZqjzigkXZVoZE451GG4JHPOqW7AW6cf0T&noverify=0&group_code=143961921) [![加入QQ群](https://img.shields.io/badge/已满-174951577-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=ZFAPAbp09S2ltvwrJzp7wGlbopsc0rwi&authKey=HB2cxpxP2yspk%2Bo3WKTBfktRCccVkU26cgi5B16u0KcAYrVu7sBaE7XSEqmMdFQp&noverify=0&group_code=174951577) [![加入QQ群](https://img.shields.io/badge/已满-161281055-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=Fn2aF5IHpwsy8j6VlalNJK6qbwFLFHat&authKey=uyIT%2B97x2AXj3odyXpsSpVaPMC%2Bidw0LxG5MAtEqlrcBcWJUA%2FeS43rsF1Tg7IRJ&noverify=0&group_code=161281055) [![加入QQ群](https://img.shields.io/badge/已满-138988063-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=XIzkm_mV2xTsUtFxo63bmicYoDBA6Ifm&authKey=dDW%2F4qsmw3x9govoZY9w%2FoWAoC4wbHqGal%2BbqLzoS6VBarU8EBptIgPKN%2FviyC8j&noverify=0&group_code=138988063) [![加入QQ群](https://img.shields.io/badge/已满-151450850-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=DkugnCg68PevlycJSKSwjhFqfIgrWWwR&authKey=pR1Pa5lPIeGF%2FFtIk6d%2FGB5qFi0EdvyErtpQXULzo03zbhopBHLWcuqdpwY241R%2F&noverify=0&group_code=151450850) [![加入QQ群](https://img.shields.io/badge/已满-224622315-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=F58bgRa-Dp-rsQJThiJqIYv8t4-lWfXh&authKey=UmUs4CVG5OPA1whvsa4uSespOvyd8%2FAr9olEGaWAfdLmfKQk%2FVBp2YU3u2xXXt76&noverify=0&group_code=224622315) [![加入QQ群](https://img.shields.io/badge/已满-287842588-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=Nxb2EQ5qozWa218Wbs7zgBnjLSNk_tVT&authKey=obBKXj6SBKgrFTJZx0AqQnIYbNOvBB2kmgwWvGhzxR67RoRr84%2Bus5OadzMcdJl5&noverify=0&group_code=287842588) [![加入QQ群](https://img.shields.io/badge/已满-187944233-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=numtK1M_I4eVd2Gvg8qtbuL8JgX42qNh&authKey=giV9XWMaFZTY%2FqPlmWbkB9g3fi0Ev5CwEtT9Tgei0oUlFFCQLDp4ozWRiVIzubIm&noverify=0&group_code=187944233) [![加入QQ群](https://img.shields.io/badge/已满-228578329-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=G6r5KGCaa3pqdbUSXNIgYloyb8e0_L0D&authKey=4w8tF1eGW7%2FedWn%2FHAypQksdrML%2BDHolQSx7094Agm7Luakj9EbfPnSTxSi2T1LQ&noverify=0&group_code=228578329) [![加入QQ群](https://img.shields.io/badge/已满-191164766-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=GsOo-OLz53J8y_9TPoO6XXSGNRTgbFxA&authKey=R7Uy%2Feq%2BZsoKNqHvRKhiXpypW7DAogoWapOawUGHokJSBIBIre2%2FoiAZeZBSLuBc&noverify=0&group_code=191164766) [![加入QQ群](https://img.shields.io/badge/已满-174569686-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=PmYavuzsOthVqfdAPbo4uAeIbu7Ttjgc&authKey=p52l8%2FXa4PS1JcEmS3VccKSwOPJUZ1ZfQ69MEKzbrooNUljRtlKjvsXf04bxNp3G&noverify=0&group_code=174569686) [![加入QQ群](https://img.shields.io/badge/127358632-blue.svg)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=M9y5NjAl44lAL_Vh2crmEehZU_PMU6KS&authKey=ZSDz8hEREWSaPuxQV3gEwqGIaGjfRNnkB4rJjf0IvXhrSUGSGwQFmBA%2Boe8HFxyl&noverify=0&group_code=127358632) 点击按钮入群。
+后端未就绪时，可在 `.env.development.local` 中开启大屏 Mock：
+
+```ini
+VITE_USE_MOCK = 'true'
+```
+
+开启后，`vite/mocks/police-dashboard.js` 会拦截 `/policeScreen/*` 与 `/system/dept/listByParentId` 请求并返回模拟数据。修改环境变量后需重启开发服务；该开关仅用于本地开发，生产构建请保持关闭。
+
+### 构建与检查
+
+```bash
+# 构建测试环境
+pnpm build:stage
+
+# 构建生产环境
+pnpm build:prod
+
+# 本地预览构建产物
+pnpm preview
+
+# ESLint 检查
+pnpm lint
+```
+
+构建产物输出到 `dist/`。生产 / 测试环境可根据 `VITE_BUILD_COMPRESS` 额外生成 gzip 压缩文件。
+
+## 环境变量
+
+| 变量                  | 说明                                                               |
+| --------------------- | ------------------------------------------------------------------ |
+| `VITE_APP_TITLE`      | 系统标题，当前为「数智巡防管理系统」                               |
+| `VITE_APP_ENV`        | 环境标识（development / staging / production）                     |
+| `VITE_APP_BASE_API`   | 接口请求前缀，开发 `/dev-api`、测试 `/stage-api`、生产 `/prod-api` |
+| `VITE_BACKEND_URL`    | 开发服务器代理的后端地址                                           |
+| `VITE_USE_MOCK`       | 是否启用大屏 Mock 数据，仅本地开发使用                             |
+| `VITE_BUILD_COMPRESS` | 构建压缩方式，支持 gzip、brotli                                    |
+
+## 部署说明
+
+1. 执行 `pnpm build:prod` 生成 `dist/`。
+2. 将 `dist/` 部署到 Nginx 等静态服务器。
+3. 将 `/prod-api` 反向代理到后端服务，并去除接口前缀。
+
+```nginx
+server {
+    listen 80;
+    server_name example.com;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /prod-api/ {
+        proxy_pass http://127.0.0.1:8080/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+> 前端路由使用 History 模式，Nginx 需配置 `try_files` 回退到 `index.html`。
+
+## 接口约定
+
+- 登录、权限、菜单、系统管理等沿用 RuoYi-Vue 接口（如 `/login`、`/getInfo`、`/getRouters`）。
+- 巡防业务接口按模块分为 `/bussiness/*`、`/police/*`、`/screen/*`。
+- 大屏统计接口统一为 `/policeScreen/*`，查询参数使用 `PoliceStatQueryDTO`。
+- 文件导入导出沿用 RuoYi 的 Excel 工具与前端下载封装。
+
+## 浏览器支持
+
+建议使用最新版本的 Chrome、Edge 浏览器。大屏建议在 1920 × 1080 及以上分辨率、横屏模式下展示。
+
