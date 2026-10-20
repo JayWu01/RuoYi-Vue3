@@ -10,7 +10,9 @@ export default function createVitePlugins(viteEnv, isBuild = false) {
   vitePlugins.push(createAutoImport())
   vitePlugins.push(createSetupExtend())
   vitePlugins.push(createSvgIcon(isBuild))
-  if (viteEnv.VITE_USE_MOCK === 'true') vitePlugins.push(createPoliceDashboardMock())
+  if (viteEnv.VITE_USE_MOCK === 'true') {
+    vitePlugins.push(createPoliceDashboardMock(viteEnv.VITE_APP_BASE_API))
+  }
   isBuild && vitePlugins.push(...createCompression(viteEnv))
   return vitePlugins
 }
