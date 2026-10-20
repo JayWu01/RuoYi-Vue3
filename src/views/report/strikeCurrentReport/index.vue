@@ -30,7 +30,9 @@
     </el-form>
 
     <!-- 数据表格 -->
-    <el-table ref="tableRef" v-loading="loading" :data="tableData" border>
+    <el-table ref="tableRef" v-loading="loading" :data="tableData" border
+              show-summary
+              :summary-method="getSummary">
       <el-table-column label="单位" prop="unitName" align="center"/>
       <el-table-column label="呼号" prop="unitCode" align="center"/>
       <el-table-column label="敲打总人数" prop="totalPerson" align="center"/>
@@ -110,6 +112,20 @@ const resetQuery = () => {
   handleQuery()
 }
 
+// 合计行：数值列求和
+const getSummary = ({ columns, data }) => {
+  const sumProps = ['totalPerson', 'crimeRed', 'crimeOrange', 'crimeYellow',
+    'crimeBlue', 'crimeBlack', 'unwarnedMinor', 'arrestSuspectCount',
+    'arrestGroupCount', 'checkCarCount', 'openDoorCount']
+  return columns.map((column, index) => {
+    if (index === 0) return '警务站合计'
+    if (sumProps.includes(column.property)) {
+      const values = data.map(item => Number(item[column.property]) || 0)
+      return values.reduce((acc, val) => acc + val, 0)
+    }
+    return ''
+  })
+}
 
 
 

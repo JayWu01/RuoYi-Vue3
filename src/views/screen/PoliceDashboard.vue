@@ -30,7 +30,7 @@ const query = shallowRef(createInitialQuery())
 const alarmChartType = shallowRef('line')
 const rankChartType = shallowRef('line')
 const juvenileChartType = shallowRef('line')
-// 警务站排名统计类型：callPolice 接处警 / netFugitive 追网逃 / minorBeat 敲打未成年 / pullCarDoor 拉车门
+// 警务站排名统计类型：callPolice 接处警 / netFugitive 追网逃 / minorBeat 敲打未成年 / pullCarDoor 拉车门 / strikeCurrent 抓现行
 const rankType = shallowRef('callPolice')
 const createInitialMonthRange = () => [
   // query.value.startDate.slice(0, 7),
@@ -40,6 +40,25 @@ const rankFilter = shallowRef({
   monthRange: createInitialMonthRange()
   // deptId: '全部单位',
   // deptName: '全部单位'
+})
+
+// 格式化 yyyy-MM-dd
+const formatDay = (date) => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+// 排名面板默认查昨天一整天
+const createYesterdayRange = () => {
+  const yesterday = formatDay(new Date(Date.now() - 24 * 60 * 60 * 1000))
+  return [yesterday, yesterday]
+}
+// 排名面板自己的筛选，与顶部工具栏、抢盗窃趋势面板的 rankFilter 互不影响
+const rankDataFilter = shallowRef({
+  dateRange: createYesterdayRange(),
+  deptId: null,
+  deptName: null
 })
 const juvenileFilter = shallowRef({
   monthRange: createInitialMonthRange()
@@ -76,8 +95,29 @@ const createPanelQuery = filter => ({
 })
 
 const getPanelParams = () => ({
-  rank: { ...createPanelQuery(rankFilter.value), rankType: rankType.value },
+  rank: createRankDataQuery(rankDataFilter.value),
   juvenile: createPanelQuery(juvenileFilter.value)
+})
+
+// 面板日期选择传出 yyyy-MM-dd，后端 @JsonFormat("yyyy-MM-dd HH:mm:ss") 解析，这里统一补全时间部分；
+// 清空日期时回落到顶部工具栏的时间范围
+const toDayTimeRange = (dateRange) => {
+  if (Array.isArray(dateRange) && dateRange.length === 2 && dateRange[0] && dateRange[1]) {
+    return {
+      startDate: `${dateRange[0]} 00:00:00`,
+      endDate: `${dateRange[1]} 23:59:59`
+    }
+  }
+  return {}
+}
+
+// 警务站排名面板的查询参数：时间以面板筛选为准，覆盖顶部工具栏的起止日期
+const createRankDataQuery = (filter) => ({
+  ...query.value,
+  ...toDayTimeRange(filter.dateRange),
+  deptId: filter.deptId,
+  deptName: filter.deptName,
+  rankType: rankType.value
 })
 
 const updatePanelFilter = (filter, key, value, reloadPanel) => {
@@ -99,11 +139,26 @@ const updatePanelUnit = (filter, deptId, unitOptions, reloadPanel) => {
   void reloadPanel(createPanelQuery(nextFilter))
 }
 
-// 抢盗窃趋势 + 警务站排名共用 rankFilter，两个面板需要一起刷新
+// 抢盗窃趋势面板共用 rankFilter；排名面板已改用独立的 rankDataFilter
 const reloadRankPanels = (filter) => {
-  const params = { ...createPanelQuery(filter), rankType: rankType.value }
-  void reloadRank(params)
-  void reloadRankData(params)
+  void reloadRank({ ...createPanelQuery(filter), rankType: rankType.value })
+}
+
+// 排名面板：时间范围变化
+const updateRankDataDateRange = (dateRange) => {
+  rankDataFilter.value = { ...rankDataFilter.value, dateRange: dateRange || [] }
+  void reloadRankData(createRankDataQuery(rankDataFilter.value))
+}
+
+// 排名面板：单位变化
+const updateRankDataUnit = (deptId) => {
+  const selectedUnit = cityBranchUnitOptions.value.find(unit => unit.deptId === deptId)
+  rankDataFilter.value = {
+    ...rankDataFilter.value,
+    deptId,
+    deptName: selectedUnit?.deptName
+  }
+  void reloadRankData(createRankDataQuery(rankDataFilter.value))
 }
 
 const updateRankMonthRange = (monthRange) => {
@@ -207,10 +262,10 @@ const exportData = () => {
   const csv = `\ufeff${rows.map(row => row.map(escapeCsvValue).join(',')).join('\n')}`
   saveAs(new Blob([csv], { type: 'text/csv;charset=utf-8' }), '警务站大屏数据.csv')
 }
-// 父script，切换选项卡触发，切换统计维度后重新拉取排名数据
+// 父script，切换选项卡触发，切换统计维度后按排名面板自己的筛选重新拉取
 const onChangeRankType = (type) => {
   rankType.value = type
-  void reloadRankData({ ...createPanelQuery(rankFilter.value), rankType: type })
+  void reloadRankData(createRankDataQuery(rankDataFilter.value))
 }
 
 onMounted(reloadAll)
@@ -282,13 +337,11 @@ onMounted(reloadAll)
           <UnitRankPanel
               :data="dashboard.rankData"
               :rank-type="rankType"
-              :month-range="rankFilter.monthRange"
+              :date-range="rankDataFilter.dateRange"
               :unit-options="cityBranchUnitOptions"
-              :dept-id="rankFilter.deptId"
-              :chart-type="rankChartType"
-              @change-chart="rankChartType = $event"
-              @change-month-range="updateRankMonthRange"
-              @update-unit="updateRankUnit"
+              :dept-id="rankDataFilter.deptId"
+              @change-date-range="updateRankDataDateRange"
+              @update-unit="updateRankDataUnit"
               @change-rank-type="onChangeRankType"
           />
         </div>
