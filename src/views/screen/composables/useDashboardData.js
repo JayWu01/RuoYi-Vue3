@@ -53,6 +53,7 @@ export function useDashboardData() {
   const dashboard = shallowRef(createEmptyDashboard())
   const updateTime = ref('-')
   const loading = reactive(createModuleState())
+  const loaded = reactive(createModuleState())
   const errors = reactive(createModuleState())
   const versions = createRequestVersions()
 
@@ -93,6 +94,7 @@ export function useDashboardData() {
     } finally {
       if (version === versions[key]) {
         loading[key] = false
+        loaded[key] = true
       }
     }
   }
@@ -137,6 +139,8 @@ export function useDashboardData() {
     errorMessage,
     updateTime,
     isLoading,
+    loading,
+    loaded,
     reload,
     reloadJuvenile,
     reloadMetrics,

@@ -1,22 +1,68 @@
+/* ==========================================================================
+   Element Plus 大屏玻璃主题覆写
+   仅作用于 /screen（.dashboard 根节点 + .dashboard-popper 弹层）
+   全部颜色引用 screen-theme.css 的语义令牌，自动跟随暗/亮主题
+   ========================================================================== */
+
+/* ---------- 统计周期分段器 ---------- */
 .dashboard .dashboard-period {
-  --el-segmented-color: #a8b4c1;
-  --el-segmented-bg-color: #061b34;
-  --el-segmented-item-selected-color: #ffffff;
-  --el-segmented-item-selected-bg-color: #0750a2;
-  --el-segmented-item-hover-color: #ffffff;
-  --el-segmented-item-hover-bg-color: rgba(13, 79, 143, 0.68);
-  --el-segmented-item-active-bg-color: rgba(13, 79, 143, 0.88);
-  border: 1px solid rgba(20, 106, 170, 0.62) !important;
-  background-color: #061b34 !important;
+  --el-segmented-color: var(--scr-text-2);
+  --el-segmented-bg-color: var(--scr-field);
+  --el-segmented-item-selected-color: var(--scr-on-accent);
+  --el-segmented-item-selected-bg-color: transparent;
+  --el-segmented-item-hover-color: var(--scr-text-1);
+  --el-segmented-item-hover-bg-color: var(--scr-surface-2);
+  --el-segmented-item-active-bg-color: var(--scr-surface-3);
+  --el-border-radius-base: 999px;
+  height: 32px;
+  padding: 3px;
+  border: 1px solid var(--scr-line) !important;
+  background-color: var(--scr-field) !important;
+}
+.dashboard .dashboard-period .el-segmented__item {
+  border-radius: 999px;
+  font-size: 12px;
+  transition: color 0.22s ease;
+}
+.dashboard .dashboard-period .el-segmented__item-label {
+  padding: 0 6px;
+  font-weight: 500;
+}
+.dashboard .dashboard-period .el-segmented__item-selected {
+  border-radius: 999px;
+  background: var(--scr-accent-gradient) !important;
+  box-shadow: 0 2px 10px var(--scr-accent-glow);
+}
+.dashboard .dashboard-period .el-segmented__item.is-selected .el-segmented__item-label {
+  color: var(--scr-on-accent) !important;
+  font-weight: 600;
+}
+.dashboard .filter-field .dashboard-period {
+  width: 100%;
+}
+.dashboard .filter-field .dashboard-period .el-segmented__group {
+  display: flex;
+  width: 100%;
+}
+.dashboard .filter-field .dashboard-period .el-segmented__item {
+  flex: 1 1 0%;
+}
+.dashboard .filter-field .dashboard-period .el-segmented__item-label {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
+/* ---------- 日期选择器 / 下拉选择 ---------- */
 .dashboard .dashboard-date-picker,
 .dashboard .dashboard-select {
-  --el-text-color-regular: #d8e9f6;
-  --el-text-color-placeholder: #93a9bd;
-  --el-border-color: rgba(20, 106, 170, 0.62);
-  --el-border-color-hover: #20b5f1;
-  --el-fill-color-blank: #061b34;
+  --el-text-color-regular: var(--scr-text-1);
+  --el-text-color-placeholder: var(--scr-text-3);
+  --el-border-color: var(--scr-line);
+  --el-border-color-hover: var(--scr-accent);
+  --el-fill-color-blank: var(--scr-field);
+  --el-color-primary: var(--scr-accent);
+  font-size: 12px;
 }
 
 .dashboard :is(
@@ -24,8 +70,11 @@
   .dashboard-date-picker.el-range-editor,
   .dashboard-select .el-select__wrapper
 ) {
-  background-color: #061b34 !important;
-  box-shadow: 0 0 0 1px rgba(20, 106, 170, 0.62) inset !important;
+  min-height: 32px;
+  border-radius: 9px;
+  background-color: var(--scr-field) !important;
+  box-shadow: 0 0 0 1px var(--scr-line) inset !important;
+  transition: box-shadow 0.22s ease, background-color 0.22s ease;
 }
 
 .dashboard :is(
@@ -35,7 +84,8 @@
   .dashboard-select .el-select__wrapper:hover,
   .dashboard-select .el-select__wrapper.is-focused
 ) {
-  box-shadow: 0 0 0 1px #20b5f1 inset !important;
+  background-color: var(--scr-field-hover) !important;
+  box-shadow: 0 0 0 1px var(--scr-accent) inset !important;
 }
 
 .dashboard :is(
@@ -47,63 +97,128 @@
   .dashboard-select .el-select__placeholder,
   .dashboard-select .el-select__caret
 ) {
-  color: #d8e9f6 !important;
+  color: var(--scr-text-1) !important;
+  font-size: 12px;
+}
+.dashboard :is(
+  .dashboard-date-picker .el-range-separator,
+  .dashboard-date-picker .el-range__icon,
+  .dashboard-date-picker .el-range__close-icon,
+  .dashboard-select .el-select__caret
+) {
+  color: var(--scr-text-3) !important;
+}
+.dashboard .dashboard-date-picker .el-range-input::placeholder,
+.dashboard .dashboard-select .el-select__placeholder {
+  color: var(--scr-text-3) !important;
+}
+.dashboard .dashboard-date-picker .el-range-input {
+  color: var(--scr-text-1) !important;
+  font-variant-numeric: tabular-nums;
+}
+.dashboard .dashboard-date-picker .el-range-input::placeholder {
+  color: var(--scr-text-3) !important;
+  font-variant-numeric: normal;
 }
 
+/* ---------- 按钮 ---------- */
 .dashboard .dashboard-action-button {
-  border-color: rgba(20, 106, 170, 0.62) !important;
-  background-color: #061b34 !important;
-  color: #d8e9f6 !important;
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid var(--scr-line-strong) !important;
+  border-radius: 10px !important;
+  background-color: var(--scr-surface-2) !important;
+  color: var(--scr-text-2) !important;
+  font-size: 12.5px;
+  font-weight: 500;
+  transition:
+    color 0.22s ease,
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    transform 0.16s ease;
 }
-
+.dashboard .dashboard-action-button:hover {
+  border-color: var(--scr-line-strong) !important;
+  background-color: var(--scr-surface-3) !important;
+  color: var(--scr-text-1) !important;
+}
+.dashboard .dashboard-action-button:active {
+  transform: scale(0.97);
+}
 .dashboard .dashboard-action-button-primary {
-  border-color: #1478ba !important;
-  background: linear-gradient(180deg, #0c3865, #06203d) !important;
+  border-color: transparent !important;
+  background: var(--scr-accent-gradient) !important;
+  color: var(--scr-on-accent) !important;
+  font-weight: 600;
+  box-shadow: 0 4px 16px var(--scr-accent-glow);
+}
+.dashboard .dashboard-action-button-primary:hover {
+  background: var(--scr-accent-gradient) !important;
+  color: var(--scr-on-accent) !important;
+  filter: brightness(1.08);
+}
+.dashboard .dashboard-action-button.is-disabled,
+.dashboard .dashboard-action-button.is-disabled:hover {
+  cursor: not-allowed;
+  opacity: 0.45;
+  transform: none;
+}
+.dashboard .dashboard-action-button .el-icon {
+  margin-right: 4px;
 }
 
+/* ---------- 弹层：玻璃面板 ---------- */
 .dashboard-popper {
-  --el-bg-color-overlay: #061b34;
-  --el-fill-color-light: #0a2945;
-  --el-text-color-regular: #d8e9f6;
-  --el-text-color-placeholder: #71869a;
-  --el-border-color-light: rgba(20, 106, 170, 0.62);
-  --el-border-color-lighter: rgba(20, 106, 170, 0.62);
-  --el-color-primary: #20b5f1;
-}
-
-.dashboard-popper.el-popper,
-.dashboard-popper :is(.el-picker-panel, .el-date-picker, .el-date-range-picker, .el-select-dropdown) {
-  border-color: #1478ba !important;
-  background-color: #061b34 !important;
-  color: #d8e9f6;
+  --el-bg-color-overlay: var(--scr-popover);
+  --el-fill-color-light: var(--scr-surface-2);
+  --el-text-color-regular: var(--scr-text-1);
+  --el-text-color-placeholder: var(--scr-text-3);
+  --el-border-color-light: var(--scr-line-strong);
+  --el-border-color-lighter: var(--scr-line);
+  --el-color-primary: var(--scr-accent);
+  --el-datepicker-bg-color: transparent;
+  --el-datepicker-text-color: var(--scr-text-1);
+  --el-datepicker-off-text-color: var(--scr-text-3);
+  --el-datepicker-header-text-color: var(--scr-text-2);
+  --el-datepicker-icon-color: var(--scr-text-2);
+  --el-datepicker-border-color: var(--scr-line);
+  --el-datepicker-inner-border-color: var(--scr-line);
+  --el-datepicker-inrange-bg-color: var(--scr-accent-soft);
+  --el-datepicker-inrange-hover-bg-color: var(--scr-accent-soft);
+  --el-datepicker-active-color: var(--scr-accent);
+  --el-datepicker-hover-text-color: var(--scr-accent);
+  --el-fill-color-blank: transparent;
 }
 
 .dashboard-popper.el-popper {
-  border: 1px solid #1478ba !important;
+  border: 1px solid var(--scr-popover-line) !important;
+  border-radius: 12px !important;
+  background: var(--scr-popover) !important;
+  color: var(--scr-text-1);
+  box-shadow: var(--scr-shadow-popover);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
+  backdrop-filter: blur(16px) saturate(1.15);
 }
-
 .dashboard-popper.el-popper .el-popper__arrow::before {
-  border-color: #1478ba;
-  background-color: #061b34 !important;
+  border-color: var(--scr-popover-line);
+  background: var(--scr-popover) !important;
 }
-
-.dashboard-popper :is(.el-date-picker, .el-date-range-picker) {
-  --el-datepicker-bg-color: #061b34;
-  --el-datepicker-text-color: #d8e9f6;
-  --el-datepicker-off-text-color: #71869a;
-  --el-datepicker-header-text-color: #a8b4c1;
-  --el-datepicker-icon-color: #d8e9f6;
-  --el-datepicker-border-color: rgba(20, 106, 170, 0.62);
-  --el-datepicker-inner-border-color: rgba(20, 106, 170, 0.62);
-  --el-datepicker-inrange-bg-color: rgba(13, 122, 209, 0.28);
-  --el-datepicker-inrange-hover-bg-color: rgba(13, 122, 209, 0.44);
-  --el-datepicker-active-color: #20b5f1;
-  --el-datepicker-hover-text-color: #20b5f1;
-  --el-fill-color-blank: #061b34;
+.dashboard-popper :is(.el-picker-panel, .el-date-picker, .el-date-range-picker, .el-select-dropdown) {
+  border-color: transparent !important;
+  background-color: transparent !important;
+  color: var(--scr-text-1);
 }
-
-.dashboard-popper :is(.el-picker-panel__content, .el-date-range-picker__content) {
-  background-color: #061b34;
+.dashboard-popper .el-date-picker,
+.dashboard-popper .el-date-range-picker {
+  border-radius: 10px;
+}
+.dashboard-popper .el-picker-panel__icon-btn,
+.dashboard-popper .el-date-picker__header-label {
+  color: var(--scr-text-2);
+}
+.dashboard-popper .el-picker-panel__icon-btn:hover,
+.dashboard-popper .el-date-picker__header-label:hover {
+  color: var(--scr-accent);
 }
 
 .dashboard-popper :is(
@@ -112,18 +227,161 @@
   .el-picker-panel__footer,
   .el-date-range-picker__content.is-left
 ) {
-  border-color: rgba(20, 106, 170, 0.62);
+  border-color: var(--scr-line);
 }
-
+.dashboard-popper .el-picker-panel__footer {
+  background: transparent;
+}
+.dashboard-popper .el-date-table th {
+  color: var(--scr-text-3);
+  font-weight: 500;
+}
+.dashboard-popper .el-date-table td .el-date-table-cell__text {
+  border-radius: 7px;
+  color: var(--scr-text-2);
+  font-variant-numeric: tabular-nums;
+}
+.dashboard-popper .el-date-table td.available:hover .el-date-table-cell__text,
+.dashboard-popper .el-month-table td.available:hover .el-date-table-cell__text,
+.dashboard-popper .el-year-table td.available:hover .el-date-table-cell__text {
+  color: var(--scr-accent);
+}
 .dashboard-popper :is(
   .el-date-table td.in-range .el-date-table-cell,
   .el-month-table td.in-range .el-date-table-cell,
   .el-year-table td.in-range .el-date-table-cell
 ) {
-  background-color: rgba(13, 122, 209, 0.28);
+  background-color: var(--scr-accent-soft);
+}
+.dashboard-popper :is(
+  .el-date-table td.start-date .el-date-table-cell__text,
+  .el-date-table td.end-date .el-date-table-cell__text,
+  .el-month-table td.start-date .el-date-table-cell__text,
+  .el-month-table td.end-date .el-date-table-cell__text,
+  .el-year-table td.start-date .el-date-table-cell__text,
+  .el-year-table td.end-date .el-date-table-cell__text
+) {
+  background: var(--scr-accent-gradient);
+  color: var(--scr-on-accent);
+  font-weight: 600;
+}
+.dashboard-popper .el-date-table td.today .el-date-table-cell__text {
+  color: var(--scr-accent);
+  font-weight: 600;
+}
+.dashboard-popper .el-year-table td.today .el-date-table-cell__text,
+.dashboard-popper .el-month-table td.today .el-date-table-cell__text {
+  color: var(--scr-accent);
+}
+.dashboard-popper .el-date-range-picker__header div {
+  color: var(--scr-text-1);
+}
+.dashboard-popper .el-time-panel {
+  border-color: var(--scr-line);
+  background: var(--scr-popover);
+}
+.dashboard-popper .el-time-spinner__item {
+  color: var(--scr-text-2);
+}
+.dashboard-popper .el-time-spinner__item.is-active {
+  color: var(--scr-accent);
+}
+.dashboard-popper .el-time-panel__footer {
+  border-color: var(--scr-line);
 }
 
-.dashboard-popper .el-select-dropdown__item:is(.is-hovering, .is-selected) {
-  background-color: #0d4f8f;
-  color: #ffffff;
+/* 下拉选项 */
+.dashboard-popper .el-select-dropdown__item {
+  color: var(--scr-text-2);
+}
+.dashboard-popper .el-select-dropdown__item.is-hovering {
+  background-color: var(--scr-surface-2);
+  color: var(--scr-text-1);
+}
+.dashboard-popper .el-select-dropdown__item.is-selected {
+  background-color: var(--scr-accent-soft);
+  color: var(--scr-accent);
+  font-weight: 600;
+}
+.dashboard-popper .el-select-dropdown__empty {
+  color: var(--scr-text-3);
+}
+
+/* 滚动条 */
+.dashboard-popper ::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.dashboard-popper ::-webkit-scrollbar-thumb {
+  background: var(--scr-scroll-thumb);
+  border-radius: 5px;
+}
+.dashboard-popper ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 日期时间面板内部：时间输入框 / 底部按钮 */
+.dashboard-popper :is(
+  .el-date-range-picker__time-header,
+  .el-date-picker__time-header
+) {
+  border-color: var(--scr-line);
+}
+
+.dashboard-popper :is(
+  .el-date-range-picker__time-header,
+  .el-date-picker__time-header
+) .el-input__wrapper {
+  background-color: var(--scr-field) !important;
+  box-shadow: 0 0 0 1px var(--scr-line) inset !important;
+}
+
+.dashboard-popper :is(
+  .el-date-range-picker__time-header,
+  .el-date-picker__time-header
+) .el-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1px var(--scr-accent) inset !important;
+}
+
+.dashboard-popper :is(
+  .el-date-range-picker__time-header,
+  .el-date-picker__time-header
+) :is(.el-input__inner, .el-input__icon) {
+  color: var(--scr-text-2) !important;
+}
+
+.dashboard-popper .el-date-range-picker__editors-wrap :is(.el-input__inner, .el-input__icon) {
+  color: var(--scr-text-2) !important;
+}
+
+.dashboard-popper .el-picker-panel__footer {
+  border-color: var(--scr-line);
+  background: transparent;
+}
+
+.dashboard-popper .el-picker-panel__footer .el-button {
+  border-color: var(--scr-line-strong) !important;
+  background-color: var(--scr-surface-2) !important;
+  color: var(--scr-text-2) !important;
+}
+
+.dashboard-popper .el-picker-panel__footer .el-button:hover {
+  background-color: var(--scr-surface-3) !important;
+  color: var(--scr-text-1) !important;
+}
+
+.dashboard-popper .el-picker-panel__footer .el-button:is(.is-plain, .el-button--primary) {
+  border-color: transparent !important;
+  background: var(--scr-accent-gradient) !important;
+  color: var(--scr-on-accent) !important;
+  font-weight: 600;
+}
+
+.dashboard-popper .el-date-range-picker__time-header .el-popper,
+.dashboard-popper .el-date-range-picker__time-header .el-icon {
+  color: var(--scr-text-3);
+}
+
+.dashboard-popper .el-time-spinner__wrapper {
+  border-color: var(--scr-line);
 }

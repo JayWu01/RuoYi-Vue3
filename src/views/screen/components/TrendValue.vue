@@ -43,13 +43,15 @@ const displayValue = computed(() => {
 </script>
 
 <template>
-  <div class="inline-flex items-center gap-1 whitespace-nowrap">
+  <span class="inline-flex items-center gap-1 whitespace-nowrap">
     <component
       :is="isUp ? ArrowUp : ArrowDown"
       v-if="shouldShowDirection"
-      :size="18"
-      :stroke-width="3"
+      :size="12"
+      :stroke-width="2.5"
+      aria-hidden="true"
+      class="shrink-0"
     />
     <AnimatedStatistic :value="displayValue" />
-  </div>
+  </span>
 </template>

@@ -58,10 +58,11 @@ export const createEmptyDashboard = () => ({
   cityBranchUnits: []
 })
 
+/* 罪错未成年等级：色值由 charts/palette.js 按亮/暗主题解析 */
 export const MINOR_LEVELS = [
-  { key: 'red', label: '红标', color: '#ef6b62' },
-  { key: 'orange', label: '橙标', color: '#f3a51c' },
-  { key: 'yellow', label: '黄标', color: '#f5c35d' },
-  { key: 'blue', label: '蓝标', color: '#526fa9' },
-  { key: 'gray', label: '黑标', color: '#37424c' }
+  { key: 'red', label: '红标' },
+  { key: 'orange', label: '橙标' },
+  { key: 'yellow', label: '黄标' },
+  { key: 'blue', label: '蓝标' },
+  { key: 'gray', label: '黑标' }
 ]

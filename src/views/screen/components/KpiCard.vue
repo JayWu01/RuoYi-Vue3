@@ -28,40 +28,40 @@ const props = defineProps({
   tone: {
     type: String,
     default: 'cyan'
+  },
+  loading: {
+    type: Boolean,
+    default: false
   }
 })
 
 const isUp = computed(() => isTrendUp(props.rate))
+const hasRate = computed(() => {
+  const text = String(props.rate ?? '').trim()
+  return text !== '' && text !== '-'
+})
+// 无有效环比数据时只展示占位符，不显示涨跌箭头
+const rateText = computed(() => (hasRate.value ? props.rate : '—'))
+const rateTone = computed(() => {
+  if (!hasRate.value) {
+    return ''
+  }
+  return isUp.value ? 'trend-up-bad' : 'trend-down-good'
+})
 </script>
 
 <template>
-  <article
-    class="relative grid h-full min-h-0 min-w-0 grid-cols-[auto_1fr] items-center gap-3 overflow-hidden rounded-md border border-line-muted bg-surface-kpi px-3 py-2 shadow-[inset_0_0_1rem_rgba(39,137,211,0.08)]"
-  >
-    <div
-      :class="{
-        'text-accent': tone === 'cyan',
-        'text-violet-300': tone === 'violet',
-        'text-chart-green': tone === 'green',
-      }"
-      class="grid size-11 shrink-0 place-items-center rounded-full bg-[radial-gradient(circle,_#174b69,_#103246)] text-xl shadow-[0_0_1rem_rgba(31,172,235,0.18)]"
-    >
-      <component :is="icon" class="h-6 w-6" :stroke-width="2.5" />
+  <article class="kpi" :class="`tone-${tone}`">
+    <div class="kpi-top">
+      <span class="kpi-label">{{ title }}</span>
+      <component :is="icon" class="kpi-ico" :size="14" :stroke-width="2" aria-hidden="true" />
     </div>
-    <div class="min-w-0">
-      <div class="text-sm leading-5 text-slate-300">
-        {{ title }}
-      </div>
-      <AnimatedStatistic class="block text-3xl leading-8 tracking-wider text-white" :value="value" />
-      <div class="mt-1 flex items-center gap-1 whitespace-nowrap text-xs leading-4 text-muted">
-        {{ note }}
-        <TrendValue
-          :value="rate"
-          :up="isUp"
-          show-direction
-          :class="isUp ? 'font-bold text-chart-red' : 'font-bold text-success'"
-        />
-      </div>
+
+    <AnimatedStatistic class="kpi-value" :value="value" :loading="loading" />
+
+    <div class="kpi-delta">
+      <span>{{ note }}</span>
+      <TrendValue :value="rateText" :up="isUp" :show-direction="hasRate" :class="rateTone" />
     </div>
   </article>
 </template>

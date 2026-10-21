@@ -58,48 +58,68 @@ const setUnit = (deptId) => {
 </script>
 
 <template>
-  <section class="mt-3 flex items-center px-4 max-lg:flex-wrap max-md:h-auto">
-    <div class="flex min-w-0 flex-1 flex-wrap items-center gap-5 max-md:w-full">
-      <span class="whitespace-nowrap text-sm text-muted">日期范围</span>
-      <el-date-picker
-        v-model="dateRange"
-        type="datetimerange"
-        format="YYYY-MM-DD HH:mm:ss"
-        value-format="YYYY-MM-DD HH:mm:ss"
-        :default-time="defaultTime"
-        clearable
-        range-separator="~"
-        start-placeholder="开始时间"
-        end-placeholder="结束时间"
-        popper-class="dashboard-popper"
-        class="dashboard-date-picker w-96 flex-none max-md:w-full"
-      />
-      <span class="whitespace-nowrap text-sm text-muted">基层单位</span>
-      <el-select
-        :model-value="model.deptId"
-        popper-class="dashboard-popper"
-        class="dashboard-select w-40 max-md:w-full"
-        placeholder="全部单位"
-        @update:model-value="setUnit"
-      >
-        <el-option label="全部单位" value="" />
-        <el-option
-          v-for="unit in unitOptions"
-          :key="unit.deptId"
-          :label="unit.deptName"
-          :value="unit.deptId"
+  <div class="filter-form" role="group" aria-label="筛选条件">
+    <div class="filter-grid">
+      <div class="filter-field filter-field-range">
+        <span class="field-label">日期范围</span>
+        <el-date-picker
+          v-model="dateRange"
+          type="datetimerange"
+          format="YYYY-MM-DD HH:mm:ss"
+          value-format="YYYY-MM-DD HH:mm:ss"
+          :default-time="defaultTime"
+          clearable
+          range-separator="~"
+          start-placeholder="开始时间"
+          end-placeholder="结束时间"
+          popper-class="dashboard-popper"
+          class="dashboard-date-picker w-full"
         />
-      </el-select>
-      <el-segmented
-        :model-value="model.statType"
-        :options="PERIOD_OPTIONS"
-        aria-label="统计周期"
-        class="dashboard-period w-40"
-        size="default"
-        @change="setField('statType', $event)"
-      />
+      </div>
+
+      <div class="filter-field">
+        <span class="field-label">基层单位</span>
+        <el-select
+          :model-value="model.deptId"
+          popper-class="dashboard-popper"
+          class="dashboard-select w-full"
+          placeholder="全部单位"
+          @update:model-value="setUnit"
+        >
+          <el-option label="全部单位" value="" />
+          <el-option
+            v-for="unit in unitOptions"
+            :key="unit.deptId"
+            :label="unit.deptName"
+            :value="unit.deptId"
+          />
+        </el-select>
+      </div>
+
+      <div class="filter-field">
+        <span class="field-label">统计周期</span>
+        <el-segmented
+          :model-value="model.statType"
+          :options="PERIOD_OPTIONS"
+          aria-label="统计周期"
+          class="dashboard-period w-full"
+          @change="setField('statType', $event)"
+        />
+      </div>
     </div>
-    <div class="ml-auto flex shrink-0 max-md:ml-0 max-md:w-full">
+
+    <div class="filter-actions">
+      <span class="filter-hint">应用后将同步刷新全部数据面板</span>
+
+      <el-button
+        class="dashboard-action-button"
+        :disabled="loading"
+        @click="emit('reset')"
+      >
+        <RefreshCw class="mr-1.5" :size="14" :stroke-width="2" />
+        重置
+      </el-button>
+
       <el-button
         class="dashboard-action-button dashboard-action-button-primary"
         :loading="loading"
@@ -107,24 +127,11 @@ const setUnit = (deptId) => {
         @click="emit('submit')"
       >
         <template #loading>
-          <LoaderCircle class="animate-spin" />
+          <LoaderCircle class="animate-spin" :size="14" :stroke-width="2" />
         </template>
-        <Search
-          v-if="!loading"
-          class="mr-1 inline-block align-middle"
-          :size="16"
-          :stroke-width="1.8"
-        />
-        {{ loading ? "加载中" : "查询" }}
-      </el-button>
-      <el-button
-        class="dashboard-action-button"
-        :disabled="loading"
-        @click="emit('reset')"
-      >
-        <RefreshCw class="mr-1 inline-block align-middle" :size="16" :stroke-width="1.8" />
-        重置
+        <Search v-if="!loading" class="mr-1.5" :size="14" :stroke-width="2" />
+        {{ loading ? '查询中' : '应用筛选' }}
       </el-button>
     </div>
-  </section>
+  </div>
 </template>

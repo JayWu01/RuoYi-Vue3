@@ -1,13 +1,16 @@
 <script setup>
-import { useDocumentVisibility, useFullscreen, useIntervalFn, watchDebounced } from '@vueuse/core'
+import { onKeyStroke, useDocumentVisibility, useFullscreen, useIntervalFn, useScrollLock, watchDebounced } from '@vueuse/core'
+import dayjs from 'dayjs'
 import { ElMessage } from 'element-plus'
-import { computed, onMounted, shallowRef, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch, watchEffect } from 'vue'
+import ScreenFilterOverlay from './components/ScreenFilterOverlay.vue'
 import ScreenHeader from './components/ScreenHeader.vue'
 import ScreenToolbar from './components/ScreenToolbar.vue'
 import TrendChartPanel from './components/TrendChartPanel.vue'
 import { useDashboardData } from './composables/useDashboardData'
 import { useScreenFilters } from './composables/useScreenFilters'
-import { AUTO_REFRESH_INTERVAL } from './constant'
+import { toggleScreenTheme, useScreenTheme } from './composables/useScreenTheme'
+import { AUTO_REFRESH_INTERVAL, PERIOD_OPTIONS } from './constant'
 import AlarmKpiPanel from './modules/AlarmKpiPanel.vue'
 import MinorDistributionPanel from './modules/MinorDistributionPanel.vue'
 import ResultPanel from './modules/ResultPanel.vue'
@@ -20,12 +23,13 @@ const {
   errorMessage,
   updateTime,
   isLoading: loading,
+  loading: moduleLoading,
+  loaded,
   reload,
   reloadMetrics,
   reloadRank,
   reloadRankData,
-  reloadJuvenile,
-  reloadSummary
+  reloadJuvenile
 } = useDashboardData()
 const {
   query,
@@ -43,10 +47,65 @@ const {
   updateJuvenileUnit,
   resetFilters
 } = useScreenFilters()
+const { theme } = useScreenTheme()
 
+const filterOpen = ref(false)
+const bodyScrollLocked = useScrollLock(document.body)
 const visibility = useDocumentVisibility()
 const specialPoliceUnitOptions = computed(() => dashboard.value.specialPoliceUnits)
 const cityBranchUnitOptions = computed(() => dashboard.value.cityBranchUnits)
+
+const panelLoading = key => moduleLoading[key] || !loaded[key]
+
+const filterSummary = computed(() => {
+  const { startDate, endDate, deptName, statType } = query.value
+  const start = dayjs(startDate)
+  const end = dayjs(endDate)
+  const range = start.isValid() && end.isValid()
+    ? `${start.format('YYYY-MM-DD')} ~ ${end.format(start.year() === end.year() ? 'MM-DD' : 'YYYY-MM-DD')}`
+    : '未选择日期'
+  const unit = deptName || '全部单位'
+  const period = PERIOD_OPTIONS.find(option => option.value === statType)?.label ?? '日'
+  return `${range} · ${unit} · 按${period}`
+})
+
+const toggleFilter = () => {
+  filterOpen.value = !filterOpen.value
+}
+
+const closeFilter = () => {
+  filterOpen.value = false
+}
+
+onKeyStroke('Escape', () => {
+  if (filterOpen.value) {
+    closeFilter()
+  }
+})
+
+watch(filterOpen, (open) => {
+  bodyScrollLocked.value = open
+})
+
+onBeforeUnmount(() => {
+  bodyScrollLocked.value = false
+})
+
+/* 面板入场：按顺序轻微上浮，避免整页同时出现 */
+const vReveal = {
+  mounted(el, binding) {
+    el.style.setProperty('--scr-reveal-delay', `${(Number(binding.value) || 0) * 55}ms`)
+    el.classList.add('scr-reveal')
+  }
+}
+
+watchEffect(() => {
+  document.documentElement.dataset.screenTheme = theme.value
+})
+
+onBeforeUnmount(() => {
+  delete document.documentElement.dataset.screenTheme
+})
 
 const formatDay = (date) => {
   const year = date.getFullYear()
@@ -122,10 +181,17 @@ watchDebounced(juvenileFilter, reloadJuvenilePanel, { deep: true, debounce: 120 
 const loadData = () => {
   if (!isQueryValid.value) {
     ElMessage.warning('请选择完整的日期范围')
-    return
+    return false
   }
 
   void reloadMetrics(query.value, getPanelParams())
+  return true
+}
+
+const handleSubmit = () => {
+  if (loadData()) {
+    closeFilter()
+  }
 }
 
 const reloadAll = () => {
@@ -142,7 +208,8 @@ const resetQuery = () => {
   rankDataFilter.value = {
     dateRange: createYesterdayRange()
   }
-  void reloadSummary(query.value)
+  void reloadMetrics(query.value, getPanelParams())
+  closeFilter()
 }
 
 const exportData = () => {
@@ -171,50 +238,64 @@ onMounted(reloadAll)
 </script>
 
 <template>
-  <div class="dashboard">
-    <div class="flex h-screen w-full flex-col overflow-x-hidden overflow-y-auto bg-canvas bg-grid bg-grid-size font-ui text-content">
+  <div class="dashboard" :data-theme="theme">
+    <div class="flex min-h-screen w-full flex-col overflow-x-hidden font-ui text-scr-fg lg:h-screen lg:overflow-y-auto">
       <ScreenHeader
         :update-time="updateTime"
         :loading="loading"
         :fullscreen="isFullscreen"
+        :theme="theme"
+        :filter-open="filterOpen"
+        :filter-summary="filterSummary"
         @fullscreen="toggle"
+        @toggle-theme="toggleScreenTheme"
+        @toggle-filter="toggleFilter"
         @export="exportData"
       />
 
-      <ScreenToolbar
-        v-model="query"
-        :unit-options="specialPoliceUnitOptions"
-        :loading="loading"
-        @submit="loadData"
-        @reset="resetQuery"
-      />
-
       <main
-        class="grid min-h-0 flex-1 grid-cols-1 gap-3 max-lg:grid-rows-layout-mobile lg:min-h-[84rem] lg:grid-cols-2 xl:min-h-0 xl:grid-cols-layout-desktop p-3 lg:p-4"
+        class="screen-main grid min-h-0 flex-1 grid-cols-1 gap-4 p-4 max-lg:grid-rows-[56.5rem_auto_48.75rem] lg:min-h-[84rem] lg:grid-cols-2 xl:grid-cols-layout-desktop 2xl:grid-cols-layout-wide max-sm:gap-3 max-sm:p-3"
+        :aria-busy="loading || undefined"
       >
-        <div class="grid min-h-0 grid-rows-layout-mobile-left gap-3 lg:row-span-2 lg:grid-rows-layout-left xl:row-span-1">
-          <AlarmKpiPanel :data="dashboard.alarmKpi" />
-          <ResultPanel :data="dashboard.result" />
-          <MinorDistributionPanel :data="dashboard.pie" />
+        <div class="grid min-h-0 grid-rows-layout-mobile-left gap-4 lg:row-span-2 lg:grid-rows-layout-left xl:row-span-1">
+          <AlarmKpiPanel
+            v-reveal="1"
+            :data="dashboard.alarmKpi"
+            :loading="panelLoading('alarmKpi')"
+          />
+          <ResultPanel
+            v-reveal="2"
+            :data="dashboard.result"
+            :loading="panelLoading('result')"
+          />
+          <MinorDistributionPanel
+            v-reveal="3"
+            :data="dashboard.pie"
+            :loading="panelLoading('pie')"
+          />
         </div>
 
-        <section class="grid min-h-0 grid-rows-layout-mobile-stack gap-3 lg:grid-rows-layout-stack">
+        <section class="grid min-h-0 grid-rows-layout-mobile-stack gap-4 lg:grid-rows-layout-stack max-sm:grid-rows-[20rem_40rem]">
           <TrendChartPanel
             v-model:chart-type="alarmChartType"
+            v-reveal="1"
             title="接处警趋势变化"
             unit="(单位：起)"
             :data="dashboard.lineAlarm"
+            :loading="panelLoading('lineAlarm')"
             :slider-threshold="30"
             :slider-window="30"
             :show-data-shadow="false"
           />
 
-          <div class="grid grid-cols-2 min-h-0 gap-3">
+          <div class="grid grid-cols-2 min-h-0 gap-4 max-sm:grid-cols-1 max-sm:grid-rows-2">
             <TrendChartPanel
               v-model:chart-type="rankChartType"
+              v-reveal="2"
               title="抢盗窃数据趋势"
               unit="(单位：起)"
               :data="dashboard.rank"
+              :loading="panelLoading('rank')"
               show-filters
               :month-range="rankFilter.monthRange"
               :unit-options="cityBranchUnitOptions"
@@ -231,9 +312,11 @@ onMounted(reloadAll)
 
             <TrendChartPanel
               v-model:chart-type="juvenileChartType"
+              v-reveal="3"
               title="未成年人数趋势"
               unit="(单位：人)"
               :data="dashboard.juvenile"
+              :loading="panelLoading('juvenile')"
               show-filters
               :month-range="juvenileFilter.monthRange"
               :unit-options="cityBranchUnitOptions"
@@ -255,10 +338,22 @@ onMounted(reloadAll)
           <UnitRankPanel
             v-model:rank-type="rankType"
             v-model:date-range="rankDateRange"
+            v-reveal="1"
             :data="dashboard.rankData"
+            :loading="panelLoading('rankData')"
           />
         </div>
       </main>
     </div>
+
+    <ScreenFilterOverlay :open="filterOpen" @close="closeFilter">
+      <ScreenToolbar
+        v-model="query"
+        :unit-options="specialPoliceUnitOptions"
+        :loading="loading"
+        @submit="handleSubmit"
+        @reset="resetQuery"
+      />
+    </ScreenFilterOverlay>
   </div>
 </template>

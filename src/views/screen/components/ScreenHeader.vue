@@ -1,7 +1,20 @@
 <script setup>
-import { FileDown, Maximize, Minimize } from '@lucide/vue'
+import {
+  ChevronDown,
+  Ellipsis,
+  FileDown,
+  Maximize,
+  Minimize,
+  Moon,
+  Shield,
+  SlidersHorizontal,
+  Sun
+} from '@lucide/vue'
+import { useEventListener, useNow } from '@vueuse/core'
+import dayjs from 'dayjs'
+import { computed, ref, useTemplateRef, watch } from 'vue'
 
-defineProps({
+const props = defineProps({
   updateTime: {
     type: String,
     required: true
@@ -13,88 +26,176 @@ defineProps({
   fullscreen: {
     type: Boolean,
     default: false
+  },
+  theme: {
+    type: String,
+    default: 'dark'
+  },
+  filterOpen: {
+    type: Boolean,
+    default: false
+  },
+  filterSummary: {
+    type: String,
+    default: ''
   }
 })
 
-defineEmits(['fullscreen', 'export'])
+defineEmits(['fullscreen', 'export', 'toggleTheme', 'toggleFilter'])
+
+const now = useNow()
+const clockText = computed(() => dayjs(now.value).format('HH:mm:ss'))
+const isDark = computed(() => props.theme === 'dark')
+
+const updatedAt = computed(() => {
+  const match = String(props.updateTime ?? '').match(/(\d{2}:\d{2}:\d{2})/)
+  return match?.[1] ?? '--:--:--'
+})
+const updateTitle = computed(() => `数据更新时间：${props.updateTime || '-'}`)
+
+const dockHovered = ref(false)
+const dockFocused = ref(false)
+const dockPinned = ref(false)
+const dockRef = useTemplateRef('dockRef')
+const dockOpen = computed(() => dockHovered.value || dockFocused.value || dockPinned.value)
+
+const toggleDock = () => {
+  dockPinned.value = !dockPinned.value
+}
+
+const handleDockFocusOut = (event) => {
+  if (!dockRef.value?.contains(event.relatedTarget)) {
+    dockFocused.value = false
+  }
+}
+
+useEventListener(document, 'pointerdown', (event) => {
+  if (dockPinned.value && !dockRef.value?.contains(event.target)) {
+    dockPinned.value = false
+  }
+})
+
+watch(() => props.filterOpen, (open) => {
+  if (open) {
+    dockPinned.value = false
+    dockHovered.value = false
+  }
+})
 </script>
 
 <template>
-  <header class="relative flex min-h-header items-center justify-center border-b border-x-0 border-t-0 border-line/50 after:absolute after:bottom-[-2px] after:left-1/4 after:h-0.5 after:w-1/2 after:bg-gradient-to-r after:from-transparent after:via-accent after:to-transparent after:shadow-header after:content-empty max-lg:justify-start max-md:flex-col max-md:items-start max-md:gap-2 max-md:py-3">
-    <div class="flex items-center gap-2 max-lg:ml-4 max-lg:text-left max-md:ml-0">
-      <div aria-hidden="true" class="hidden h-16 w-48 items-center lg:flex xl:w-56 2xl:w-64">
-        <span class="relative flex h-12 w-full items-center">
-          <span class="absolute left-0 right-5 top-1/2 h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-accent/35 to-accent/90" />
-          <span class="relative ml-auto flex h-10 items-center justify-center gap-1">
-            <span class="h-4 w-3 -skew-x-[135deg] bg-gradient-to-b from-[#57d9fa] via-[#2bbaf0] to-[#0b68b3] shadow-[0_0_0.65rem_rgba(32,181,241,0.45)]" />
-            <span class="h-4 w-3 -skew-x-[135deg] bg-gradient-to-b from-[#42c9f5] via-[#20b5f1] to-[#0a5da9] shadow-[0_0_0.65rem_rgba(32,181,241,0.38)]" />
-            <span class="h-4 w-3 -skew-x-[135deg] bg-gradient-to-b from-[#3bbff0] via-[#149fe1] to-[#0a579d] shadow-[0_0_0.65rem_rgba(32,181,241,0.34)]" />
-            <span class="h-4 w-3 -skew-x-[135deg] bg-gradient-to-b from-[#35b7ed] via-[#128fd0] to-[#084b8e] shadow-[0_0_0.65rem_rgba(32,181,241,0.3)]" />
-            <span class="h-4 w-3 -skew-x-[135deg] bg-gradient-to-b from-[#2da9e3] via-[#0f82c1] to-[#073f7d] shadow-[0_0_0.65rem_rgba(32,181,241,0.28)]" />
-            <span class="h-4 w-3 -skew-x-[135deg] bg-gradient-to-b from-[#269bd8] via-[#0d73b3] to-[#06366c] shadow-[0_0_0.65rem_rgba(32,181,241,0.25)]" />
-          </span>
-        </span>
+  <header class="screen-header">
+    <div class="header-left">
+      <button
+        type="button"
+        class="filter-trigger"
+        :class="{ 'is-active': filterOpen }"
+        :aria-expanded="filterOpen"
+        aria-haspopup="dialog"
+        @click="$emit('toggleFilter')"
+      >
+        <SlidersHorizontal :size="14" :stroke-width="2" aria-hidden="true" />
+        <span class="filter-trigger-label">筛选</span>
+        <span class="filter-summary">{{ filterSummary }}</span>
+        <ChevronDown
+          class="filter-chevron"
+          :class="{ 'is-open': filterOpen }"
+          :size="13"
+          :stroke-width="2.2"
+          aria-hidden="true"
+        />
+      </button>
+    </div>
+
+    <div class="header-brand">
+      <div class="brand-mark" aria-hidden="true">
+        <Shield :size="19" :stroke-width="2.2" />
       </div>
-      <div class="text-center max-lg:text-left">
-        <h1 class="m-0 bg-gradient-to-b from-white via-[#f1fbff] to-[#8fc9ed] bg-clip-text text-[clamp(1.75rem,3vw,2.5rem)] font-extrabold tracking-[0.25rem] text-transparent drop-shadow-[0_0_12px_rgba(81,183,244,0.4)]">
+      <div class="min-w-0">
+        <h1 class="brand-title">
           街面巡防质效
         </h1>
-        <p class="mb-0 mt-1 text-xs tracking-[0.25rem] text-[#78a8c8] max-md:tracking-[0.25rem]">
+        <p class="brand-sub">
           POLICE STATION DAILY WORK DATA CENTER
         </p>
       </div>
-      <div aria-hidden="true" class="hidden h-16 w-48 items-center lg:flex xl:w-56 2xl:w-64">
-        <span class="relative flex h-12 w-full items-center">
-          <span class="absolute left-5 right-0 top-1/2 h-px -translate-y-1/2 bg-gradient-to-l from-transparent via-accent/35 to-accent/90" />
-          <span class="relative mr-auto flex h-10 items-center justify-center gap-1">
-            <span class="h-4 w-3 skew-x-[135deg] bg-gradient-to-b from-[#57d9fa] via-[#2bbaf0] to-[#0b68b3] shadow-[0_0_0.65rem_rgba(32,181,241,0.45)]" />
-            <span class="h-4 w-3 skew-x-[135deg] bg-gradient-to-b from-[#42c9f5] via-[#20b5f1] to-[#0a5da9] shadow-[0_0_0.65rem_rgba(32,181,241,0.38)]" />
-            <span class="h-4 w-3 skew-x-[135deg] bg-gradient-to-b from-[#3bbff0] via-[#149fe1] to-[#0a579d] shadow-[0_0_0.65rem_rgba(32,181,241,0.34)]" />
-            <span class="h-4 w-3 skew-x-[135deg] bg-gradient-to-b from-[#35b7ed] via-[#128fd0] to-[#084b8e] shadow-[0_0_0.65rem_rgba(32,181,241,0.3)]" />
-            <span class="h-4 w-3 skew-x-[135deg] bg-gradient-to-b from-[#2da9e3] via-[#0f82c1] to-[#073f7d] shadow-[0_0_0.65rem_rgba(32,181,241,0.28)]" />
-            <span class="h-4 w-3 skew-x-[135deg] bg-gradient-to-b from-[#269bd8] via-[#0d73b3] to-[#06366c] shadow-[0_0_0.65rem_rgba(32,181,241,0.25)]" />
-          </span>
-        </span>
-      </div>
     </div>
-    <div class="absolute right-4 flex items-center gap-3 text-xs text-muted max-lg:static max-lg:ml-auto max-lg:flex-wrap max-lg:justify-end max-md:ml-0">
-      <span class="inline-flex items-center gap-2">
-        <i
-          :class="{ 'animate-data-pulse': loading }"
-          class="h-2 w-2 rounded-full bg-success shadow-[0_0_0.5rem_rgba(141,189,83,0.7)]"
-        />
-        数据更新时间：{{ updateTime }}
+
+    <div class="header-right" :class="{ 'is-dock-open': dockOpen }">
+      <span class="chip live header-live"><span class="d" />{{ loading ? '同步中' : '实时' }}</span>
+
+      <span class="header-item header-updated" :title="updateTitle">
+        更新 {{ updatedAt }}
       </span>
 
-      <div class="inline-flex shrink-0 items-center gap-1 p-0.5">
-        <button
-          type="button"
-          :aria-label="fullscreen ? '退出全屏' : '全屏'"
-          :aria-pressed="fullscreen"
-          :title="fullscreen ? '退出全屏' : '全屏'"
-          class="!m-0 !grid !h-6 !w-6 !place-items-center !rounded !border-0 !bg-transparent !p-0 !text-[#b7cfdd] transition-colors hover:!bg-field hover:!text-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent/60"
-          :class="{ '!bg-field !text-accent': fullscreen }"
-          @click="$emit('fullscreen')"
-        >
-          <component
-            :is="fullscreen ? Minimize : Maximize"
-            :size="15"
-            :stroke-width="1.8"
-            aria-hidden="true"
-          />
-        </button>
+      <span class="header-clock">{{ clockText }}</span>
+
+      <div
+        ref="dockRef"
+        class="action-dock"
+        :class="{ 'is-open': dockOpen }"
+        @mouseenter="dockHovered = true"
+        @mouseleave="dockHovered = false"
+        @focusin="dockFocused = true"
+        @focusout="handleDockFocusOut"
+      >
+        <div class="action-dock-items">
+          <button
+            type="button"
+            class="icon-btn theme-toggle"
+            :aria-label="isDark ? '切换为浅色模式' : '切换为深色模式'"
+            :title="isDark ? '切换为浅色模式' : '切换为深色模式'"
+            @click="$emit('toggleTheme')"
+          >
+            <Transition name="scr-icon" mode="out-in">
+              <Sun v-if="isDark" key="sun" :size="15" :stroke-width="2" aria-hidden="true" />
+              <Moon v-else key="moon" :size="15" :stroke-width="2" aria-hidden="true" />
+            </Transition>
+          </button>
+
+          <button
+            type="button"
+            class="icon-btn"
+            :class="{ 'is-active': fullscreen }"
+            :aria-label="fullscreen ? '退出全屏' : '全屏'"
+            :aria-pressed="fullscreen"
+            :title="fullscreen ? '退出全屏' : '全屏'"
+            @click="$emit('fullscreen')"
+          >
+            <component
+              :is="fullscreen ? Minimize : Maximize"
+              :size="15"
+              :stroke-width="2"
+              aria-hidden="true"
+            />
+          </button>
+
+          <button
+            type="button"
+            class="icon-btn"
+            aria-label="导出数据"
+            title="导出数据"
+            :disabled="loading"
+            @click="$emit('export')"
+          >
+            <FileDown :size="15" :stroke-width="2" aria-hidden="true" />
+          </button>
+        </div>
 
         <button
           type="button"
-          aria-label="导出数据"
-          title="导出数据"
-          :disabled="loading"
-          class="!m-0 !grid !h-6 !w-6 !place-items-center !rounded-md !border-0 !bg-transparent !p-0 !text-[#b7cfdd] transition-colors hover:!bg-field hover:!text-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent/60 disabled:cursor-not-allowed disabled:opacity-40"
-          @click="$emit('export')"
+          class="icon-btn action-dock-trigger"
+          :class="{ 'is-active': dockOpen }"
+          :aria-expanded="dockOpen"
+          aria-label="更多操作"
+          title="更多操作"
+          @click="toggleDock"
         >
-          <FileDown :size="15" :stroke-width="1.8" aria-hidden="true" />
+          <Ellipsis :size="16" :stroke-width="2.2" aria-hidden="true" />
         </button>
       </div>
     </div>
+
+    <span v-if="loading" class="header-progress" aria-hidden="true" />
   </header>
 </template>

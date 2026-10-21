@@ -1,9 +1,18 @@
 <script setup>
-import { onMounted, useTemplateRef, watch } from 'vue'
-import { calcAxisMaxAndInterval, createDashboardTooltip, createEmptyGraphic, createSliderZoom } from '../charts/shared'
+import { ChartSpline, LoaderCircle } from '@lucide/vue'
+import { computed, onMounted, useTemplateRef, watch } from 'vue'
+import { getScreenPalette } from '../charts/palette'
+import {
+  calcAxisMaxAndInterval,
+  createAreaGradient,
+  createBarGradient,
+  createDashboardTooltip,
+  createSliderZoom
+} from '../charts/shared'
 import ChartTypeToggle from '../components/ChartTypeToggle.vue'
 import ScreenPanel from '../components/ScreenPanel.vue'
 import { useECharts } from '../composables/useECharts'
+import { useScreenTheme } from '../composables/useScreenTheme'
 
 const props = defineProps({
   title: { type: String, required: true },
@@ -12,6 +21,7 @@ const props = defineProps({
     type: Object,
     default: () => ({ xAxis: [], seriesList: [] })
   },
+  loading: { type: Boolean, default: false },
   showChartToggle: { type: Boolean, default: true },
   showFilters: { type: Boolean, default: false },
   monthRange: { type: Array, default: null },
@@ -29,112 +39,161 @@ const props = defineProps({
   barWidth: { type: Number, default: 10 }
 })
 
-const emit = defineEmits(['change-month-range', 'update-unit'])
+const emit = defineEmits(['changeMonthRange', 'updateUnit'])
 const chartType = defineModel('chartType', { type: String, default: 'line' })
+
+const { theme } = useScreenTheme()
+const palette = computed(() => getScreenPalette(theme.value))
 
 const chartRef = useTemplateRef('chartRef')
 const { setOption } = useECharts(chartRef)
 
+const isBar = computed(() => chartType.value === 'bar')
+const hasData = computed(() => Boolean(props.data?.xAxis?.length && props.data?.seriesList?.length))
+const showSkeleton = computed(() => props.loading && !hasData.value)
+
 const handleUnitChange = (value) => {
   const deptId = value === '' ? null : value
   const unit = props.unitOptions.find(item => item.deptId === deptId)
-  emit('update-unit', { deptId, deptName: unit?.deptName })
+  emit('updateUnit', { deptId, deptName: unit?.deptName })
 }
 
+/* 折线：symbol 无点 + smooth + lttb 采样；单系列才加垂直渐变面积，多系列避免糊 */
+const buildLineSeries = seriesList => seriesList.map((item, index) => {
+  const color = palette.value.series[index % palette.value.series.length]
+  const series = {
+    name: item.name,
+    type: 'line',
+    smooth: true,
+    symbol: 'none',
+    sampling: 'lttb',
+    data: item.data,
+    lineStyle: { width: 2.5, color },
+    itemStyle: { color },
+    emphasis: { focus: 'series' },
+    animationDelay: index * 70
+  }
+
+  if (seriesList.length === 1) {
+    series.areaStyle = { color: createAreaGradient(color, palette.value.areaAlpha) }
+  }
+
+  return series
+})
+
+/* 柱状：圆角 + 垂直渐变；barWidth prop 作为最大柱宽，点位多时自动收窄避免相邻分类重叠 */
+const buildBarSeries = seriesList => seriesList.map((item, index) => {
+  const color = palette.value.series[index % palette.value.series.length]
+  return {
+    name: item.name,
+    type: 'bar',
+    barMaxWidth: props.barWidth,
+    data: item.data,
+    itemStyle: {
+      color: createBarGradient(color, palette.value.barAlpha),
+      borderRadius: [5, 5, 0, 0]
+    },
+    emphasis: { focus: 'series' },
+    animationDelay: index * 50
+  }
+})
+
 const renderChart = () => {
-  const colors = ['#6b96e8', '#86c75b', '#f2b841']
   const xAxis = props.data?.xAxis ?? []
   const seriesList = props.data?.seriesList ?? []
 
+  /* 空态：清空画布，空态文案由 HTML 覆盖层负责 */
   if (!xAxis.length || !seriesList.length) {
     setOption({
-      xAxis: { type: 'category', data: [] },
-      yAxis: { type: 'value' },
+      legend: { show: false },
+      tooltip: { show: false },
+      xAxis: { show: false, type: 'category', data: [] },
+      yAxis: { show: false, type: 'value' },
       series: [],
-      graphic: createEmptyGraphic()
+      dataZoom: []
     })
     return
   }
 
-  const lineSeries = seriesList.map((item, index) => ({
-    name: item.name,
-    type: 'line',
-    symbolSize: 12,
-    smooth: true,
-    data: item.data,
-    lineStyle: { color: colors[index] || colors[0], width: 5 },
-    itemStyle: { color: colors[index] || colors[0] }
-  }))
-  const barSeries = seriesList.map((item, index) => ({
-    name: item.name,
-    type: 'bar',
-    barWidth: props.barWidth,
-    data: item.data,
-    itemStyle: { color: colors[index] || colors[0] }
-  }))
-
+  const colors = palette.value
   const count = xAxis.length
   const showSlider = count > props.sliderThreshold
   const endPercent = count > props.sliderWindow ? (props.sliderWindow / count) * 100 : 100
   const axisScale = props.scaleAxis
     ? calcAxisMaxAndInterval(seriesList.flatMap(item => item.data))
     : null
+  const barMode = isBar.value
 
   setOption({
+    animationDuration: 700,
+    animationDurationUpdate: 320,
+    animationEasing: 'cubicOut',
+    animationEasingUpdate: 'cubicOut',
+    textStyle: { fontFamily: '"PingFang SC","Microsoft YaHei",sans-serif' },
     legend: {
-      top: 8,
+      show: true,
+      top: 4,
       left: props.legendLeft,
-      itemWidth: 18,
-      itemHeight: 4,
-      itemGap: 18,
-      icon: 'roundRect',
-      textStyle: { color: '#a8b4c1', fontSize: 12 }
+      icon: 'circle',
+      itemWidth: 7,
+      itemHeight: 7,
+      itemGap: 14,
+      textStyle: { color: colors.text3, fontSize: 10.5 },
+      inactiveColor: colors.legendInactive
     },
-    tooltip: createDashboardTooltip(),
+    tooltip: createDashboardTooltip('axis', colors),
     grid: {
       left: props.gridLeft,
       right: props.gridRight,
-      top: 46,
+      top: 34,
       bottom: props.gridBottom,
       containLabel: true
     },
     xAxis: {
+      show: true,
       type: 'category',
       data: xAxis,
-      axisLine: { lineStyle: { color: '#38536a' } },
-      axisLabel: { color: '#a8b4c1', rotate: props.xAxisRotate },
-      axisTick: { show: false }
+      boundaryGap: barMode,
+      axisLine: { lineStyle: { color: colors.axisLine } },
+      axisTick: { show: false },
+      axisLabel: {
+        color: colors.text3,
+        fontSize: 10,
+        rotate: props.xAxisRotate,
+        hideOverlap: true
+      }
     },
     yAxis: {
+      show: true,
+      type: 'value',
       min: 0,
       ...(axisScale ? { max: axisScale.max, interval: axisScale.interval } : {}),
-      splitLine: {
-        lineStyle: { color: 'rgba(72,108,132,.28)', type: 'dashed' }
-      },
-      axisLabel: { color: '#a8b4c1' },
+      splitNumber: 4,
+      splitLine: { lineStyle: { color: colors.splitLine } },
+      axisLabel: { color: colors.text3, fontSize: 10 },
       axisLine: { show: false },
       axisTick: { show: false }
     },
-    series: chartType.value === 'line' ? lineSeries : barSeries,
+    series: barMode ? buildBarSeries(seriesList) : buildLineSeries(seriesList),
     dataZoom: createSliderZoom({
       show: showSlider,
       endPercent,
       showDataShadow: props.showDataShadow
-    })
+    }, colors)
   })
 }
 
-watch(() => [props.data, chartType.value], renderChart)
+watch([() => props.data, chartType, palette], renderChart)
 onMounted(renderChart)
 </script>
 
 <template>
-  <ScreenPanel :title="title" :unit="unit">
+  <ScreenPanel :title="title" :unit="unit" :loading="loading">
     <template v-if="showChartToggle" #actions>
       <ChartTypeToggle v-model="chartType" />
     </template>
 
-    <div v-if="showFilters" class="flex min-w-0 items-center justify-end gap-2 px-4">
+    <div v-if="showFilters" class="flex min-w-0 shrink-0 flex-wrap items-center gap-2 px-4 pb-1 max-md:flex-col max-md:items-stretch">
       <el-date-picker
         :model-value="monthRange"
         type="monthrange"
@@ -146,12 +205,12 @@ onMounted(renderChart)
         clearable
         size="small"
         popper-class="dashboard-popper"
-        class="dashboard-date-picker min-w-0 flex-1"
-        @update:model-value="emit('change-month-range', $event)"
+        class="dashboard-date-picker min-w-[10.5rem] flex-1 max-md:w-full"
+        @update:model-value="emit('changeMonthRange', $event)"
       />
       <el-select
         popper-class="dashboard-popper"
-        class="dashboard-select min-w-0 flex-1"
+        class="dashboard-select min-w-[7.5rem] flex-1 max-md:w-full"
         :model-value="deptId ?? ''"
         clearable
         size="small"
@@ -168,6 +227,27 @@ onMounted(renderChart)
       </el-select>
     </div>
 
-    <div ref="chartRef" class="min-h-0 flex-1 w-full" />
+    <div class="relative min-h-0 flex-1" :aria-busy="loading || undefined">
+      <div ref="chartRef" class="absolute inset-0" />
+
+      <Transition name="scr-fade">
+        <div v-if="showSkeleton" class="chart-skeleton absolute inset-0 z-panel-overlay" aria-hidden="true">
+          <span class="cs-line" />
+          <div class="cs-wave" />
+          <span class="cs-line" />
+          <span class="cs-status">
+            <LoaderCircle class="cs-spinner" :size="14" :stroke-width="2" />
+            数据加载中
+          </span>
+        </div>
+      </Transition>
+
+      <div v-if="!hasData && !loading" class="empty-state absolute inset-0 z-panel-overlay">
+        <div class="empty-ico">
+          <ChartSpline :size="16" :stroke-width="1.8" />
+        </div>
+        <span>暂无趋势数据</span>
+      </div>
+    </div>
   </ScreenPanel>
 </template>
