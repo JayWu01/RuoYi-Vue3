@@ -204,7 +204,8 @@ const rankBaseValues = {
   callPolice: [168, 152, 143, 126, 118, 97, 86, 74],
   netFugitive: [42, 38, 35, 31, 27, 22, 18, 15],
   minorBeat: [36, 31, 28, 25, 21, 18, 15, 12],
-  pullCarDoor: [58, 52, 47, 41, 36, 30, 25, 19]
+  pullCarDoor: [58, 52, 47, 41, 36, 30, 25, 19],
+  strikeCurrent: [42, 37, 33, 28, 24, 20, 16, 13]
 }
 
 const createRankList = (query) => {

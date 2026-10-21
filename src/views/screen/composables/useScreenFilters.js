@@ -50,11 +50,6 @@ export function useScreenFilters() {
     deptName: filter.deptName
   })
 
-  const getPanelParams = () => ({
-    rank: { ...createPanelQuery(rankFilter.value), rankType: rankType.value },
-    juvenile: createPanelQuery(juvenileFilter.value)
-  })
-
   const updateRankMonthRange = (monthRange) => {
     rankFilter.value = { ...rankFilter.value, monthRange: monthRange ?? null }
   }
@@ -91,7 +86,6 @@ export function useScreenFilters() {
     juvenileChartType,
     isQueryValid,
     createPanelQuery,
-    getPanelParams,
     updateRankMonthRange,
     updateJuvenileMonthRange,
     updateRankUnit,

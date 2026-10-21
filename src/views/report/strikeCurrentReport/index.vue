@@ -1,60 +1,3 @@
-<template>
-  <div class="app-container">
-    <!-- 查询区域 -->
-    <el-form :model="queryParams" ref="queryFormRef" :inline="true" size="small">
-      <el-form-item label="打击日期" prop="strikeDate">
-        <el-date-picker
-            v-model="queryParams.strikeDate"
-            type="daterange"
-            range-separator="-"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            format="YYYY-MM-DD"
-            value-format="YYYY-MM-DD"
-        />
-      </el-form-item>
-<!--      <el-form-item label="警务站">-->
-<!--        <el-select v-model="queryParams.deptId" placeholder="全部警务站" clearable>-->
-<!--          <el-option label="八一广场警务站" value="1001"/>-->
-<!--          <el-option label="滕王阁警务站" value="1002"/>-->
-<!--          <el-option label="福州路警务站" value="1003"/>-->
-<!--        </el-select>-->
-<!--      </el-form-item>-->
-      <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="success" icon="Download" @click="handleExport">导出双层表头报表</el-button>
-      </el-form-item>
-    </el-form>
-
-    <!-- 数据表格 -->
-    <el-table ref="tableRef" v-loading="loading" :data="tableData" border>
-      <el-table-column label="单位" prop="unitName" align="center"/>
-      <el-table-column label="呼号" prop="unitCode" align="center"/>
-      <el-table-column label="敲打总人数" prop="totalPerson" align="center"/>
-      <el-table-column label="红" prop="crimeRed" align="center"/>
-      <el-table-column label="橙" prop="crimeOrange" align="center"/>
-      <el-table-column label="黄" prop="crimeYellow" align="center"/>
-      <el-table-column label="蓝" prop="crimeBlue" align="center"/>
-      <el-table-column label="黑" prop="crimeBlack" align="center"/>
-      <el-table-column label="非预警未成年人数" prop="unwarnedMinor" align="center"/>
-      <el-table-column label="抓获嫌疑人数" prop="arrestSuspectCount" align="center"/>
-      <el-table-column label="打掉团伙数量" prop="arrestGroupCount" align="center"/>
-      <el-table-column label="检查车辆数" prop="checkCarCount" align="center"/>
-      <el-table-column label="未关车门数" prop="openDoorCount" align="center"/>
-    </el-table>
-    <pagination
-        v-show="total>0"
-        :total="total"
-        v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize"
-        @pagination="handleQuery"
-    />
-  </div>
-</template>
-
 <script setup>
 import { Download, RefreshCw, Search } from '@lucide/vue'
 import dayjs from 'dayjs'
@@ -111,9 +54,7 @@ const resetQuery = () => {
 
 // 合计行：数值列求和
 const getSummary = ({ columns, data }) => {
-  const sumProps = ['totalPerson', 'crimeRed', 'crimeOrange', 'crimeYellow',
-    'crimeBlue', 'crimeBlack', 'unwarnedMinor', 'arrestSuspectCount',
-    'arrestGroupCount', 'checkCarCount', 'openDoorCount']
+  const sumProps = ['totalPerson', 'crimeRed', 'crimeOrange', 'crimeYellow', 'crimeBlue', 'crimeBlack', 'unwarnedMinor', 'arrestSuspectCount', 'arrestGroupCount', 'checkCarCount', 'openDoorCount']
   return columns.map((column, index) => {
     if (index === 0) return '警务站合计'
     if (sumProps.includes(column.property)) {
@@ -123,8 +64,6 @@ const getSummary = ({ columns, data }) => {
     return ''
   })
 }
-
-
 
 const handleExport = async () => {
   if (queryParams.strikeDate?.length === 2) {
@@ -204,7 +143,14 @@ handleQuery()
     </el-form>
 
     <!-- 数据表格 -->
-    <el-table ref="tableRef" v-loading="loading" :data="tableData" border>
+    <el-table
+      ref="tableRef"
+      v-loading="loading"
+      :data="tableData"
+      border
+      show-summary
+      :summary-method="getSummary"
+    >
       <el-table-column label="单位" prop="unitName" align="center" />
       <el-table-column label="呼号" prop="unitCode" align="center" />
       <el-table-column label="敲打总人数" prop="totalPerson" align="center" />
