@@ -5,25 +5,24 @@ import locale from 'element-plus/es/locale/lang/zh-cn'
 import Cookies from 'js-cookie'
 import { createApp } from 'vue'
 import { getConfigKey } from '@/api/system/config'
+
 // 字典标签组件
 import DictTag from '@/components/DictTag'
-
 // 富文本组件
 import Editor from '@/components/Editor'
+
 // 文件上传组件
 import FileUpload from '@/components/FileUpload'
-
 // 图片预览组件
 import ImagePreview from '@/components/ImagePreview'
 // 图片上传组件
 import ImageUpload from '@/components/ImageUpload'
+
 // 分页组件
 import Pagination from '@/components/Pagination'
 // 自定义表格工具组件
 import RightToolbar from '@/components/RightToolbar'
-
 import SvgIcon from '@/components/SvgIcon'
-import elementIcons from '@/components/SvgIcon/svgicon'
 
 import { useDict } from '@/utils/dict'
 import { download } from '@/utils/request'
@@ -69,7 +68,6 @@ app.component('Editor', Editor)
 app.use(router)
 app.use(store)
 app.use(plugins)
-app.use(elementIcons)
 app.component('SvgIcon', SvgIcon)
 
 directive(app)

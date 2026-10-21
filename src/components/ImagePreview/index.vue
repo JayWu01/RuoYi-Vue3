@@ -1,4 +1,5 @@
 <script setup>
+import { Image } from '@lucide/vue'
 import { isExternal } from '@/utils/validate'
 
 const props = defineProps({
@@ -61,7 +62,7 @@ const realHeight = computed(() =>
   >
     <template #error>
       <div class="image-slot">
-        <el-icon><picture-filled /></el-icon>
+        <Image />
       </div>
     </template>
   </el-image>

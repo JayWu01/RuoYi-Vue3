@@ -1,4 +1,6 @@
 <script setup>
+import { ArrowUpDown, Copy, Download, Info, TriangleAlert, Upload, User } from '@lucide/vue'
+
 const props = defineProps({
   visible: { type: Boolean, default: false },
   row: { type: Object, default: () => ({}) }
@@ -59,7 +61,7 @@ function copyText(str) {
       <!-- 基本信息 -->
       <div class="detail-card">
         <div class="detail-card-title">
-          <el-icon><InfoFilled /></el-icon> 基本信息
+          <Info /> 基本信息
         </div>
         <el-row class="detail-row">
           <el-col :span="12">
@@ -96,7 +98,7 @@ function copyText(str) {
       <!-- 操作人员 -->
       <div class="detail-card">
         <div class="detail-card-title">
-          <el-icon><User /></el-icon> 操作人员
+          <User /> 操作人员
         </div>
         <el-row class="detail-row">
           <el-col :span="12">
@@ -125,7 +127,7 @@ function copyText(str) {
       <!-- 请求信息 -->
       <div class="detail-card">
         <div class="detail-card-title">
-          <el-icon><Sort /></el-icon> 请求信息
+          <ArrowUpDown /> 请求信息
         </div>
         <el-row class="detail-row">
           <el-col :span="24">
@@ -159,12 +161,12 @@ function copyText(str) {
       <!-- 请求参数 -->
       <div class="detail-card">
         <div class="detail-card-title">
-          <el-icon><Upload /></el-icon> 请求参数
+          <Upload /> 请求参数
         </div>
         <div class="code-body">
           <div class="code-wrap">
             <div class="code-action">
-              <el-button size="small" :icon="CopyDocument" @click="copyText(form.operParam)">
+              <el-button size="small" :icon="Copy" @click="copyText(form.operParam)">
                 复制
               </el-button>
             </div>
@@ -176,12 +178,12 @@ function copyText(str) {
       <!-- 返回参数 -->
       <div class="detail-card">
         <div class="detail-card-title">
-          <el-icon><Download /></el-icon> 返回参数
+          <Download /> 返回参数
         </div>
         <div class="code-body">
           <div class="code-wrap">
             <div class="code-action">
-              <el-button size="small" :icon="CopyDocument" @click="copyText(form.jsonResult)">
+              <el-button size="small" :icon="Copy" @click="copyText(form.jsonResult)">
                 复制
               </el-button>
             </div>
@@ -193,7 +195,7 @@ function copyText(str) {
       <!-- 异常信息 -->
       <div v-if="form.status !== 0" class="detail-card">
         <div class="detail-card-title error-title">
-          <el-icon><Warning /></el-icon> 异常信息
+          <TriangleAlert /> 异常信息
         </div>
         <div class="error-body">
           <div class="error-msg">

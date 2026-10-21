@@ -1,4 +1,5 @@
 <script setup>
+import { CirclePlus, Link, Minus, MousePointer2, Settings2, X } from '@lucide/vue'
 import draggable from 'vuedraggable/dist/vuedraggable.common'
 import { inputComponents, selectComponents } from '@/utils/generator/config'
 import { isNumberStr } from '@/utils/index'
@@ -331,9 +332,7 @@ function tagChange(tagIcon) {
     </el-tabs>
     <div class="field-box">
       <a class="document-link" target="_blank" :href="documentLink" title="查看组件文档">
-        <el-icon>
-          <Link />
-        </el-icon>
+        <Link />
       </a>
       <el-scrollbar class="right-scrollbar">
         <!-- 组件属性 -->
@@ -342,7 +341,6 @@ function tagChange(tagIcon) {
           size="default"
           label-width="90px"
           label-position="top"
-          style=""
         >
           <el-form-item v-if="activeData.changeTag" label="组件类型">
             <el-select
@@ -359,9 +357,8 @@ function tagChange(tagIcon) {
                   :value="item.tagIcon"
                 >
                   <svg-icon
-                    class="node-icon"
+                    class="node-icon mr-2.5"
                     :icon-class="item.tagIcon"
-                    style="margin-right: 10px"
                   />
                   <span> {{ item.label }}</span>
                 </el-option>
@@ -465,7 +462,7 @@ function tagChange(tagIcon) {
           <el-form-item v-if="activeData['prefix-icon'] !== undefined" label="前图标">
             <el-input v-model="activeData['prefix-icon']" placeholder="请输入前图标名称">
               <template #append>
-                <el-button icon="Pointer" @click="openIconsDialog('prefix-icon')">
+                <el-button :icon="MousePointer2" @click="openIconsDialog('prefix-icon')">
                   选择
                 </el-button>
               </template>
@@ -474,7 +471,7 @@ function tagChange(tagIcon) {
           <el-form-item v-if="activeData['suffix-icon'] !== undefined" label="后图标">
             <el-input v-model="activeData['suffix-icon']" placeholder="请输入后图标名称">
               <template #append>
-                <el-button icon="Pointer" @click="openIconsDialog('suffix-icon')">
+                <el-button :icon="MousePointer2" @click="openIconsDialog('suffix-icon')">
                   选择
                 </el-button>
               </template>
@@ -647,7 +644,7 @@ function tagChange(tagIcon) {
               <template #item="{ element, index }">
                 <div :key="index" class="select-item">
                   <div class="select-line-icon option-drag">
-                    <i class="el-icon-s-operation" />
+                    <Settings2 size="1em" />
                   </div>
                   <el-input v-model="element.label" placeholder="选项名" size="small" />
                   <el-input
@@ -660,20 +657,19 @@ function tagChange(tagIcon) {
                     class="close-btn select-line-icon"
                     @click="activeData.options.splice(index, 1)"
                   >
-                    <el-icon>
-                      <Remove />
-                    </el-icon>
+                    <Minus />
                   </div>
                 </div>
               </template>
             </draggable>
             <div>
               <el-button
-                icon="CirclePlus"
-                style="margin-left: 8px; margin-top: 10px"
+                :icon="CirclePlus"
+
                 text
                 bg
                 type="primary"
+                class="ml-2 mt-2.5"
                 @click="addSelectItem"
               >
                 添加选项
@@ -717,11 +713,12 @@ function tagChange(tagIcon) {
             />
             <div v-if="activeData.dataType === 'static'">
               <el-button
-                icon="CirclePlus"
-                style="margin-left: 0; margin-top: 10px"
+                :icon="CirclePlus"
+
                 type="primary"
                 text
                 bg
+                class="ml-0 mt-2.5"
                 @click="addTreeItem"
               >
                 添加父级
@@ -859,9 +856,8 @@ function tagChange(tagIcon) {
               <template #default="{ node, data }">
                 <span class="node-label">
                   <svg-icon
-                    class="node-icon"
+                    class="node-icon mr-[5px]"
                     :icon-class="data.tagIcon"
-                    style="margin-right: 5px"
                   />
                   {{ node.label }}
                 </span>
@@ -873,24 +869,23 @@ function tagChange(tagIcon) {
             <el-divider>正则校验</el-divider>
             <div v-for="(item, index) in activeData.regList" :key="index" class="reg-item">
               <span class="close-btn" @click="activeData.regList.splice(index, 1)">
-                <el-icon>
-                  <Close />
-                </el-icon>
+                <X />
               </span>
               <el-form-item label="表达式">
                 <el-input v-model="item.pattern" placeholder="请输入正则" />
               </el-form-item>
-              <el-form-item label="错误提示" style="margin-bottom: 0">
+              <el-form-item label="错误提示" class="mb-0">
                 <el-input v-model="item.message" placeholder="请输入错误提示" />
               </el-form-item>
             </div>
             <div>
               <el-button
-                icon="CirclePlus"
-                style="margin-left: 0; margin-top: 10px"
+                :icon="CirclePlus"
+
                 type="primary"
                 text
                 bg
+                class="ml-0 mt-2.5"
                 @click="addReg"
               >
                 添加规则

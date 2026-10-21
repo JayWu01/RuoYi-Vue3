@@ -1,4 +1,5 @@
 <script setup>
+import { FileText } from '@lucide/vue'
 import Sortable from 'sortablejs'
 import { getToken } from '@/utils/auth'
 
@@ -217,10 +218,10 @@ onMounted(() => {
     <div v-if="showTip && !disabled" class="el-upload__tip">
       请上传
       <template v-if="fileSize">
-        大小不超过 <b style="color: #f56c6c">{{ fileSize }}MB</b>
+        大小不超过 <b class="text-[#f56c6c]">{{ fileSize }}MB</b>
       </template>
       <template v-if="fileType">
-        格式为 <b style="color: #f56c6c">{{ fileType.join("/") }}</b>
+        格式为 <b class="text-[#f56c6c]">{{ fileType.join("/") }}</b>
       </template>
       的文件
     </div>
@@ -237,7 +238,7 @@ onMounted(() => {
         class="el-upload-list__item ele-upload-list__item-content"
       >
         <el-link :href="`${baseUrl}${file.url}`" underline="never" target="_blank">
-          <span class="el-icon-document"> {{ getFileName(file.name) }} </span>
+          <FileText size="1em" class="mr-1" /> {{ getFileName(file.name) }}
         </el-link>
         <div class="ele-upload-list__item-content-action">
           <el-link v-if="!disabled" underline="never" type="danger" @click="handleDelete(index)">

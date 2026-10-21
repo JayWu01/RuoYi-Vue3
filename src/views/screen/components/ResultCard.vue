@@ -1,10 +1,9 @@
 <script setup>
 import AnimatedStatistic from './AnimatedStatistic.vue'
-import TrendValue from './TrendValue.vue'
 
 defineProps({
   icon: {
-    type: Object,
+    type: [Object, Function],
     required: true
   },
   label: {
@@ -18,14 +17,6 @@ defineProps({
   value: {
     type: [String, Number],
     default: '-'
-  },
-  rate: {
-    type: [String, Number],
-    default: '-'
-  },
-  up: {
-    type: Boolean,
-    default: true
   },
   tone: {
     type: String,
@@ -53,14 +44,5 @@ defineProps({
       <small v-if="sub" class="block text-base text-muted">{{ sub }}</small>
     </div>
     <AnimatedStatistic class="block text-lg leading-6 text-white" :value="value" />
-<!--    <div class="mt-1 whitespace-nowrap text-xs text-muted">-->
-<!--      环比-->
-<!--      <TrendValue-->
-<!--        :value="rate"-->
-<!--        :up="up"-->
-<!--        show-direction-->
-<!--        :class="up ? 'font-bold text-chart-red' : 'font-bold text-success'"-->
-<!--      />-->
-<!--    </div>-->
   </article>
 </template>

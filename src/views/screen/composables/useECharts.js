@@ -1,6 +1,27 @@
-import { useResizeObserver } from '@vueuse/core'
-import * as echarts from 'echarts'
-import { onBeforeUnmount, onMounted, shallowRef } from 'vue'
+import { usePreferredReducedMotion, useResizeObserver } from '@vueuse/core'
+import { BarChart, LineChart, PieChart } from 'echarts/charts'
+import {
+  DataZoomComponent,
+  GraphicComponent,
+  GridComponent,
+  LegendComponent,
+  TooltipComponent
+} from 'echarts/components'
+import * as echarts from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
+import { computed, onBeforeUnmount, onMounted, shallowRef } from 'vue'
+
+echarts.use([
+  BarChart,
+  LineChart,
+  PieChart,
+  DataZoomComponent,
+  GraphicComponent,
+  GridComponent,
+  LegendComponent,
+  TooltipComponent,
+  CanvasRenderer
+])
 
 const dashboardChartAnimation = {
   animation: true,
@@ -10,39 +31,33 @@ const dashboardChartAnimation = {
   animationEasingUpdate: 'cubicInOut'
 }
 
-export const createDashboardTooltip = (trigger = 'axis') => ({
-  trigger,
-  backgroundColor: 'rgba(3, 18, 38, 0.96)',
-  borderColor: '#1478ba',
-  borderWidth: 1,
-  padding: [8, 12],
-  textStyle: {
-    color: '#d8e9f6',
-    fontSize: 12
-  },
-  axisPointer: trigger === 'axis'
-    ? {
-        type: 'line',
-        lineStyle: { color: 'rgba(32, 181, 241, 0.6)', width: 1 }
-      }
-    : undefined,
-  extraCssText: 'box-shadow: 0 0 12px rgba(0, 100, 190, 0.28);'
-})
-
 export function useECharts(elementRef) {
   const chart = shallowRef(null)
+  const reducedMotion = usePreferredReducedMotion()
+  const animation = computed(() => (reducedMotion.value === 'reduce'
+    ? { animation: false }
+    : dashboardChartAnimation))
+  let lastOption = null
 
   const ensureChart = () => {
-    if (!elementRef.value) {
+    const element = elementRef.value
+    if (!element || !element.clientWidth || !element.clientHeight) {
       return null
     }
 
-    chart.value ||= echarts.init(elementRef.value)
+    if (!chart.value) {
+      chart.value = echarts.init(element)
+      if (lastOption) {
+        chart.value.setOption(lastOption, true)
+      }
+    }
+
     return chart.value
   }
 
   const setOption = (option) => {
-    ensureChart()?.setOption({ ...dashboardChartAnimation, ...option }, true)
+    lastOption = { ...animation.value, ...option }
+    ensureChart()?.setOption(lastOption, true)
   }
 
   const resize = () => {
@@ -52,7 +67,11 @@ export function useECharts(elementRef) {
   useResizeObserver(elementRef, resize)
 
   onMounted(resize)
-  onBeforeUnmount(() => ensureChart()?.dispose())
+
+  onBeforeUnmount(() => {
+    chart.value?.dispose()
+    chart.value = null
+  })
 
   return {
     setOption,

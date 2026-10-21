@@ -1,4 +1,5 @@
 <script setup name="Logininfor">
+import { Download, LockOpen, RefreshCw, Search, Trash2 } from '@lucide/vue'
 import { cleanLogininfor, delLogininfor, list, unlockLogininfor } from '@/api/monitor/logininfor'
 
 const { proxy } = getCurrentInstance()
@@ -136,7 +137,7 @@ getList()
           v-model="queryParams.ipaddr"
           placeholder="请输入登录地址"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -145,7 +146,7 @@ getList()
           v-model="queryParams.userName"
           placeholder="请输入用户名称"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -154,7 +155,7 @@ getList()
           v-model="queryParams.status"
           placeholder="登录状态"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
         >
           <el-option
             v-for="dict in sys_common_status"
@@ -164,7 +165,7 @@ getList()
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="登录时间" style="width: 308px">
+      <el-form-item label="登录时间" class="w-[308px]">
         <el-date-picker
           v-model="dateRange"
           value-format="YYYY-MM-DD HH:mm:ss"
@@ -176,10 +177,10 @@ getList()
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">
+        <el-button type="primary" :icon="Search" @click="handleQuery">
           搜索
         </el-button>
-        <el-button icon="Refresh" @click="resetQuery">
+        <el-button :icon="RefreshCw" @click="resetQuery">
           重置
         </el-button>
       </el-form-item>
@@ -191,7 +192,7 @@ getList()
           v-hasPermi="['monitor:logininfor:remove']"
           type="danger"
           plain
-          icon="Delete"
+          :icon="Trash2"
           :disabled="multiple"
           @click="handleDelete"
         >
@@ -203,7 +204,7 @@ getList()
           v-hasPermi="['monitor:logininfor:remove']"
           type="danger"
           plain
-          icon="Delete"
+          :icon="Trash2"
           @click="handleClean"
         >
           清空
@@ -214,7 +215,7 @@ getList()
           v-hasPermi="['monitor:logininfor:unlock']"
           type="primary"
           plain
-          icon="Unlock"
+          :icon="LockOpen"
           :disabled="single"
           @click="handleUnlock"
         >
@@ -226,7 +227,7 @@ getList()
           v-hasPermi="['monitor:logininfor:export']"
           type="warning"
           plain
-          icon="Download"
+          :icon="Download"
           @click="handleExport"
         >
           导出

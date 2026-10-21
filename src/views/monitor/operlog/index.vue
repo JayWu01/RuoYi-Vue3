@@ -1,4 +1,5 @@
 <script setup name="Operlog">
+import { Download, Eye, RefreshCw, Search, Trash2 } from '@lucide/vue'
 import { cleanOperlog, delOperlog, list } from '@/api/monitor/operlog'
 import OperlogDetail from './detail'
 
@@ -133,7 +134,7 @@ getList()
           v-model="queryParams.operIp"
           placeholder="请输入操作地址"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -142,7 +143,7 @@ getList()
           v-model="queryParams.title"
           placeholder="请输入系统模块"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -151,7 +152,7 @@ getList()
           v-model="queryParams.operName"
           placeholder="请输入操作人员"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -160,7 +161,7 @@ getList()
           v-model="queryParams.businessType"
           placeholder="操作类型"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
         >
           <el-option
             v-for="dict in sys_oper_type"
@@ -175,7 +176,7 @@ getList()
           v-model="queryParams.status"
           placeholder="操作状态"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
         >
           <el-option
             v-for="dict in sys_common_status"
@@ -185,7 +186,7 @@ getList()
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="操作时间" style="width: 308px">
+      <el-form-item label="操作时间" class="w-[308px]">
         <el-date-picker
           v-model="dateRange"
           value-format="YYYY-MM-DD HH:mm:ss"
@@ -197,10 +198,10 @@ getList()
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">
+        <el-button type="primary" :icon="Search" @click="handleQuery">
           搜索
         </el-button>
-        <el-button icon="Refresh" @click="resetQuery">
+        <el-button :icon="RefreshCw" @click="resetQuery">
           重置
         </el-button>
       </el-form-item>
@@ -212,7 +213,7 @@ getList()
           v-hasPermi="['monitor:operlog:remove']"
           type="danger"
           plain
-          icon="Delete"
+          :icon="Trash2"
           :disabled="multiple"
           @click="handleDelete"
         >
@@ -224,7 +225,7 @@ getList()
           v-hasPermi="['monitor:operlog:remove']"
           type="danger"
           plain
-          icon="Delete"
+          :icon="Trash2"
           @click="handleClean"
         >
           清空
@@ -235,7 +236,7 @@ getList()
           v-hasPermi="['monitor:operlog:export']"
           type="warning"
           plain
-          icon="Download"
+          :icon="Download"
           @click="handleExport"
         >
           导出
@@ -312,7 +313,7 @@ getList()
             v-hasPermi="['monitor:operlog:query']"
             link
             type="primary"
-            icon="View"
+            :icon="Eye"
             @click="handleDetail(scope.row, scope.index)"
           >
             详细

@@ -1,4 +1,5 @@
 <script setup>
+import { LoaderCircle, Mail } from '@lucide/vue'
 import { listNoticeTop, markNoticeRead, markNoticeReadAll } from '@/api/system/notice'
 import NoticeDetailView from './DetailView'
 
@@ -94,15 +95,11 @@ function markAllRead() {
         <span class="notice-mark-all" @click="markAllRead">全部已读</span>
       </div>
       <div v-if="noticeLoading" class="notice-loading">
-        <el-icon class="is-loading">
-          <Loading />
-        </el-icon>
+        <LoaderCircle class="animate-spin" />
         加载中...
       </div>
       <div v-else-if="noticeList.length === 0" class="notice-empty">
-        <el-icon style="font-size: 24px; display: block; margin-bottom: 6px">
-          <Postcard />
-        </el-icon>
+        <Mail :size="24" class="block mb-1.5" />
         暂无公告
       </div>
       <div v-else>

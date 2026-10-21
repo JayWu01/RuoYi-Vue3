@@ -1,4 +1,5 @@
 <script setup>
+import { Search } from '@lucide/vue'
 import Fuse from 'fuse.js'
 import usePermissionStore from '@/store/modules/permission'
 import useSettingsStore from '@/store/modules/settings'
@@ -191,7 +192,7 @@ watch(searchPool, (list) => {
         ref="headerSearchSelectRef"
         v-model="search"
         size="large"
-        prefix-icon="Search"
+        :prefix-icon="Search"
         placeholder="菜单搜索，支持标题、URL模糊查询"
         clearable
         @input="querySearch"
@@ -229,9 +230,7 @@ watch(searchPool, (list) => {
           </template>
 
           <div v-else-if="search && options.length === 0" class="empty-state">
-            <el-icon class="empty-icon">
-              <Search />
-            </el-icon>
+            <Search class="empty-icon" />
             <p class="empty-text">
               未找到 "<strong>{{ search }}</strong>" 相关菜单
             </p>

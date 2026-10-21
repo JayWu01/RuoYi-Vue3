@@ -15,7 +15,6 @@
     "worma:gen": "worma gen"
   },
   "dependencies": {
-    "@element-plus/icons-vue": "2.3.2",
     "@lucide/vue": "^1.59.0",
     "@vueup/vue-quill": "1.2.0",
     "@vueuse/core": "14.1.0",

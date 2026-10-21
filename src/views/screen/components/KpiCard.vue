@@ -1,10 +1,12 @@
 <script setup>
+import { computed } from 'vue'
+import { isTrendUp } from '../utils/trend'
 import AnimatedStatistic from './AnimatedStatistic.vue'
 import TrendValue from './TrendValue.vue'
 
-defineProps({
+const props = defineProps({
   icon: {
-    type: String,
+    type: [Object, Function],
     required: true
   },
   title: {
@@ -23,15 +25,13 @@ defineProps({
     type: [String, Number],
     default: '-'
   },
-  up: {
-    type: Boolean,
-    default: true
-  },
   tone: {
     type: String,
     default: 'cyan'
   }
 })
+
+const isUp = computed(() => isTrendUp(props.rate))
 </script>
 
 <template>
@@ -57,9 +57,9 @@ defineProps({
         {{ note }}
         <TrendValue
           :value="rate"
-          :up="up"
+          :up="isUp"
           show-direction
-          :class="up ? 'font-bold text-chart-red' : 'font-bold text-success'"
+          :class="isUp ? 'font-bold text-chart-red' : 'font-bold text-success'"
         />
       </div>
     </div>

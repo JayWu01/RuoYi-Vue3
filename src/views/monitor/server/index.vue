@@ -1,4 +1,5 @@
 <script setup>
+import { Coffee, Cpu, MessageSquare, Monitor, Ticket } from '@lucide/vue'
 import { getServer } from '@/api/monitor/server'
 
 const server = ref([])
@@ -21,11 +22,11 @@ getList()
       <el-col :span="12" class="card-box">
         <el-card>
           <template #header>
-            <Cpu style="width: 1em; height: 1em; vertical-align: middle" />
-            <span style="vertical-align: middle">CPU</span>
+            <Cpu class="mr-1 align-middle" />
+            <span class="align-middle">CPU</span>
           </template>
           <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%">
+            <table cellspacing="0" class="w-full">
               <thead>
                 <tr>
                   <th class="el-table__cell is-leaf">
@@ -98,11 +99,11 @@ getList()
       <el-col :span="12" class="card-box">
         <el-card>
           <template #header>
-            <Tickets style="width: 1em; height: 1em; vertical-align: middle" />
-            <span style="vertical-align: middle">内存</span>
+            <Ticket class="mr-1 align-middle" />
+            <span class="align-middle">内存</span>
           </template>
           <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%">
+            <table cellspacing="0" class="w-full">
               <thead>
                 <tr>
                   <th class="el-table__cell is-leaf">
@@ -208,11 +209,11 @@ getList()
       <el-col :span="24" class="card-box">
         <el-card>
           <template #header>
-            <Monitor style="width: 1em; height: 1em; vertical-align: middle" />
-            <span style="vertical-align: middle">服务器信息</span>
+            <Monitor class="mr-1 align-middle" />
+            <span class="align-middle">服务器信息</span>
           </template>
           <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%">
+            <table cellspacing="0" class="w-full">
               <tbody>
                 <tr>
                   <td class="el-table__cell is-leaf">
@@ -267,11 +268,11 @@ getList()
       <el-col :span="24" class="card-box">
         <el-card>
           <template #header>
-            <CoffeeCup style="width: 1em; height: 1em; vertical-align: middle" />
-            <span style="vertical-align: middle">Java虚拟机信息</span>
+            <Coffee class="mr-1 align-middle" />
+            <span class="align-middle">Java虚拟机信息</span>
           </template>
           <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%; table-layout: fixed">
+            <table cellspacing="0" class="w-full table-fixed">
               <tbody>
                 <tr>
                   <td class="el-table__cell is-leaf">
@@ -362,11 +363,11 @@ getList()
       <el-col :span="24" class="card-box">
         <el-card>
           <template #header>
-            <MessageBox style="width: 1em; height: 1em; vertical-align: middle" />
-            <span style="vertical-align: middle">磁盘状态</span>
+            <MessageSquare class="align-middle" />
+            <span class="align-middle">磁盘状态</span>
           </template>
           <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%">
+            <table cellspacing="0" class="w-full">
               <thead>
                 <tr>
                   <th class="el-table__cell el-table__cell is-leaf">

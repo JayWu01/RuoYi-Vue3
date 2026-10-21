@@ -34,7 +34,10 @@ const numericValue = computed(() => {
   const value = Number.parseFloat(normalizedValue.value?.replaceAll(',', '') ?? '')
   return Number.isFinite(value) ? value : null
 })
-const decimalLength = computed(() => normalizedValue.value?.split('.')[1]?.length || 0)
+const decimalLength = computed(() => {
+  const match = String(normalizedValue.value ?? '').replaceAll(',', '').match(/\.(\d+)/)
+  return match?.[1]?.length ?? 0
+})
 const statisticPrecision = computed(() => props.precision ?? decimalLength.value)
 const statisticSuffix = computed(() => props.suffix || (rawValue.value?.includes('%') ? '%' : ''))
 const statisticRootStyle = {
@@ -63,6 +66,7 @@ watch(numericValue, (value) => {
   <el-statistic
     v-if="numericValue !== null"
     v-bind="$attrs"
+    class="tabular-nums"
     :style="statisticRootStyle"
     :value="animatedValue"
     :precision="statisticPrecision"
@@ -70,5 +74,5 @@ watch(numericValue, (value) => {
     :suffix="statisticSuffix"
     :value-style="statisticNumberStyle"
   />
-  <span v-else v-bind="$attrs">{{ rawValue }}</span>
+  <span v-else v-bind="$attrs" class="tabular-nums">{{ rawValue }}</span>
 </template>

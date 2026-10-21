@@ -1,4 +1,5 @@
 <script setup name="Menu">
+import { ArrowUpDown, Check, CircleHelp, Pencil, Plus, RefreshCw, Search, Trash2 } from '@lucide/vue'
 import { addMenu, delMenu, getMenu, listMenu, updateMenu, updateMenuSort } from '@/api/system/menu'
 import IconSelect from '@/components/IconSelect'
 import SvgIcon from '@/components/SvgIcon'
@@ -214,7 +215,7 @@ getList()
           v-model="queryParams.menuName"
           placeholder="请输入菜单名称"
           clearable
-          style="width: 200px"
+          class="w-[200px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -223,7 +224,7 @@ getList()
           v-model="queryParams.status"
           placeholder="菜单状态"
           clearable
-          style="width: 200px"
+          class="w-[200px]"
         >
           <el-option
             v-for="dict in sys_normal_disable"
@@ -234,10 +235,10 @@ getList()
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">
+        <el-button type="primary" :icon="Search" @click="handleQuery">
           搜索
         </el-button>
-        <el-button icon="Refresh" @click="resetQuery">
+        <el-button :icon="RefreshCw" @click="resetQuery">
           重置
         </el-button>
       </el-form-item>
@@ -249,7 +250,7 @@ getList()
           v-hasPermi="['system:menu:add']"
           type="primary"
           plain
-          icon="Plus"
+          :icon="Plus"
           @click="handleAdd"
         >
           新增
@@ -260,14 +261,14 @@ getList()
           v-hasPermi="['system:menu:edit']"
           type="warning"
           plain
-          icon="Check"
+          :icon="Check"
           @click="handleSaveSort"
         >
           保存排序
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="info" plain icon="Sort" @click="toggleExpandAll">
+        <el-button type="info" plain :icon="ArrowUpDown" @click="toggleExpandAll">
           展开/折叠
         </el-button>
       </el-col>
@@ -321,7 +322,7 @@ getList()
             v-model="scope.row.orderNum"
             controls-position="right"
             :min="0"
-            style="width: 88px"
+            class="w-[88px]"
           />
         </template>
       </el-table-column>
@@ -343,7 +344,7 @@ getList()
             v-hasPermi="['system:menu:edit']"
             link
             type="primary"
-            icon="Edit"
+            :icon="Pencil"
             @click="handleUpdate(scope.row)"
           >
             修改
@@ -352,7 +353,7 @@ getList()
             v-hasPermi="['system:menu:add']"
             link
             type="primary"
-            icon="Plus"
+            :icon="Plus"
             @click="handleAdd(scope.row)"
           >
             新增
@@ -361,7 +362,7 @@ getList()
             v-hasPermi="['system:menu:remove']"
             link
             type="primary"
-            icon="Delete"
+            :icon="Trash2"
             @click="handleDelete(scope.row)"
           >
             删除
@@ -419,12 +420,9 @@ getList()
                       <SvgIcon
                         v-if="form.icon"
                         :icon-class="form.icon"
-                        class="el-input__icon"
-                        style="height: 32px; width: 16px"
+                        class="el-input__icon h-8 w-4"
                       />
-                      <el-icon v-else style="height: 32px; width: 16px">
-                        <search />
-                      </el-icon>
+                      <Search v-else class="h-8 w-4" />
                     </template>
                   </el-input>
                 </template>
@@ -450,7 +448,7 @@ getList()
                     content="默认不填则和路由地址相同：如地址为：`user`，则名称为`User`（注意：因为router会删除名称相同路由，为避免名字的冲突，特殊情况下请自定义，保证唯一性）"
                     placement="top"
                   >
-                    <el-icon><question-filled /></el-icon>
+                    <CircleHelp />
                   </el-tooltip>
                   路由名称
                 </span>
@@ -463,7 +461,7 @@ getList()
               <template #label>
                 <span>
                   <el-tooltip content="选择是外链则路由地址需要以`http(s)://`开头" placement="top">
-                    <el-icon><question-filled /></el-icon> </el-tooltip>是否外链
+                    <CircleHelp /> </el-tooltip>是否外链
                 </span>
               </template>
               <el-radio-group v-model="form.isFrame">
@@ -484,7 +482,7 @@ getList()
                     content="访问的路由地址，如：`user`，如外网地址需内链访问则以`http(s)://`开头"
                     placement="top"
                   >
-                    <el-icon><question-filled /></el-icon>
+                    <CircleHelp />
                   </el-tooltip>
                   路由地址
                 </span>
@@ -500,7 +498,7 @@ getList()
                     content="访问的组件路径，如：`system/user/index`，默认在`views`目录下"
                     placement="top"
                   >
-                    <el-icon><question-filled /></el-icon>
+                    <CircleHelp />
                   </el-tooltip>
                   组件路径
                 </span>
@@ -517,7 +515,7 @@ getList()
                     content="控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasPermi('system:user:list')`)"
                     placement="top"
                   >
-                    <el-icon><question-filled /></el-icon>
+                    <CircleHelp />
                   </el-tooltip>
                   权限字符
                 </span>
@@ -533,7 +531,7 @@ getList()
                     content="访问路由的默认传递参数，如：`{&quot;id&quot;: 1, &quot;name&quot;: &quot;ry&quot;}`"
                     placement="top"
                   >
-                    <el-icon><question-filled /></el-icon>
+                    <CircleHelp />
                   </el-tooltip>
                   路由参数
                 </span>
@@ -548,7 +546,7 @@ getList()
                     content="选择是则会被`keep-alive`缓存，需要匹配组件的`name`和地址保持一致"
                     placement="top"
                   >
-                    <el-icon><question-filled /></el-icon>
+                    <CircleHelp />
                   </el-tooltip>
                   是否缓存
                 </span>
@@ -571,7 +569,7 @@ getList()
                     content="选择隐藏则路由将不会出现在侧边栏，但仍然可以访问"
                     placement="top"
                   >
-                    <el-icon><question-filled /></el-icon>
+                    <CircleHelp />
                   </el-tooltip>
                   显示状态
                 </span>
@@ -591,7 +589,7 @@ getList()
                     content="选择停用则路由将不会出现在侧边栏，也不能被访问"
                     placement="top"
                   >
-                    <el-icon><question-filled /></el-icon>
+                    <CircleHelp />
                   </el-tooltip>
                   菜单状态
                 </span>

@@ -1,4 +1,5 @@
 <script setup name="Notice">
+import { Pencil, Plus, RefreshCw, Search, Trash2, User } from '@lucide/vue'
 import { addNotice, delNotice, getNotice, listNotice, updateNotice } from '@/api/system/notice'
 import NoticeDetailView from '@/layout/components/HeaderNotice/DetailView'
 import ReadUsersDialog from './ReadUsers'
@@ -155,7 +156,7 @@ getList()
           v-model="queryParams.noticeTitle"
           placeholder="请输入公告标题"
           clearable
-          style="width: 200px"
+          class="w-[200px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -164,7 +165,7 @@ getList()
           v-model="queryParams.createBy"
           placeholder="请输入操作人员"
           clearable
-          style="width: 200px"
+          class="w-[200px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -173,7 +174,7 @@ getList()
           v-model="queryParams.noticeType"
           placeholder="公告类型"
           clearable
-          style="width: 200px"
+          class="w-[200px]"
         >
           <el-option
             v-for="dict in sys_notice_type"
@@ -184,10 +185,10 @@ getList()
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">
+        <el-button type="primary" :icon="Search" @click="handleQuery">
           搜索
         </el-button>
-        <el-button icon="Refresh" @click="resetQuery">
+        <el-button :icon="RefreshCw" @click="resetQuery">
           重置
         </el-button>
       </el-form-item>
@@ -199,7 +200,7 @@ getList()
           v-hasPermi="['system:notice:add']"
           type="primary"
           plain
-          icon="Plus"
+          :icon="Plus"
           @click="handleAdd"
         >
           新增
@@ -210,7 +211,7 @@ getList()
           v-hasPermi="['system:notice:edit']"
           type="success"
           plain
-          icon="Edit"
+          :icon="Pencil"
           :disabled="single"
           @click="handleUpdate"
         >
@@ -222,7 +223,7 @@ getList()
           v-hasPermi="['system:notice:remove']"
           type="danger"
           plain
-          icon="Delete"
+          :icon="Trash2"
           :disabled="multiple"
           @click="handleDelete"
         >
@@ -237,7 +238,7 @@ getList()
       <el-table-column label="序号" align="center" prop="noticeId" width="100" />
       <el-table-column label="公告标题" align="center" :show-overflow-tooltip="true">
         <template #default="scope">
-          <a class="link-type" style="cursor: pointer" @click="handleViewData(scope.row)">{{
+          <a class="link-type cursor-pointer" @click="handleViewData(scope.row)">{{
             scope.row.noticeTitle
           }}</a>
         </template>
@@ -264,7 +265,7 @@ getList()
             v-hasPermi="['system:notice:list']"
             link
             type="primary"
-            icon="User"
+            :icon="User"
             @click="handleReadUsers(scope.row)"
           >
             阅读用户
@@ -273,7 +274,7 @@ getList()
             v-hasPermi="['system:notice:edit']"
             link
             type="primary"
-            icon="Edit"
+            :icon="Pencil"
             @click="handleUpdate(scope.row)"
           >
             修改
@@ -282,7 +283,7 @@ getList()
             v-hasPermi="['system:notice:remove']"
             link
             type="primary"
-            icon="Delete"
+            :icon="Trash2"
             @click="handleDelete(scope.row)"
           >
             删除

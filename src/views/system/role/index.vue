@@ -1,4 +1,5 @@
 <script setup name="Role">
+import { CircleCheck, CircleHelp, Download, Pencil, Plus, RefreshCw, Search, Trash2, User } from '@lucide/vue'
 import { treeselect as menuTreeselect, roleMenuTreeselect } from '@/api/system/menu'
 import {
   addRole,
@@ -375,7 +376,7 @@ getList()
           v-model="queryParams.roleName"
           placeholder="请输入角色名称"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -384,7 +385,7 @@ getList()
           v-model="queryParams.roleKey"
           placeholder="请输入权限字符"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -393,7 +394,7 @@ getList()
           v-model="queryParams.status"
           placeholder="角色状态"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
         >
           <el-option
             v-for="dict in sys_normal_disable"
@@ -403,7 +404,7 @@ getList()
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="创建时间" style="width: 308px">
+      <el-form-item label="创建时间" class="w-[308px]">
         <el-date-picker
           v-model="dateRange"
           value-format="YYYY-MM-DD"
@@ -414,10 +415,10 @@ getList()
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">
+        <el-button type="primary" :icon="Search" @click="handleQuery">
           搜索
         </el-button>
-        <el-button icon="Refresh" @click="resetQuery">
+        <el-button :icon="RefreshCw" @click="resetQuery">
           重置
         </el-button>
       </el-form-item>
@@ -428,7 +429,7 @@ getList()
           v-hasPermi="['system:role:add']"
           type="primary"
           plain
-          icon="Plus"
+          :icon="Plus"
           @click="handleAdd"
         >
           新增
@@ -439,7 +440,7 @@ getList()
           v-hasPermi="['system:role:edit']"
           type="success"
           plain
-          icon="Edit"
+          :icon="Pencil"
           :disabled="single"
           @click="handleUpdate"
         >
@@ -451,7 +452,7 @@ getList()
           v-hasPermi="['system:role:remove']"
           type="danger"
           plain
-          icon="Delete"
+          :icon="Trash2"
           :disabled="multiple"
           @click="handleDelete"
         >
@@ -463,7 +464,7 @@ getList()
           v-hasPermi="['system:role:export']"
           type="warning"
           plain
-          icon="Download"
+          :icon="Download"
           @click="handleExport"
         >
           导出
@@ -501,7 +502,7 @@ getList()
               v-hasPermi="['system:role:edit']"
               link
               type="primary"
-              icon="Edit"
+              :icon="Pencil"
               @click="handleUpdate(scope.row)"
             />
           </el-tooltip>
@@ -510,7 +511,7 @@ getList()
               v-hasPermi="['system:role:remove']"
               link
               type="primary"
-              icon="Delete"
+              :icon="Trash2"
               @click="handleDelete(scope.row)"
             />
           </el-tooltip>
@@ -519,7 +520,7 @@ getList()
               v-hasPermi="['system:role:edit']"
               link
               type="primary"
-              icon="CircleCheck"
+              :icon="CircleCheck"
               @click="handleDataScope(scope.row)"
             />
           </el-tooltip>
@@ -528,7 +529,7 @@ getList()
               v-hasPermi="['system:role:edit']"
               link
               type="primary"
-              icon="User"
+              :icon="User"
               @click="handleAuthUser(scope.row)"
             />
           </el-tooltip>
@@ -557,7 +558,7 @@ getList()
                 content="控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasRole('admin')`)"
                 placement="top"
               >
-                <el-icon><question-filled /></el-icon>
+                <CircleHelp />
               </el-tooltip>
               权限字符
             </span>

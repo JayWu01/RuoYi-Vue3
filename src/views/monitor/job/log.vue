@@ -1,4 +1,5 @@
 <script setup name="JobLog">
+import { Download, Eye, RefreshCw, Search, Trash2, X } from '@lucide/vue'
 import { getJob } from '@/api/monitor/job'
 import { cleanJobLog, delJobLog, listJobLog } from '@/api/monitor/jobLog'
 import JobDetail from './detail'
@@ -137,7 +138,7 @@ function handleExport() {
           v-model="queryParams.jobName"
           placeholder="请输入任务名称"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -146,7 +147,7 @@ function handleExport() {
           v-model="queryParams.jobGroup"
           placeholder="请选择任务组名"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
         >
           <el-option
             v-for="dict in sys_job_group"
@@ -161,7 +162,7 @@ function handleExport() {
           v-model="queryParams.status"
           placeholder="请选择执行状态"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
         >
           <el-option
             v-for="dict in sys_common_status"
@@ -171,7 +172,7 @@ function handleExport() {
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="执行时间" style="width: 308px">
+      <el-form-item label="执行时间" class="w-[308px]">
         <el-date-picker
           v-model="dateRange"
           value-format="YYYY-MM-DD"
@@ -182,10 +183,10 @@ function handleExport() {
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">
+        <el-button type="primary" :icon="Search" @click="handleQuery">
           搜索
         </el-button>
-        <el-button icon="Refresh" @click="resetQuery">
+        <el-button :icon="RefreshCw" @click="resetQuery">
           重置
         </el-button>
       </el-form-item>
@@ -197,7 +198,7 @@ function handleExport() {
           v-hasPermi="['monitor:job:remove']"
           type="danger"
           plain
-          icon="Delete"
+          :icon="Trash2"
           :disabled="multiple"
           @click="handleDelete"
         >
@@ -209,7 +210,7 @@ function handleExport() {
           v-hasPermi="['monitor:job:remove']"
           type="danger"
           plain
-          icon="Delete"
+          :icon="Trash2"
           @click="handleClean"
         >
           清空
@@ -220,14 +221,14 @@ function handleExport() {
           v-hasPermi="['monitor:job:export']"
           type="warning"
           plain
-          icon="Download"
+          :icon="Download"
           @click="handleExport"
         >
           导出
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="Close" @click="handleClose">
+        <el-button type="warning" plain :icon="X" @click="handleClose">
           关闭
         </el-button>
       </el-col>
@@ -281,7 +282,7 @@ function handleExport() {
             v-hasPermi="['monitor:job:query']"
             link
             type="primary"
-            icon="View"
+            :icon="Eye"
             @click="handleView(scope.row)"
           >
             详细

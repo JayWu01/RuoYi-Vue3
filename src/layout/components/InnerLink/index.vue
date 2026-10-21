@@ -31,9 +31,10 @@ onMounted(() => {
     <iframe
       :id="iframeId"
       ref="iframeRef"
-      style="width: 100%; height: 100%"
+
       :src="src"
       frameborder="no"
+      class="size-full"
     />
   </div>
 </template>

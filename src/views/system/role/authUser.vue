@@ -1,4 +1,5 @@
 <script setup name="AuthUser">
+import { CircleX, Plus, RefreshCw, Search, X } from '@lucide/vue'
 import { allocatedUserList, authUserCancel, authUserCancelAll } from '@/api/system/role'
 import selectUser from './selectUser'
 
@@ -101,7 +102,7 @@ getList()
           v-model="queryParams.userName"
           placeholder="请输入用户名称"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -110,15 +111,15 @@ getList()
           v-model="queryParams.phonenumber"
           placeholder="请输入手机号码"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">
+        <el-button type="primary" :icon="Search" @click="handleQuery">
           搜索
         </el-button>
-        <el-button icon="Refresh" @click="resetQuery">
+        <el-button :icon="RefreshCw" @click="resetQuery">
           重置
         </el-button>
       </el-form-item>
@@ -130,7 +131,7 @@ getList()
           v-hasPermi="['system:role:add']"
           type="primary"
           plain
-          icon="Plus"
+          :icon="Plus"
           @click="openSelectUser"
         >
           添加用户
@@ -141,7 +142,7 @@ getList()
           v-hasPermi="['system:role:remove']"
           type="danger"
           plain
-          icon="CircleClose"
+          :icon="CircleX"
           :disabled="multiple"
           @click="cancelAuthUserAll"
         >
@@ -149,7 +150,7 @@ getList()
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="Close" @click="handleClose">
+        <el-button type="warning" plain :icon="X" @click="handleClose">
           关闭
         </el-button>
       </el-col>
@@ -178,7 +179,7 @@ getList()
             v-hasPermi="['system:role:remove']"
             link
             type="primary"
-            icon="CircleClose"
+            :icon="CircleX"
             @click="cancelAuthUser(scope.row)"
           >
             取消授权

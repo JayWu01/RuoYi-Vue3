@@ -1,4 +1,5 @@
 <script setup>
+import { Copy, Download as DownloadIcon, Trash2 } from '@lucide/vue'
 import ClipboardJS from 'clipboard'
 import { ElNotification } from 'element-plus'
 import beautifier from 'js-beautify'
@@ -323,13 +324,13 @@ onUnmounted(() => {
     </div>
     <div class="center-board">
       <div class="action-bar">
-        <el-button icon="Download" type="primary" text @click="download">
+        <el-button :icon="DownloadIcon" type="primary" text @click="download">
           导出vue文件
         </el-button>
-        <el-button class="copy-btn-main" icon="DocumentCopy" type="primary" text @click="copy">
+        <el-button class="copy-btn-main" :icon="Copy" type="primary" text @click="copy">
           复制代码
         </el-button>
-        <el-button class="delete-btn" icon="Delete" text type="danger" @click="empty">
+        <el-button class="delete-btn" :icon="Trash2" text type="danger" @click="empty">
           清空
         </el-button>
       </div>

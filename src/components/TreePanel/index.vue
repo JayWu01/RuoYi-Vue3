@@ -1,4 +1,6 @@
 <script setup>
+import { ChevronDown, ChevronsLeft, ChevronsRight, ChevronUp, FileText, Folder, RefreshCw, Search } from '@lucide/vue'
+
 const props = defineProps({
   // 树形数据
   treeData: {
@@ -12,8 +14,8 @@ const props = defineProps({
   },
   // 标题图标
   titleIcon: {
-    type: [String, Object],
-    default: 'OfficeBuilding'
+    type: [String, Object, Function],
+    default: 'Building2'
   },
   // 是否显示搜索框
   showSearch: {
@@ -510,19 +512,15 @@ onBeforeUnmount(() => {
     />
     <div class="tree-header">
       <span v-show="!collapsed" class="tree-title">
-        <el-icon><component :is="titleIcon" /></el-icon> {{ title }}
+        <component :is="titleIcon" class="text-[16px] text-[#409eff]" /> {{ title }}
       </span>
       <div v-show="!collapsed" class="tree-actions">
         <el-tooltip :content="isExpandedAll ? '收起全部' : '展开全部'" placement="right">
-          <el-icon class="tree-action-icon" @click="toggleExpandAll">
-            <ArrowDown v-if="isExpandedAll" />
-            <ArrowUp v-else />
-          </el-icon>
+          <ChevronDown v-if="isExpandedAll" class="tree-action-icon" @click="toggleExpandAll" />
+          <ChevronUp v-else class="tree-action-icon" @click="toggleExpandAll" />
         </el-tooltip>
         <el-tooltip content="刷新" placement="right">
-          <el-icon class="tree-action-icon" @click="handleRefresh">
-            <Refresh />
-          </el-icon>
+          <RefreshCw class="tree-action-icon" @click="handleRefresh" />
         </el-tooltip>
         <slot name="actions" />
       </div>
@@ -531,17 +529,15 @@ onBeforeUnmount(() => {
     <!-- 侧边栏展开/收起按钮 -->
     <div class="collapse-button-container">
       <el-tooltip :content="collapsed ? '展开' : '收起'" placement="right">
-        <el-icon class="collapse-button" @click="toggleCollapsed">
-          <DArrowRight v-if="collapsed" />
-          <DArrowLeft v-else />
-        </el-icon>
+        <ChevronsRight v-if="collapsed" class="collapse-button" @click="toggleCollapsed" />
+        <ChevronsLeft v-else class="collapse-button" @click="toggleCollapsed" />
       </el-tooltip>
     </div>
 
     <div v-show="!collapsed" v-if="showSearch" class="tree-search">
       <el-input v-model="searchKeyword" :placeholder="searchPlaceholder" clearable>
         <template #prefix>
-          <el-icon><Search /></el-icon>
+          <Search />
         </template>
       </el-input>
     </div>
@@ -566,10 +562,8 @@ onBeforeUnmount(() => {
         <template #default="{ node, data }">
           <slot name="node" :node="node" :data="data">
             <span class="tree-node">
-              <el-icon class="node-icon">
-                <Folder v-if="data.children && data.children.length" />
-                <Document v-else />
-              </el-icon>
+              <Folder v-if="data.children && data.children.length" class="node-icon" />
+              <FileText v-else class="node-icon" />
               <span class="node-label" :title="node.label">{{ node.label }}</span>
             </span>
           </slot>
@@ -689,11 +683,6 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     gap: 5px;
-
-    .el-icon {
-      color: #409eff;
-      font-size: 16px;
-    }
   }
 
   .tree-actions {

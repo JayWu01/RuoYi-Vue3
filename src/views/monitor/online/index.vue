@@ -1,4 +1,5 @@
 <script setup name="Online">
+import { RefreshCw, Search, Trash2 } from '@lucide/vue'
 import { forceLogout, list as initData } from '@/api/monitor/online'
 
 const { proxy } = getCurrentInstance()
@@ -61,7 +62,7 @@ getList()
           v-model="queryParams.ipaddr"
           placeholder="请输入登录地址"
           clearable
-          style="width: 200px"
+          class="w-[200px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -70,15 +71,15 @@ getList()
           v-model="queryParams.userName"
           placeholder="请输入用户名称"
           clearable
-          style="width: 200px"
+          class="w-[200px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">
+        <el-button type="primary" :icon="Search" @click="handleQuery">
           搜索
         </el-button>
-        <el-button icon="Refresh" @click="resetQuery">
+        <el-button :icon="RefreshCw" @click="resetQuery">
           重置
         </el-button>
       </el-form-item>
@@ -86,7 +87,7 @@ getList()
     <el-table
       v-loading="loading"
       :data="onlineList.slice((pageNum - 1) * pageSize, pageNum * pageSize)"
-      style="width: 100%"
+      class="w-full"
     >
       <el-table-column label="序号" width="50" type="index" align="center">
         <template #default="scope">
@@ -131,7 +132,7 @@ getList()
             v-hasPermi="['monitor:online:forceLogout']"
             link
             type="primary"
-            icon="Delete"
+            :icon="Trash2"
             @click="handleForceLogout(scope.row)"
           >
             强退

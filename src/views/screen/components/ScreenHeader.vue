@@ -88,7 +88,8 @@ defineEmits(['fullscreen', 'export'])
           type="button"
           aria-label="导出数据"
           title="导出数据"
-          class="!m-0 !grid !h-6 !w-6 !place-items-center !rounded-md !border-0 !bg-transparent !p-0 !text-[#b7cfdd] transition-colors hover:!bg-field hover:!text-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent/60"
+          :disabled="loading"
+          class="!m-0 !grid !h-6 !w-6 !place-items-center !rounded-md !border-0 !bg-transparent !p-0 !text-[#b7cfdd] transition-colors hover:!bg-field hover:!text-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent/60 disabled:cursor-not-allowed disabled:opacity-40"
           @click="$emit('export')"
         >
           <FileDown :size="15" :stroke-width="1.8" aria-hidden="true" />

@@ -200,8 +200,8 @@ onMounted(() => {
                   :label="dict.dictName"
                   :value="dict.dictType"
                 >
-                  <span style="float: left">{{ dict.dictName }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{
+                  <span class="float-left">{{ dict.dictName }}</span>
+                  <span class="float-right text-[#8492a6] text-[13px]">{{
                     dict.dictType
                   }}</span>
                 </el-option>
@@ -215,7 +215,7 @@ onMounted(() => {
       </el-tab-pane>
     </el-tabs>
     <el-form label-width="100px">
-      <div style="text-align: center; margin-left: -100px; margin-top: 10px">
+      <div class="text-center -ml-[100px] mt-2.5">
         <el-button type="primary" @click="submitForm()">
           提交
         </el-button>

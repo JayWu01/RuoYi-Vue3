@@ -1,4 +1,5 @@
 <script setup name="Data">
+import { Download, Pencil, Plus, RefreshCw, Search, Trash2, X } from '@lucide/vue'
 import { addData, delData, getData, listData, updateData } from '@/api/system/dict/data'
 import { optionselect as getDictOptionselect, getType } from '@/api/system/dict/type'
 import useDictStore from '@/store/modules/dict'
@@ -196,7 +197,7 @@ getTypeList()
   <div class="app-container">
     <el-form v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true">
       <el-form-item label="字典名称" prop="dictType">
-        <el-select v-model="queryParams.dictType" style="width: 200px">
+        <el-select v-model="queryParams.dictType" class="w-[200px]">
           <el-option
             v-for="item in typeOptions"
             :key="item.dictId"
@@ -210,7 +211,7 @@ getTypeList()
           v-model="queryParams.dictLabel"
           placeholder="请输入字典标签"
           clearable
-          style="width: 200px"
+          class="w-[200px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -219,7 +220,7 @@ getTypeList()
           v-model="queryParams.status"
           placeholder="数据状态"
           clearable
-          style="width: 200px"
+          class="w-[200px]"
         >
           <el-option
             v-for="dict in sys_normal_disable"
@@ -230,10 +231,10 @@ getTypeList()
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">
+        <el-button type="primary" :icon="Search" @click="handleQuery">
           搜索
         </el-button>
-        <el-button icon="Refresh" @click="resetQuery">
+        <el-button :icon="RefreshCw" @click="resetQuery">
           重置
         </el-button>
       </el-form-item>
@@ -245,7 +246,7 @@ getTypeList()
           v-hasPermi="['system:dict:add']"
           type="primary"
           plain
-          icon="Plus"
+          :icon="Plus"
           @click="handleAdd"
         >
           新增
@@ -256,7 +257,7 @@ getTypeList()
           v-hasPermi="['system:dict:edit']"
           type="success"
           plain
-          icon="Edit"
+          :icon="Pencil"
           :disabled="single"
           @click="handleUpdate"
         >
@@ -268,7 +269,7 @@ getTypeList()
           v-hasPermi="['system:dict:remove']"
           type="danger"
           plain
-          icon="Delete"
+          :icon="Trash2"
           :disabled="multiple"
           @click="handleDelete"
         >
@@ -280,14 +281,14 @@ getTypeList()
           v-hasPermi="['system:dict:export']"
           type="warning"
           plain
-          icon="Download"
+          :icon="Download"
           @click="handleExport"
         >
           导出
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="Close" @click="handleClose">
+        <el-button type="warning" plain :icon="X" @click="handleClose">
           关闭
         </el-button>
       </el-col>
@@ -338,7 +339,7 @@ getTypeList()
             v-hasPermi="['system:dict:edit']"
             link
             type="primary"
-            icon="Edit"
+            :icon="Pencil"
             @click="handleUpdate(scope.row)"
           >
             修改
@@ -347,7 +348,7 @@ getTypeList()
             v-hasPermi="['system:dict:remove']"
             link
             type="primary"
-            icon="Delete"
+            :icon="Trash2"
             @click="handleDelete(scope.row)"
           >
             删除

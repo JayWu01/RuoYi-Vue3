@@ -16,7 +16,7 @@ export function initDrawingDefaultValue() {
       'clearable': true,
       'prepend': '',
       'append': '',
-      'prefix-icon': 'Cellphone',
+      'prefix-icon': 'Phone',
       'suffix-icon': '',
       'maxlength': 11,
       'show-word-limit': true,

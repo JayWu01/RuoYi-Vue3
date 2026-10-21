@@ -1,4 +1,6 @@
 <script setup name="JobDetail">
+import { Calendar, Clock, FileText, Info, Settings, Settings2, TriangleAlert } from '@lucide/vue'
+
 const props = defineProps({
   visible: { type: Boolean, default: false },
   row: { type: Object, default: () => ({}) },
@@ -38,7 +40,7 @@ const costTime = computed(() => {
         <!-- 基本信息 -->
         <div class="detail-card">
           <div class="detail-card-title">
-            <el-icon><InfoFilled /></el-icon> 基本信息
+            <Info /> 基本信息
           </div>
           <el-row class="detail-row">
             <el-col :span="12">
@@ -86,7 +88,7 @@ const costTime = computed(() => {
         <!-- 任务信息 -->
         <div class="detail-card">
           <div class="detail-card-title">
-            <el-icon><Clock /></el-icon> 任务信息
+            <Clock /> 任务信息
           </div>
           <el-row class="detail-row">
             <el-col :span="12">
@@ -112,7 +114,7 @@ const costTime = computed(() => {
         <!-- 调用目标 -->
         <div class="detail-card">
           <div class="detail-card-title">
-            <el-icon><Operation /></el-icon> 调用目标
+            <Settings2 /> 调用目标
           </div>
           <div class="code-body">
             <div class="code-wrap">
@@ -123,7 +125,7 @@ const costTime = computed(() => {
         <!-- 异常信息 -->
         <div v-if="form.status == 1" class="detail-card">
           <div class="detail-card-title error-title">
-            <el-icon><Warning /></el-icon> 异常信息
+            <TriangleAlert /> 异常信息
           </div>
           <div class="error-body">
             <div class="error-msg">
@@ -137,7 +139,7 @@ const costTime = computed(() => {
         <!-- 任务配置 -->
         <div class="detail-card">
           <div class="detail-card-title">
-            <el-icon><Setting /></el-icon> 任务配置
+            <Settings /> 任务配置
           </div>
           <el-row class="detail-row">
             <el-col :span="12">
@@ -174,7 +176,7 @@ const costTime = computed(() => {
         <!-- 调度信息 -->
         <div class="detail-card">
           <div class="detail-card-title">
-            <el-icon><Calendar /></el-icon> 调度信息
+            <Calendar /> 调度信息
           </div>
           <el-row class="detail-row">
             <el-col :span="12">
@@ -222,7 +224,7 @@ const costTime = computed(() => {
         <!-- 执行方法 -->
         <div class="detail-card">
           <div class="detail-card-title">
-            <el-icon><Operation /></el-icon> 执行方法
+            <Settings2 /> 执行方法
           </div>
           <div class="code-body">
             <div class="code-wrap">
@@ -233,7 +235,7 @@ const costTime = computed(() => {
         <!-- 元信息 -->
         <div class="detail-card">
           <div class="detail-card-title">
-            <el-icon><Document /></el-icon> 元信息
+            <FileText /> 元信息
           </div>
           <el-row class="detail-row">
             <el-col :span="12">

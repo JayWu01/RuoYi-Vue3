@@ -1,4 +1,5 @@
 <script setup name="Gen">
+import { Copy, Download, Eye, Pencil, Plus, RefreshCw, Search, Trash2, Upload } from '@lucide/vue'
 import { delTable, genCode, listTable, previewTable, synchDb } from '@/api/tool/gen'
 import createTable from './createTable'
 import importTable from './importTable'
@@ -176,7 +177,7 @@ getList()
           v-model="queryParams.tableName"
           placeholder="请输入表名称"
           clearable
-          style="width: 200px"
+          class="w-[200px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -185,11 +186,11 @@ getList()
           v-model="queryParams.tableComment"
           placeholder="请输入表描述"
           clearable
-          style="width: 200px"
+          class="w-[200px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="创建时间" style="width: 308px">
+      <el-form-item label="创建时间" class="w-[308px]">
         <el-date-picker
           v-model="dateRange"
           value-format="YYYY-MM-DD"
@@ -200,10 +201,10 @@ getList()
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">
+        <el-button type="primary" :icon="Search" @click="handleQuery">
           搜索
         </el-button>
-        <el-button icon="Refresh" @click="resetQuery">
+        <el-button :icon="RefreshCw" @click="resetQuery">
           重置
         </el-button>
       </el-form-item>
@@ -215,7 +216,7 @@ getList()
           v-hasPermi="['tool:gen:code']"
           type="primary"
           plain
-          icon="Download"
+          :icon="Download"
           :disabled="multiple"
           @click="handleGenTable"
         >
@@ -223,7 +224,7 @@ getList()
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button v-hasRole="['admin']" type="primary" plain icon="Plus" @click="openCreateTable">
+        <el-button v-hasRole="['admin']" type="primary" plain :icon="Plus" @click="openCreateTable">
           创建
         </el-button>
       </el-col>
@@ -232,7 +233,7 @@ getList()
           v-hasPermi="['tool:gen:import']"
           type="info"
           plain
-          icon="Upload"
+          :icon="Upload"
           @click="openImportTable"
         >
           导入
@@ -243,7 +244,7 @@ getList()
           v-hasPermi="['tool:gen:edit']"
           type="success"
           plain
-          icon="Edit"
+          :icon="Pencil"
           :disabled="single"
           @click="handleEditTable"
         >
@@ -255,7 +256,7 @@ getList()
           v-hasPermi="['tool:gen:remove']"
           type="danger"
           plain
-          icon="Delete"
+          :icon="Trash2"
           :disabled="multiple"
           @click="handleDelete"
         >
@@ -320,7 +321,7 @@ getList()
               v-hasPermi="['tool:gen:preview']"
               link
               type="primary"
-              icon="View"
+              :icon="Eye"
               @click="handlePreview(scope.row)"
             />
           </el-tooltip>
@@ -329,7 +330,7 @@ getList()
               v-hasPermi="['tool:gen:edit']"
               link
               type="primary"
-              icon="Edit"
+              :icon="Pencil"
               @click="handleEditTable(scope.row)"
             />
           </el-tooltip>
@@ -338,7 +339,7 @@ getList()
               v-hasPermi="['tool:gen:remove']"
               link
               type="primary"
-              icon="Delete"
+              :icon="Trash2"
               @click="handleDelete(scope.row)"
             />
           </el-tooltip>
@@ -347,7 +348,7 @@ getList()
               v-hasPermi="['tool:gen:edit']"
               link
               type="primary"
-              icon="Refresh"
+              :icon="RefreshCw"
               @click="handleSynchDb(scope.row)"
             />
           </el-tooltip>
@@ -356,7 +357,7 @@ getList()
               v-hasPermi="['tool:gen:code']"
               link
               type="primary"
-              icon="Download"
+              :icon="Download"
               @click="handleGenTable(scope.row)"
             />
           </el-tooltip>
@@ -390,8 +391,9 @@ getList()
             v-copyText="value"
             v-copyText:callback="copyTextSuccess"
             underline="never"
-            icon="DocumentCopy"
-            style="float: right"
+            :icon="Copy"
+
+            class="float-right"
           >
             &nbsp;复制
           </el-link>

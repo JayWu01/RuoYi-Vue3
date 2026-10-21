@@ -2,13 +2,13 @@
 import { Bell, ClipboardList, Phone, Share2 } from '@lucide/vue'
 import KpiCard from '../components/KpiCard.vue'
 import ScreenPanel from '../components/ScreenPanel.vue'
+
 const props = defineProps({
   data: {
     type: Object,
     required: true
   }
 })
-const isUp = value => !value?.startsWith('-')
 
 /**
  * 格式化环比百分比，0.000000% 转为 0%，其他原样输出
@@ -33,8 +33,6 @@ function formatRate(rateStr) {
   const sign = num > 0 ? '+' : '-'
   return `${sign}${Math.abs(num).toFixed(1)}%`
 }
-
-
 </script>
 
 <template>
@@ -46,7 +44,6 @@ function formatRate(rateStr) {
         tone="cyan"
         :value="props.data.totalAlarm"
         :rate="formatRate(props.data.totalAlarmRatio)"
-        :up="isUp(props.data.totalAlarmRatio)"
       />
       <KpiCard
         :icon="Bell"
@@ -54,7 +51,6 @@ function formatRate(rateStr) {
         tone="violet"
         :value="props.data.selfAlarm"
         :rate="formatRate(props.data.selfAlarmRatio)"
-        :up="isUp(props.data.selfAlarmRatio)"
       />
       <KpiCard
         :icon="Share2"
@@ -62,7 +58,6 @@ function formatRate(rateStr) {
         tone="green"
         :value="props.data.transferAlarm"
         :rate="formatRate(props.data.transferAlarmRatio)"
-        :up="isUp(props.data.transferAlarmRatio)"
       />
       <KpiCard
         :icon="Phone"
@@ -70,7 +65,6 @@ function formatRate(rateStr) {
         tone="cyan"
         :value="props.data.policeDispatch"
         :rate="formatRate(props.data.policeDispatchRatio)"
-        :up="isUp(props.data.policeDispatchRatio)"
       />
     </div>
   </ScreenPanel>

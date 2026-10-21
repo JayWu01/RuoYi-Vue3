@@ -362,10 +362,10 @@ function buildElCheckboxGroupChild(conf) {
 function buildElUploadChild(conf) {
   const list = []
   if (conf['list-type'] === 'picture-card') {
-    list.push('<i class="el-icon-plus"></i>')
+    list.push('<Plus />')
   } else {
     list.push(
-      `<el-button size="small" type="primary" icon="el-icon-upload">${conf.buttonText}</el-button>`
+      `<el-button size="small" type="primary" icon="Upload">${conf.buttonText}</el-button>`
     )
   }
   if (conf.showTip) {

@@ -1,4 +1,5 @@
 <script setup name="Job">
+import { ChevronRight, CircleHelp, Clock, Download, Pencil, Plus, RefreshCw, Search, Settings2, Trash2 } from '@lucide/vue'
 import {
   addJob,
   changeJobStatus,
@@ -226,7 +227,7 @@ getList()
           v-model="queryParams.jobName"
           placeholder="请输入任务名称"
           clearable
-          style="width: 200px"
+          class="w-[200px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -235,7 +236,7 @@ getList()
           v-model="queryParams.jobGroup"
           placeholder="请选择任务组名"
           clearable
-          style="width: 200px"
+          class="w-[200px]"
         >
           <el-option
             v-for="dict in sys_job_group"
@@ -250,7 +251,7 @@ getList()
           v-model="queryParams.status"
           placeholder="请选择任务状态"
           clearable
-          style="width: 200px"
+          class="w-[200px]"
         >
           <el-option
             v-for="dict in sys_job_status"
@@ -261,10 +262,10 @@ getList()
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">
+        <el-button type="primary" :icon="Search" @click="handleQuery">
           搜索
         </el-button>
-        <el-button icon="Refresh" @click="resetQuery">
+        <el-button :icon="RefreshCw" @click="resetQuery">
           重置
         </el-button>
       </el-form-item>
@@ -276,7 +277,7 @@ getList()
           v-hasPermi="['monitor:job:add']"
           type="primary"
           plain
-          icon="Plus"
+          :icon="Plus"
           @click="handleAdd"
         >
           新增
@@ -287,7 +288,7 @@ getList()
           v-hasPermi="['monitor:job:edit']"
           type="success"
           plain
-          icon="Edit"
+          :icon="Pencil"
           :disabled="single"
           @click="handleUpdate"
         >
@@ -299,7 +300,7 @@ getList()
           v-hasPermi="['monitor:job:remove']"
           type="danger"
           plain
-          icon="Delete"
+          :icon="Trash2"
           :disabled="multiple"
           @click="handleDelete"
         >
@@ -311,7 +312,7 @@ getList()
           v-hasPermi="['monitor:job:export']"
           type="warning"
           plain
-          icon="Download"
+          :icon="Download"
           @click="handleExport"
         >
           导出
@@ -322,7 +323,7 @@ getList()
           v-hasPermi="['monitor:job:query']"
           type="info"
           plain
-          icon="Operation"
+          :icon="Settings2"
           @click="handleJobLog"
         >
           日志
@@ -336,7 +337,7 @@ getList()
       <el-table-column label="任务编号" width="100" align="center" prop="jobId" />
       <el-table-column label="任务名称" align="center" :show-overflow-tooltip="true">
         <template #default="scope">
-          <a class="link-type" style="cursor: pointer" @click="handleView(scope.row)">{{
+          <a class="link-type cursor-pointer" @click="handleView(scope.row)">{{
             scope.row.jobName
           }}</a>
         </template>
@@ -380,7 +381,7 @@ getList()
               v-hasPermi="['monitor:job:edit']"
               link
               type="primary"
-              icon="Edit"
+              :icon="Pencil"
               @click="handleUpdate(scope.row)"
             />
           </el-tooltip>
@@ -389,7 +390,7 @@ getList()
               v-hasPermi="['monitor:job:remove']"
               link
               type="primary"
-              icon="Delete"
+              :icon="Trash2"
               @click="handleDelete(scope.row)"
             />
           </el-tooltip>
@@ -398,7 +399,7 @@ getList()
               v-hasPermi="['monitor:job:changeStatus']"
               link
               type="primary"
-              icon="CaretRight"
+              :icon="ChevronRight"
               @click="handleRun(scope.row)"
             />
           </el-tooltip>
@@ -407,7 +408,7 @@ getList()
               v-hasPermi="['monitor:job:query']"
               link
               type="primary"
-              icon="Operation"
+              :icon="Settings2"
               @click="handleJobLog(scope.row)"
             />
           </el-tooltip>
@@ -457,7 +458,7 @@ getList()
                         <br>参数说明：支持字符串，布尔类型，长整型，浮点型，整型
                       </div>
                     </template>
-                    <el-icon><question-filled /></el-icon>
+                    <CircleHelp />
                   </el-tooltip>
                 </span>
               </template>
@@ -470,7 +471,7 @@ getList()
                 <template #append>
                   <el-button type="primary" @click="handleShowCron">
                     生成表达式
-                    <i class="el-icon-time el-icon--right" />
+                    <Clock class="ml-[5px]" size="1em" />
                   </el-button>
                 </template>
               </el-input>

@@ -2,11 +2,10 @@ import request from '@/utils/request'
 import {
   getAlarmKpi as requestAlarmKpi,
   getAlarmTrend as requestAlarmTrend,
-  getFugitiveTrend as requestFugitiveTrend,
   getJuvenileTrend as requestJuvenileTrend,
   getMinorPie as requestMinorPie,
   getResultKpi as requestResultKpi,
-  getTwoRob as requestUnitRank
+  getTwoRob as requestTwoRob
 } from './generated/services/general'
 
 /** @typedef {import('./generated/components').PoliceStatQueryDTO} PoliceStatQueryDTO */
@@ -39,15 +38,6 @@ export function getMinorPie(params) {
 }
 
 /**
- * 获取网逃抓捕趋势数据。
- * @param {PoliceStatQueryDTO} params 查询条件
- * @returns {ReturnType<typeof requestFugitiveTrend>} 趋势数据
- */
-export function getFugitiveTrend(params) {
-  return requestFugitiveTrend({ data: params })
-}
-
-/**
  * 获取警情趋势数据。
  * @param {PoliceStatQueryDTO} params 查询条件
  * @returns {ReturnType<typeof requestAlarmTrend>} 趋势数据
@@ -70,7 +60,7 @@ export function getAlarmTrend(params) {
  * @returns {ReturnType<typeof requestTwoRob>} 趋势数据
  */
 export function getTwoRob(params) {
-  return requestUnitRank({ data: params })
+  return requestTwoRob({ data: params })
 }
 
 /**

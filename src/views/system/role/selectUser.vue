@@ -1,4 +1,5 @@
 <script setup name="SelectUser">
+import { RefreshCw, Search } from '@lucide/vue'
 import { authUserSelectAll, unallocatedUserList } from '@/api/system/role'
 
 const props = defineProps({
@@ -90,7 +91,7 @@ defineExpose({
           v-model="queryParams.userName"
           placeholder="请输入用户名称"
           clearable
-          style="width: 180px"
+          class="w-[180px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -99,15 +100,15 @@ defineExpose({
           v-model="queryParams.phonenumber"
           placeholder="请输入手机号码"
           clearable
-          style="width: 180px"
+          class="w-[180px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">
+        <el-button type="primary" :icon="Search" @click="handleQuery">
           搜索
         </el-button>
-        <el-button icon="Refresh" @click="resetQuery">
+        <el-button :icon="RefreshCw" @click="resetQuery">
           重置
         </el-button>
       </el-form-item>

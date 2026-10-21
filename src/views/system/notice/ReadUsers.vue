@@ -1,5 +1,5 @@
 <script setup name="ReadUsers">
-import { Search } from '@element-plus/icons-vue'
+import { RefreshCw, Search } from '@lucide/vue'
 import { listNoticeReadUsers } from '@/api/system/notice'
 
 const { proxy } = getCurrentInstance()
@@ -73,28 +73,29 @@ defineExpose({
       :model="queryParams"
       size="small"
       :inline="true"
-      style="margin-bottom: 4px"
+
+      class="mb-1"
     >
       <el-form-item prop="searchValue">
         <el-input
           v-model="queryParams.searchValue"
           placeholder="登录名称 / 用户名称"
           clearable
-          :prefix-icon="Search"
-          style="width: 220px"
+          :prefix-:icon="Search"
+          class="w-[220px]"
           @keyup.enter="handleQuery"
           @clear="handleQuery"
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" size="small" @click="handleQuery">
+        <el-button type="primary" :icon="Search" size="small" @click="handleQuery">
           搜索
         </el-button>
-        <el-button icon="Refresh" size="small" @click="resetQuery">
+        <el-button :icon="RefreshCw" size="small" @click="resetQuery">
           重置
         </el-button>
       </el-form-item>
-      <el-form-item style="float: right; margin-right: 0">
+      <el-form-item class="float-right mr-0">
         <span class="read-stat">
           共 <strong>{{ total }}</strong> 人已读
         </span>
@@ -132,7 +133,8 @@ defineExpose({
       v-model:page="queryParams.pageNum"
       v-model:limit="queryParams.pageSize"
       :total="total"
-      style="padding: 6px 0px"
+
+      class="py-1.5"
       @pagination="getList"
     />
   </el-dialog>

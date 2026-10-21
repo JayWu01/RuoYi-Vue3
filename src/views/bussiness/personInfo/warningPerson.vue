@@ -1,100 +1,7 @@
-<template>
-  <div class="app-container">
-    <div class="page-header">
-      <h2>⚠️重复线索预警列表</h2>
-    </div>
-
-    <!-- 查询表单 -->
-    <el-form :model="queryParams" ref="queryRef" inline>
-      <el-form-item label="接警时间">
-        <el-date-picker
-            v-model="queryParams.dateRange"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            value-format="YYYY-MM-DD"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="Search" @click="getData">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
-
-    <!-- 预警表格 -->
-    <el-table
-        v-loading="loading"
-        :data="tableData"
-        border
-        stripe
-        style="width: 100%;margin-top:10px"
-    >
-      <el-table-column label="警单编号" prop="receiveAlarmNo" align="center" />
-      <el-table-column label="姓名" prop="personName" align="center" />
-      <el-table-column label="身份证号" prop="cardNo" align="center" />
-      <el-table-column label="手机号" prop="phoneNo" align="center" />
-      <el-table-column label="性别" prop="gender" align="center" />
-      <el-table-column label="接警时间" prop="alarmTime" align="center" />
-      <el-table-column label="重复类型" prop="repeatType" align="center">
-        <template #default="scope">
-          <el-tag
-              :type="getTagType(scope.row.repeatType)"
-          >{{ scope.row.repeatType }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center" fixed="right">
-        <template #default="scope">
-          <el-button type="text" icon="View" @click="openCompareDialog(scope.row)">查看警情对比</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <!-- 分页 -->
-    <pagination
-        v-model:total="total"
-        v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize"
-        @pagination="getData"
-    />
-
-    <!-- 弹窗：本组警情对比 -->
-    <el-dialog
-        v-model="compareDialog.visible"
-        title="重复线索组对比"
-        width="85%"
-        append-to-body
-    >
-      <el-table
-          :data="compareDialog.tableData"
-          border
-          stripe
-          :row-class-name="setRowClass"
-      >
-        <el-table-column label="警单编号" prop="receiveAlarmNo" align="center"/>
-        <el-table-column label="姓名" prop="personName" align="center"/>
-        <el-table-column label="身份证号" prop="cardNo" align="center"/>
-        <el-table-column label="手机号" prop="phoneNo" align="center"/>
-        <el-table-column label="性别" prop="gender" align="center"/>
-        <el-table-column label="接警时间" prop="alarmTime" align="center"/>
-        <el-table-column label="重复类型" prop="repeatType" align="center">
-          <template #default="scope">
-            <el-tag :type="getTagType(scope.row.repeatType)">{{ scope.row.repeatType }}</el-tag>
-          </template>
-        </el-table-column>
-      </el-table>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="compareDialog.visible = false">关闭</el-button>
-        </span>
-      </template>
-    </el-dialog>
-  </div>
-</template>
-
 <script setup>
-import { ref, reactive } from 'vue'
-import { getWarningList, getGroupPersonByAlarmIds } from '@/api/bussiness/personInfo'
+import { Eye, RefreshCw, Search } from '@lucide/vue'
+import { reactive, ref } from 'vue'
+import { getGroupPersonByAlarmIds, getWarningList } from '@/api/bussiness/personInfo'
 
 const queryRef = ref(null)
 const loading = ref(false)
@@ -175,6 +82,111 @@ const getTagType = (type) => {
   return ''
 }
 </script>
+
+<template>
+  <div class="app-container">
+    <div class="page-header">
+      <h2>⚠️重复线索预警列表</h2>
+    </div>
+
+    <!-- 查询表单 -->
+    <el-form ref="queryRef" :model="queryParams" inline>
+      <el-form-item label="接警时间">
+        <el-date-picker
+          v-model="queryParams.dateRange"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          value-format="YYYY-MM-DD"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" :icon="Search" @click="getData">
+          搜索
+        </el-button>
+        <el-button :icon="RefreshCw" @click="resetQuery">
+          重置
+        </el-button>
+      </el-form-item>
+    </el-form>
+
+    <!-- 预警表格 -->
+    <el-table
+      v-loading="loading"
+      :data="tableData"
+      border
+      stripe
+
+      class="w-full mt-2.5"
+    >
+      <el-table-column label="警单编号" prop="receiveAlarmNo" align="center" />
+      <el-table-column label="姓名" prop="personName" align="center" />
+      <el-table-column label="身份证号" prop="cardNo" align="center" />
+      <el-table-column label="手机号" prop="phoneNo" align="center" />
+      <el-table-column label="性别" prop="gender" align="center" />
+      <el-table-column label="接警时间" prop="alarmTime" align="center" />
+      <el-table-column label="重复类型" prop="repeatType" align="center">
+        <template #default="scope">
+          <el-tag
+            :type="getTagType(scope.row.repeatType)"
+          >
+            {{ scope.row.repeatType }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" align="center" fixed="right">
+        <template #default="scope">
+          <el-button type="text" :icon="Eye" @click="openCompareDialog(scope.row)">
+            查看警情对比
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <!-- 分页 -->
+    <pagination
+      v-model:total="total"
+      v-model:page="queryParams.pageNum"
+      v-model:limit="queryParams.pageSize"
+      @pagination="getData"
+    />
+
+    <!-- 弹窗：本组警情对比 -->
+    <el-dialog
+      v-model="compareDialog.visible"
+      title="重复线索组对比"
+      width="85%"
+      append-to-body
+    >
+      <el-table
+        :data="compareDialog.tableData"
+        border
+        stripe
+        :row-class-name="setRowClass"
+      >
+        <el-table-column label="警单编号" prop="receiveAlarmNo" align="center" />
+        <el-table-column label="姓名" prop="personName" align="center" />
+        <el-table-column label="身份证号" prop="cardNo" align="center" />
+        <el-table-column label="手机号" prop="phoneNo" align="center" />
+        <el-table-column label="性别" prop="gender" align="center" />
+        <el-table-column label="接警时间" prop="alarmTime" align="center" />
+        <el-table-column label="重复类型" prop="repeatType" align="center">
+          <template #default="scope">
+            <el-tag :type="getTagType(scope.row.repeatType)">
+              {{ scope.row.repeatType }}
+            </el-tag>
+          </template>
+        </el-table-column>
+      </el-table>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="compareDialog.visible = false">关闭</el-button>
+        </span>
+      </template>
+    </el-dialog>
+  </div>
+</template>
 
 <style scoped>
 /* 弹窗高亮行样式 */

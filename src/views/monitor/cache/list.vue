@@ -1,4 +1,5 @@
 <script setup name="CacheList">
+import { FileText, KeyRound, Library, RefreshCw, Trash2 } from '@lucide/vue'
 import {
   clearCacheAll,
   clearCacheKey,
@@ -100,15 +101,15 @@ getCacheNames()
   <div class="app-container">
     <el-row :gutter="10">
       <el-col :span="8">
-        <el-card style="height: calc(100vh - 125px)">
+        <el-card class="h-[calc(100vh_-_125px)]">
           <template #header>
-            <Collection style="width: 1em; height: 1em; vertical-align: middle" />
-            <span style="vertical-align: middle">缓存列表</span>
+            <Library class="mr-1 align-middle" />
+            <span class="align-middle">缓存列表</span>
             <el-button
-              style="float: right; padding: 3px 0"
+              class="float-right py-[3px]"
               link
               type="primary"
-              icon="Refresh"
+              :icon="RefreshCw"
               @click="refreshCacheNames()"
             />
           </template>
@@ -117,7 +118,7 @@ getCacheNames()
             :data="cacheNames"
             :height="tableHeight"
             highlight-current-row
-            style="width: 100%"
+            class="w-full"
             @row-click="getCacheKeys"
           >
             <el-table-column label="序号" width="60" type="index" />
@@ -146,7 +147,7 @@ getCacheNames()
                 <el-button
                   link
                   type="primary"
-                  icon="Delete"
+                  :icon="Trash2"
                   @click="handleClearCacheName(scope.row)"
                 />
               </template>
@@ -156,15 +157,15 @@ getCacheNames()
       </el-col>
 
       <el-col :span="8">
-        <el-card style="height: calc(100vh - 125px)">
+        <el-card class="h-[calc(100vh_-_125px)]">
           <template #header>
-            <Key style="width: 1em; height: 1em; vertical-align: middle" />
-            <span style="vertical-align: middle">键名列表</span>
+            <KeyRound class="mr-1 align-middle" />
+            <span class="align-middle">键名列表</span>
             <el-button
-              style="float: right; padding: 3px 0"
+              class="float-right py-[3px]"
               link
               type="primary"
-              icon="Refresh"
+              :icon="RefreshCw"
               @click="refreshCacheKeys()"
             />
           </template>
@@ -173,7 +174,7 @@ getCacheNames()
             :data="cacheKeys"
             :height="tableHeight"
             highlight-current-row
-            style="width: 100%"
+            class="w-full"
             @row-click="handleCacheValue"
           >
             <el-table-column label="序号" width="60" type="index" />
@@ -193,7 +194,7 @@ getCacheNames()
                 <el-button
                   link
                   type="primary"
-                  icon="Delete"
+                  :icon="Trash2"
                   @click="handleClearCacheKey(scope.row)"
                 />
               </template>
@@ -203,15 +204,15 @@ getCacheNames()
       </el-col>
 
       <el-col :span="8">
-        <el-card :bordered="false" style="height: calc(100vh - 125px)">
+        <el-card :bordered="false" class="h-[calc(100vh_-_125px)]">
           <template #header>
-            <Document style="width: 1em; height: 1em; vertical-align: middle" />
-            <span style="vertical-align: middle">缓存内容</span>
+            <FileText class="align-middle" />
+            <span class="align-middle">缓存内容</span>
             <el-button
-              style="float: right; padding: 3px 0"
+              class="float-right py-[3px]"
               link
               type="primary"
-              icon="Refresh"
+              :icon="RefreshCw"
               @click="handleClearCacheAll()"
             >
               清理全部

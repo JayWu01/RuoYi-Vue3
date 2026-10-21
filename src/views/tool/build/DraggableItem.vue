@@ -1,4 +1,5 @@
 <script setup name="DraggableItem">
+import { Copy, Trash2 } from '@lucide/vue'
 import draggable from 'vuedraggable/dist/vuedraggable.common'
 import render from '@/utils/generator/render'
 
@@ -88,10 +89,10 @@ watch(
       </draggable>
     </el-row>
     <span class="drawing-item-copy" title="复制" @click.stop="copyItem(element)">
-      <el-icon><CopyDocument /></el-icon>
+      <Copy />
     </span>
     <span class="drawing-item-delete" title="删除" @click.stop="deleteItem(index)">
-      <el-icon><Delete /></el-icon>
+      <Trash2 />
     </span>
   </el-col>
 </template>

@@ -1,14 +1,9 @@
 <script setup>
-import { RefreshCw, Search } from '@lucide/vue'
+import { LoaderCircle, RefreshCw, Search } from '@lucide/vue'
 import { computed } from 'vue'
 import { PERIOD_OPTIONS } from '../constant'
 
 const props = defineProps({
-  deptId: { type: [String, Number, null], default: null },
-  modelValue: {
-    type: Object,
-    required: true
-  },
   unitOptions: {
     type: Array,
     default: () => []
@@ -19,7 +14,12 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'submit', 'reset'])
+const emit = defineEmits(['submit', 'reset'])
+
+const model = defineModel({
+  type: Object,
+  required: true
+})
 
 const defaultTime = [
   new Date(2000, 1, 1, 0, 0, 0),
@@ -27,32 +27,33 @@ const defaultTime = [
 ]
 
 const dateRange = computed({
-  get: () => [props.modelValue.startDate, props.modelValue.endDate],
+  get: () => (model.value.startDate && model.value.endDate
+    ? [model.value.startDate, model.value.endDate]
+    : null),
   set: (value) => {
-    emit('update:modelValue', {
-      ...props.modelValue,
+    model.value = {
+      ...model.value,
       startDate: value?.[0] ?? '',
       endDate: value?.[1] ?? ''
-    })
+    }
   }
 })
 
 const setField = (key, value) => {
-  emit('update:modelValue', {
-    ...props.modelValue,
+  model.value = {
+    ...model.value,
     [key]: value
-  })
+  }
 }
 
 const setUnit = (deptId) => {
-  const unit = props.unitOptions.find(item => item.deptId === deptId)
-  emit('update:modelValue', {
-    ...props.modelValue,
-    // deptId: deptId || '全部单位',
-    // deptName: unit?.deptName || '全部单位'
-    deptId,
+  const nextDeptId = deptId === '' ? null : deptId
+  const unit = props.unitOptions.find(item => item.deptId === nextDeptId)
+  model.value = {
+    ...model.value,
+    deptId: nextDeptId,
     deptName: unit?.deptName
-  })
+  }
 }
 </script>
 
@@ -65,6 +66,7 @@ const setUnit = (deptId) => {
         type="datetimerange"
         format="YYYY-MM-DD HH:mm:ss"
         value-format="YYYY-MM-DD HH:mm:ss"
+        :default-time="defaultTime"
         clearable
         range-separator="~"
         start-placeholder="开始时间"
@@ -74,13 +76,13 @@ const setUnit = (deptId) => {
       />
       <span class="whitespace-nowrap text-sm text-muted">基层单位</span>
       <el-select
-        :model-value="modelValue.deptId"
+        :model-value="model.deptId"
         popper-class="dashboard-popper"
         class="dashboard-select w-40 max-md:w-full"
         placeholder="全部单位"
         @update:model-value="setUnit"
       >
-        <el-option label="全部单位" :value="null" />
+        <el-option label="全部单位" value="" />
         <el-option
           v-for="unit in unitOptions"
           :key="unit.deptId"
@@ -89,7 +91,7 @@ const setUnit = (deptId) => {
         />
       </el-select>
       <el-segmented
-        :model-value="modelValue.statType"
+        :model-value="model.statType"
         :options="PERIOD_OPTIONS"
         aria-label="统计周期"
         class="dashboard-period w-40"
@@ -104,6 +106,9 @@ const setUnit = (deptId) => {
         :disabled="loading"
         @click="emit('submit')"
       >
+        <template #loading>
+          <LoaderCircle class="animate-spin" />
+        </template>
         <Search
           v-if="!loading"
           class="mr-1 inline-block align-middle"

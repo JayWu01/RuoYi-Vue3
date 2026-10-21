@@ -1,5 +1,6 @@
 <script setup>
 import { Medal, Target, Users } from '@lucide/vue'
+import { computed } from 'vue'
 import ResultCard from '../components/ResultCard.vue'
 import ScreenPanel from '../components/ScreenPanel.vue'
 
@@ -10,8 +11,10 @@ const props = defineProps({
   }
 })
 
-const isUp = value => !value?.startsWith('-')
-
+const doorPullText = computed(() => {
+  const value = props.data.doorPullAmount
+  return value == null || value === '' ? '-' : `￥${value}`
+})
 </script>
 
 <template>
@@ -39,22 +42,20 @@ const isUp = value => !value?.startsWith('-')
         :icon="Medal"
         label="检查车辆"
         tone="green"
-        :value="props.data.checkCarCount"
+        :value="props.data.checkCarCount ?? '-'"
       />
       <ResultCard
         :icon="Target"
         label="打开车门数"
         tone="yellow"
-        :value="props.data.openDoorCount ?? 0"
+        :value="props.data.openDoorCount ?? '-'"
       />
       <ResultCard
         :icon="Target"
         label="发现贵重物品"
         tone="yellow"
-        :value="'￥'+props.data.doorPullAmount ?? 0"
+        :value="doorPullText"
       />
     </div>
   </ScreenPanel>
-
 </template>
-

@@ -1,4 +1,5 @@
 <script setup name="Config">
+import { Download, Pencil, Plus, RefreshCw, Search, Trash2 } from '@lucide/vue'
 import {
   addConfig,
   delConfig,
@@ -178,7 +179,7 @@ getList()
           v-model="queryParams.configName"
           placeholder="请输入参数名称"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -187,7 +188,7 @@ getList()
           v-model="queryParams.configKey"
           placeholder="请输入参数键名"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -196,7 +197,7 @@ getList()
           v-model="queryParams.configType"
           placeholder="系统内置"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
         >
           <el-option
             v-for="dict in sys_yes_no"
@@ -206,7 +207,7 @@ getList()
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="创建时间" style="width: 308px">
+      <el-form-item label="创建时间" class="w-[308px]">
         <el-date-picker
           v-model="dateRange"
           value-format="YYYY-MM-DD"
@@ -217,10 +218,10 @@ getList()
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">
+        <el-button type="primary" :icon="Search" @click="handleQuery">
           搜索
         </el-button>
-        <el-button icon="Refresh" @click="resetQuery">
+        <el-button :icon="RefreshCw" @click="resetQuery">
           重置
         </el-button>
       </el-form-item>
@@ -232,7 +233,7 @@ getList()
           v-hasPermi="['system:config:add']"
           type="primary"
           plain
-          icon="Plus"
+          :icon="Plus"
           @click="handleAdd"
         >
           新增
@@ -243,7 +244,7 @@ getList()
           v-hasPermi="['system:config:edit']"
           type="success"
           plain
-          icon="Edit"
+          :icon="Pencil"
           :disabled="single"
           @click="handleUpdate"
         >
@@ -255,7 +256,7 @@ getList()
           v-hasPermi="['system:config:remove']"
           type="danger"
           plain
-          icon="Delete"
+          :icon="Trash2"
           :disabled="multiple"
           @click="handleDelete"
         >
@@ -267,7 +268,7 @@ getList()
           v-hasPermi="['system:config:export']"
           type="warning"
           plain
-          icon="Download"
+          :icon="Download"
           @click="handleExport"
         >
           导出
@@ -278,7 +279,7 @@ getList()
           v-hasPermi="['system:config:remove']"
           type="danger"
           plain
-          icon="Refresh"
+          :icon="RefreshCw"
           @click="handleRefreshCache"
         >
           刷新缓存
@@ -330,7 +331,7 @@ getList()
             v-hasPermi="['system:config:edit']"
             link
             type="primary"
-            icon="Edit"
+            :icon="Pencil"
             @click="handleUpdate(scope.row)"
           >
             修改
@@ -339,7 +340,7 @@ getList()
             v-hasPermi="['system:config:remove']"
             link
             type="primary"
-            icon="Delete"
+            :icon="Trash2"
             @click="handleDelete(scope.row)"
           >
             删除

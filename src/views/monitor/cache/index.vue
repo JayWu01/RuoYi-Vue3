@@ -1,4 +1,5 @@
 <script setup name="Cache">
+import { ChartPie, Gauge, Monitor } from '@lucide/vue'
 import * as echarts from 'echarts'
 import { getCache } from '@/api/monitor/cache'
 
@@ -71,11 +72,11 @@ getList()
       <el-col :span="24" class="card-box">
         <el-card>
           <template #header>
-            <Monitor style="width: 1em; height: 1em; vertical-align: middle" />
-            <span style="vertical-align: middle">基本信息</span>
+            <Monitor class="mr-1 align-middle" />
+            <span class="align-middle">基本信息</span>
           </template>
           <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%">
+            <table cellspacing="0" class="w-full">
               <tbody>
                 <tr>
                   <td class="el-table__cell is-leaf">
@@ -214,11 +215,11 @@ getList()
       <el-col :span="12" class="card-box">
         <el-card>
           <template #header>
-            <PieChart style="width: 1em; height: 1em; vertical-align: middle" />
-            <span style="vertical-align: middle">命令统计</span>
+            <ChartPie class="mr-1 align-middle" />
+            <span class="align-middle">命令统计</span>
           </template>
           <div class="el-table el-table--enable-row-hover el-table--medium">
-            <div ref="commandstats" style="height: 420px" />
+            <div ref="commandstats" class="h-[420px]" />
           </div>
         </el-card>
       </el-col>
@@ -226,11 +227,11 @@ getList()
       <el-col :span="12" class="card-box">
         <el-card>
           <template #header>
-            <Odometer style="width: 1em; height: 1em; vertical-align: middle" />
-            <span style="vertical-align: middle">内存信息</span>
+            <Gauge class="mr-1 align-middle" />
+            <span class="align-middle">内存信息</span>
           </template>
           <div class="el-table el-table--enable-row-hover el-table--medium">
-            <div ref="usedmemory" style="height: 420px" />
+            <div ref="usedmemory" class="h-[420px]" />
           </div>
         </el-card>
       </el-col>

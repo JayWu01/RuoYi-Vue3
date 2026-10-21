@@ -1,17 +1,14 @@
 <script setup>
-import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import { Search } from '@lucide/vue'
 import { watch } from 'vue'
+import { formIcons } from '@/utils/generator/formIcons'
 
 const emit = defineEmits(['select'])
-const iconList = ref([])
-const originList = []
+const originList = Object.keys(formIcons)
+const iconList = ref([...originList])
 const key = ref('')
 const active = ref('')
 const value = defineModel()
-for (const [key] of Object.entries(ElementPlusIconsVue)) {
-  iconList.value.push(key)
-  originList.push(key)
-}
 
 function onOpen() {}
 function onClose() {}
@@ -40,14 +37,14 @@ watch(key, (val) => {
       @open="onOpen"
       @close="onClose"
     >
-      <template #header="{ close, titleId, titleClass }">
+      <template #header>
         选择图标
         <el-input
           v-model="key"
           size="small"
           :style="{ width: '260px' }"
           placeholder="请输入图标名称"
-          prefix-icon="Search"
+          :prefix-icon="Search"
           clearable
         />
       </template>
@@ -59,9 +56,7 @@ watch(key, (val) => {
           @click="onSelect(icon)"
         >
           <div>
-            <el-icon :size="30">
-              <component :is="icon" />
-            </el-icon>
+            <component :is="formIcons[icon]" :size="30" />
             <div>{{ icon }}</div>
           </div>
         </li>

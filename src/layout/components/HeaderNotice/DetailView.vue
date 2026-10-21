@@ -1,4 +1,5 @@
 <script setup>
+import { Bell, Clock, FileText, MessageSquare, User } from '@lucide/vue'
 import { getNotice } from '@/api/system/notice'
 
 const visible = ref(false)
@@ -72,19 +73,19 @@ defineExpose({
   >
     <div v-loading="loading" class="notice-detail-drawer__body">
       <div v-if="!detail" class="notice-empty">
-        <el-icon><Document /></el-icon>
+        <FileText class="mb-2.5 inline-flex text-[28px]" />
         <span>暂无数据</span>
       </div>
       <div v-else class="notice-page">
         <div class="notice-type-wrap">
           <span v-if="detail.noticeType === '1'" class="notice-type-tag type-notify">
-            <el-icon><Bell /></el-icon> 通知
+            <Bell /> 通知
           </span>
           <span v-else-if="detail.noticeType === '2'" class="notice-type-tag type-announce">
-            <el-icon><Message /></el-icon> 公告
+            <MessageSquare /> 公告
           </span>
           <span v-else class="notice-type-tag type-notify">
-            <el-icon><Document /></el-icon> 消息
+            <FileText /> 消息
           </span>
         </div>
 
@@ -94,11 +95,11 @@ defineExpose({
 
         <div class="notice-meta">
           <span class="meta-item">
-            <el-icon><User /></el-icon>
+            <User class="text-xs text-[#a0aec0]" />
             <span>{{ detail.createBy || "—" }}</span>
           </span>
           <span class="meta-item">
-            <el-icon><Clock /></el-icon>
+            <Clock class="text-xs text-[#a0aec0]" />
             <span>{{ detail.createTime || "—" }}</span>
           </span>
           <span class="meta-item">
@@ -116,7 +117,7 @@ defineExpose({
         <div class="notice-body">
           <div v-if="hasContent" class="notice-content" v-html="detail.noticeContent" />
           <div v-else class="notice-empty notice-empty--inner">
-            <el-icon><Document /></el-icon> 暂无内容
+            <FileText class="mb-2.5 inline-flex text-[28px]" /> 暂无内容
           </div>
         </div>
       </div>
@@ -194,11 +195,6 @@ defineExpose({
   gap: 5px;
   font-size: 12px;
   color: var(--notice-meta-color, #718096);
-}
-
-.meta-item .el-icon {
-  font-size: 12px;
-  color: var(--notice-meta-icon-color, #a0aec0);
 }
 
 .status-dot {
@@ -334,11 +330,6 @@ defineExpose({
   padding: 40px 0;
   color: var(--notice-meta-icon-color, #a0aec0);
   font-size: 13px;
-}
-.notice-empty .el-icon {
-  font-size: 28px;
-  display: inline-flex;
-  margin-bottom: 10px;
 }
 .notice-empty--inner {
   padding: 32px 0;

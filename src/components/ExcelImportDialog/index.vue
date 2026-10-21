@@ -1,4 +1,5 @@
 <script setup>
+import { CloudUpload } from '@lucide/vue'
 import { getToken } from '@/utils/auth'
 
 const props = defineProps({
@@ -136,9 +137,7 @@ defineExpose({ open })
       :auto-upload="false"
       drag
     >
-      <el-icon class="el-icon--upload">
-        <upload-filled />
-      </el-icon>
+      <CloudUpload class="mb-4 text-[67px] text-[color:var(--el-text-color-placeholder)]" />
       <div class="el-upload__text">
         将文件拖到此处，或<em>点击上传</em>
       </div>
@@ -154,7 +153,8 @@ defineExpose({ open })
             v-if="templateUrl"
             type="primary"
             underline="never"
-            style="font-size: 12px; vertical-align: baseline"
+
+            class="text-xs align-baseline"
             @click="handleDownloadTemplate"
           >
             下载模板

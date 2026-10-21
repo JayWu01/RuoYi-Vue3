@@ -1,70 +1,9 @@
-<template>
-  <div class="app-container">
-    <!-- 查询区域 -->
-    <el-form :model="queryParams" ref="queryFormRef" :inline="true" size="small">
-      <el-form-item label="接警日期" prop="alarmDate">
-        <el-date-picker
-            v-model="queryParams.alarmDate"
-            type="daterange"
-            range-separator="-"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            format="YYYY-MM-DD"
-            value-format="YYYY-MM-DD"
-        />
-      </el-form-item>
-<!--      <el-form-item label="警务站">-->
-<!--        <el-select v-model="queryParams.deptId" placeholder="全部警务站" clearable filterable style="width: 200px">-->
-<!--          <el-option-->
-<!--              v-for="unit in unitOptions"-->
-<!--              :key="unit.deptId"-->
-<!--              :label="unit.deptName"-->
-<!--              :value="unit.deptId"-->
-<!--          />-->
-<!--        </el-select>-->
-<!--      </el-form-item>-->
-      <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="success" icon="Download" @click="handleExport">导出报表</el-button>
-      </el-form-item>
-    </el-form>
-
-    <!-- 数据表格：大队列纵向合并，与纸质报表样式一致 -->
-    <el-table
-        ref="tableRef"
-        v-loading="loading"
-        :data="tableData"
-        border
-        show-summary
-        :summary-method="getSummary"
-        :span-method="detSpanMethod"
-    >
-      <el-table-column label="大队" prop="detName" align="center"/>
-      <el-table-column label="警务站" prop="unitName" align="center"/>
-      <el-table-column label="总警情数" prop="totalAlarm" align="center"/>
-      <el-table-column label="110派警" prop="policeDispatch" align="center"/>
-      <el-table-column label="流出所转警" prop="transferAlarm" align="center"/>
-      <el-table-column label="自接警" prop="selfAlarm" align="center"/>
-      <el-table-column label="大队单站日警情数" prop="detDailyAvg" align="center"/>
-    </el-table>
-    <pagination
-        v-show="total>0"
-        :total="total"
-        v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize"
-        @pagination="handleQuery"
-    />
-  </div>
-</template>
-
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { Download, RefreshCw, Search } from '@lucide/vue'
 import dayjs from 'dayjs'
 import { ElMessage } from 'element-plus'
-import { getAlarmReportList, exportAlarmReport, getAlarmUnitOptions } from '@/api/report/alarmReport'
+import { onMounted, reactive, ref } from 'vue'
+import { exportAlarmReport, getAlarmReportList, getAlarmUnitOptions } from '@/api/report/alarmReport'
 
 const tableRef = ref(null)
 const queryFormRef = ref(null)
@@ -155,7 +94,7 @@ const handleExport = async () => {
   } else {
     dateTitle = '全部时段'
   }
-  const year = queryParams.startDate ? dayjs(queryParams.startDate).format('YYYY') + '年' : ''
+  const year = queryParams.startDate ? `${dayjs(queryParams.startDate).format('YYYY')}年` : ''
   const fileName = `${year}全市街面警务站接处警统计表（${dateTitle}）.xlsx`
 
   const res = await exportAlarmReport({ ...queryParams })
@@ -181,10 +120,78 @@ const handleExport = async () => {
 
 onMounted(() => {
   handleQuery()
-  getAlarmUnitOptions().then(list => {
+  getAlarmUnitOptions().then((list) => {
     unitOptions.value = list || []
   }).catch(() => {
     unitOptions.value = []
   })
 })
 </script>
+
+<template>
+  <div class="app-container">
+    <!-- 查询区域 -->
+    <el-form ref="queryFormRef" :model="queryParams" :inline="true" size="small">
+      <el-form-item label="接警日期" prop="alarmDate">
+        <el-date-picker
+          v-model="queryParams.alarmDate"
+          type="daterange"
+          range-separator="-"
+          start-placeholder="开始时间"
+          end-placeholder="结束时间"
+          format="YYYY-MM-DD"
+          value-format="YYYY-MM-DD"
+        />
+      </el-form-item>
+      <!--      <el-form-item label="警务站"> -->
+      <!--        <el-select v-model="queryParams.deptId" placeholder="全部警务站" clearable filterable class="w-[200px]"> -->
+      <!--          <el-option -->
+      <!--              v-for="unit in unitOptions" -->
+      <!--              :key="unit.deptId" -->
+      <!--              :label="unit.deptName" -->
+      <!--              :value="unit.deptId" -->
+      <!--          /> -->
+      <!--        </el-select> -->
+      <!--      </el-form-item> -->
+      <el-form-item>
+        <el-button type="primary" :icon="Search" @click="handleQuery">
+          搜索
+        </el-button>
+        <el-button :icon="RefreshCw" @click="resetQuery">
+          重置
+        </el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="success" :icon="Download" @click="handleExport">
+          导出报表
+        </el-button>
+      </el-form-item>
+    </el-form>
+
+    <!-- 数据表格：大队列纵向合并，与纸质报表样式一致 -->
+    <el-table
+      ref="tableRef"
+      v-loading="loading"
+      :data="tableData"
+      border
+      show-summary
+      :summary-method="getSummary"
+      :span-method="detSpanMethod"
+    >
+      <el-table-column label="大队" prop="detName" align="center" />
+      <el-table-column label="警务站" prop="unitName" align="center" />
+      <el-table-column label="总警情数" prop="totalAlarm" align="center" />
+      <el-table-column label="110派警" prop="policeDispatch" align="center" />
+      <el-table-column label="流出所转警" prop="transferAlarm" align="center" />
+      <el-table-column label="自接警" prop="selfAlarm" align="center" />
+      <el-table-column label="大队单站日警情数" prop="detDailyAvg" align="center" />
+    </el-table>
+    <pagination
+      v-show="total > 0"
+      v-model:page="queryParams.pageNum"
+      v-model:limit="queryParams.pageSize"
+      :total="total"
+      @pagination="handleQuery"
+    />
+  </div>
+</template>

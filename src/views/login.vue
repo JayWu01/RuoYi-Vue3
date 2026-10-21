@@ -1,4 +1,5 @@
 <script setup>
+import { LoaderCircle } from '@lucide/vue'
 import Cookies from 'js-cookie'
 import { getCodeImg } from '@/api/login'
 import defaultSettings from '@/settings'
@@ -147,7 +148,7 @@ getCookie()
           size="large"
           auto-complete="off"
           placeholder="验证码"
-          style="width: 63%"
+          class="w-[63%]"
           @keyup.enter="handleLogin"
         >
           <template #prefix>
@@ -158,21 +159,24 @@ getCookie()
           <img :src="codeUrl" class="login-code-img" @click="getCode">
         </div>
       </el-form-item>
-      <el-checkbox v-model="loginForm.rememberMe" style="margin: 0px 0px 25px 0px">
+      <el-checkbox v-model="loginForm.rememberMe" class="mb-[25px]">
         记住密码
       </el-checkbox>
-      <el-form-item style="width: 100%">
+      <el-form-item class="w-full">
         <el-button
           :loading="loading"
           size="large"
           type="primary"
-          style="width: 100%"
+          class="w-full"
           @click.prevent="handleLogin"
         >
+          <template #loading>
+            <LoaderCircle class="animate-spin" />
+          </template>
           <span v-if="!loading">登 录</span>
           <span v-else>登 录 中...</span>
         </el-button>
-        <div v-if="register" style="float: right">
+        <div v-if="register" class="float-right">
           <router-link class="link-type" to="/register">
             立即注册
           </router-link>

@@ -1,4 +1,5 @@
 <script setup name="User">
+import { CircleCheck, Download, KeyRound, Pencil, Plus, RefreshCw, Search, Trash2, Upload } from '@lucide/vue'
 import {
   addUser,
   changeUserStatus,
@@ -342,7 +343,7 @@ onMounted(() => {
               v-model="queryParams.userName"
               placeholder="请输入用户名称"
               clearable
-              style="width: 240px"
+              class="w-[240px]"
               @keyup.enter="handleQuery"
             />
           </el-form-item>
@@ -351,7 +352,7 @@ onMounted(() => {
               v-model="queryParams.phonenumber"
               placeholder="请输入手机号码"
               clearable
-              style="width: 240px"
+              class="w-[240px]"
               @keyup.enter="handleQuery"
             />
           </el-form-item>
@@ -360,7 +361,7 @@ onMounted(() => {
               v-model="queryParams.status"
               placeholder="用户状态"
               clearable
-              style="width: 240px"
+              class="w-[240px]"
             >
               <el-option
                 v-for="dict in sys_normal_disable"
@@ -370,7 +371,7 @@ onMounted(() => {
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="创建时间" style="width: 308px">
+          <el-form-item label="创建时间" class="w-[308px]">
             <el-date-picker
               v-model="dateRange"
               value-format="YYYY-MM-DD"
@@ -381,10 +382,10 @@ onMounted(() => {
             />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" icon="Search" @click="handleQuery">
+            <el-button type="primary" :icon="Search" @click="handleQuery">
               搜索
             </el-button>
-            <el-button icon="Refresh" @click="resetQuery">
+            <el-button :icon="RefreshCw" @click="resetQuery">
               重置
             </el-button>
           </el-form-item>
@@ -396,7 +397,7 @@ onMounted(() => {
               v-hasPermi="['system:user:add']"
               type="primary"
               plain
-              icon="Plus"
+              :icon="Plus"
               @click="handleAdd"
             >
               新增
@@ -407,7 +408,7 @@ onMounted(() => {
               v-hasPermi="['system:user:edit']"
               type="success"
               plain
-              icon="Edit"
+              :icon="Pencil"
               :disabled="single"
               @click="handleUpdate"
             >
@@ -419,7 +420,7 @@ onMounted(() => {
               v-hasPermi="['system:user:remove']"
               type="danger"
               plain
-              icon="Delete"
+              :icon="Trash2"
               :disabled="multiple"
               @click="handleDelete"
             >
@@ -431,7 +432,7 @@ onMounted(() => {
               v-hasPermi="['system:user:import']"
               type="info"
               plain
-              icon="Upload"
+              :icon="Upload"
               @click="handleImport"
             >
               导入
@@ -442,7 +443,7 @@ onMounted(() => {
               v-hasPermi="['system:user:export']"
               type="warning"
               plain
-              icon="Download"
+              :icon="Download"
               @click="handleExport"
             >
               导出
@@ -473,7 +474,7 @@ onMounted(() => {
             :show-overflow-tooltip="true"
           >
             <template #default="scope">
-              <a class="link-type" style="cursor: pointer" @click="handleViewData(scope.row)">{{
+              <a class="link-type cursor-pointer" @click="handleViewData(scope.row)">{{
                 scope.row.userName
               }}</a>
             </template>
@@ -535,7 +536,7 @@ onMounted(() => {
                   v-hasPermi="['system:user:edit']"
                   link
                   type="primary"
-                  icon="Edit"
+                  :icon="Pencil"
                   @click="handleUpdate(scope.row)"
                 />
               </el-tooltip>
@@ -544,7 +545,7 @@ onMounted(() => {
                   v-hasPermi="['system:user:remove']"
                   link
                   type="primary"
-                  icon="Delete"
+                  :icon="Trash2"
                   @click="handleDelete(scope.row)"
                 />
               </el-tooltip>
@@ -553,7 +554,7 @@ onMounted(() => {
                   v-hasPermi="['system:user:resetPwd']"
                   link
                   type="primary"
-                  icon="Key"
+                  :icon="KeyRound"
                   @click="handleResetPwd(scope.row)"
                 />
               </el-tooltip>
@@ -562,7 +563,7 @@ onMounted(() => {
                   v-hasPermi="['system:user:edit']"
                   link
                   type="primary"
-                  icon="CircleCheck"
+                  :icon="CircleCheck"
                   @click="handleAuthRole(scope.row)"
                 />
               </el-tooltip>

@@ -1,98 +1,67 @@
+import dayjs from 'dayjs'
+
 export const PERIOD_OPTIONS = [
   { label: '日', value: 'day' },
   { label: '周', value: 'week' },
   { label: '月', value: 'month' }
 ]
 
+const toParentId = (value, fallback) => {
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? parsed : fallback
+}
+
 export const UNIT_PARENT_IDS = {
-  specialPolice: 101, // 特警支队单位
-  cityBranch: 102 // 全市分局单位
+  specialPolice: toParentId(import.meta.env.VITE_SCREEN_SPECIAL_POLICE_PARENT_ID, 101),
+  cityBranch: toParentId(import.meta.env.VITE_SCREEN_CITY_BRANCH_PARENT_ID, 102)
 }
 
-// export const getCurrentYearRange = () => {
-//   const year = new Date().getFullYear()
-//   return {
-//     startDate: `${year}-01-01 00:00:00`,
-//     endDate: `${year}-12-31 23:59:59`
-//   }
-// }
+export const AUTO_REFRESH_INTERVAL = 5 * 60 * 1000
 
-// 近一周
-// import dayjs from 'dayjs'
-// export const getCurrentYearRange = () => {
-//   return {
-//     startDate: dayjs().subtract(6, 'day').startOf('day').format('YYYY-MM-DD HH:mm:ss'),
-//     endDate: dayjs().endOf('day').format('YYYY-MM-DD HH:mm:ss')
-//   }
-// }
-
-// 本年1月1日至今
-import dayjs from 'dayjs'
-export const getCurrentYearRange = () => {
-  return {
-    // 当年1月1日 00:00:00
-    startDate: dayjs().startOf('year').format('YYYY-MM-DD HH:mm:ss'),
-    // 当前时间（此刻，不是当日结束）
-    endDate: dayjs().format('YYYY-MM-DD HH:mm:ss')
-  }
-}
+export const getCurrentYearRange = () => ({
+  startDate: dayjs().startOf('year').format('YYYY-MM-DD HH:mm:ss'),
+  endDate: dayjs().format('YYYY-MM-DD HH:mm:ss')
+})
 
 export const createInitialQuery = () => ({
   ...getCurrentYearRange(),
-  // deptName: '全部单位',
-  // deptId: '全部单位',
   statType: 'day'
 })
 
 export const createEmptyDashboard = () => ({
-  updateTime: '-',
   alarmKpi: {},
   result: {},
   pie: {
     total: 0,
     ratioCompareYesterday: '-',
+    unwarnedMinorCount: null,
+    unwarnedMinorRatio: '-',
     dataList: []
-  },
-  lineFugitive: {
-    xAxis: [],
-    seriesList: []
   },
   lineAlarm: {
     xAxis: [],
     seriesList: []
   },
-  rank: { data: [] },
-  // 警务站排名（接口 /policeScreen/getRankList 返回 yAxis + series）
-  rankData: { yAxis: [], series: [] },
-  juvenile: { data: [] },
+  rank: {
+    xAxis: [],
+    seriesList: []
+  },
+  rankData: {
+    yAxis: [],
+    series: []
+  },
+  juvenile: {
+    xAxis: [],
+    seriesList: []
+  },
   specialPoliceUnits: [],
   cityBranchUnits: []
 })
 
 export const MINOR_LEVELS = [
-  {
-    key: 'red',
-    label: '红标',
-    colorClass: 'bg-category-red'
-  },
-  {
-    key: 'orange',
-    label: '橙标',
-    colorClass: 'bg-category-orange'
-  },
-  {
-    key: 'yellow',
-    label: '黄标',
-    colorClass: 'bg-category-yellow'
-  },
-  {
-    key: 'blue',
-    label: '蓝标',
-    colorClass: 'bg-category-blue'
-  },
-  {
-    key: 'gray',
-    label: '黑标',
-    colorClass: 'bg-category-gray'
-  }
+  { key: 'red', label: '红标', color: '#ef6b62' },
+  { key: 'orange', label: '橙标', color: '#f3a51c' },
+  { key: 'yellow', label: '黄标', color: '#f5c35d' },
+  { key: 'blue', label: '蓝标', color: '#526fa9' },
+  { key: 'gray', label: '黑标', color: '#37424c' }
 ]

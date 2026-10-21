@@ -1,7 +1,8 @@
 <script setup>
+import { Search } from '@lucide/vue'
 import icons from './requireIcons'
 
-const props = defineProps({
+defineProps({
   activeIcon: {
     type: String
   }
@@ -43,7 +44,7 @@ defineExpose({
       @input="filterIcons"
     >
       <template #suffix>
-        <i class="el-icon-search el-input__icon" />
+        <Search class="el-input__icon" size="1em" />
       </template>
     </el-input>
     <div class="icon-list">
@@ -55,7 +56,7 @@ defineExpose({
           @click="selectedIcon(item)"
         >
           <div class="icon-item" :class="[{ active: activeIcon === item }]">
-            <svg-icon :icon-class="item" class-name="icon" style="height: 25px; width: 16px" />
+            <svg-icon :icon-class="item" class-name="icon" class="h-[25px] w-4" />
             <span>{{ item }}</span>
           </div>
         </div>

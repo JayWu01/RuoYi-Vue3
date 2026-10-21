@@ -1,4 +1,5 @@
 <script setup name="Post">
+import { Download, Pencil, Plus, RefreshCw, Search, Trash2 } from '@lucide/vue'
 import { addPost, delPost, getPost, listPost, updatePost } from '@/api/system/post'
 
 const { proxy } = getCurrentInstance()
@@ -156,7 +157,7 @@ getList()
           v-model="queryParams.postCode"
           placeholder="请输入岗位编码"
           clearable
-          style="width: 200px"
+          class="w-[200px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -165,7 +166,7 @@ getList()
           v-model="queryParams.postName"
           placeholder="请输入岗位名称"
           clearable
-          style="width: 200px"
+          class="w-[200px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -174,7 +175,7 @@ getList()
           v-model="queryParams.status"
           placeholder="岗位状态"
           clearable
-          style="width: 200px"
+          class="w-[200px]"
         >
           <el-option
             v-for="dict in sys_normal_disable"
@@ -185,10 +186,10 @@ getList()
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">
+        <el-button type="primary" :icon="Search" @click="handleQuery">
           搜索
         </el-button>
-        <el-button icon="Refresh" @click="resetQuery">
+        <el-button :icon="RefreshCw" @click="resetQuery">
           重置
         </el-button>
       </el-form-item>
@@ -200,7 +201,7 @@ getList()
           v-hasPermi="['system:post:add']"
           type="primary"
           plain
-          icon="Plus"
+          :icon="Plus"
           @click="handleAdd"
         >
           新增
@@ -211,7 +212,7 @@ getList()
           v-hasPermi="['system:post:edit']"
           type="success"
           plain
-          icon="Edit"
+          :icon="Pencil"
           :disabled="single"
           @click="handleUpdate"
         >
@@ -223,7 +224,7 @@ getList()
           v-hasPermi="['system:post:remove']"
           type="danger"
           plain
-          icon="Delete"
+          :icon="Trash2"
           :disabled="multiple"
           @click="handleDelete"
         >
@@ -235,7 +236,7 @@ getList()
           v-hasPermi="['system:post:export']"
           type="warning"
           plain
-          icon="Download"
+          :icon="Download"
           @click="handleExport"
         >
           导出
@@ -271,7 +272,7 @@ getList()
             v-hasPermi="['system:post:edit']"
             link
             type="primary"
-            icon="Edit"
+            :icon="Pencil"
             @click="handleUpdate(scope.row)"
           >
             修改
@@ -280,7 +281,7 @@ getList()
             v-hasPermi="['system:post:remove']"
             link
             type="primary"
-            icon="Delete"
+            :icon="Trash2"
             @click="handleDelete(scope.row)"
           >
             删除

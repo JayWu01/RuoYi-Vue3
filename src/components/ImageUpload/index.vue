@@ -1,4 +1,5 @@
 <script setup>
+import { Plus } from '@lucide/vue'
 import Sortable from 'sortablejs'
 import { getToken } from '@/utils/auth'
 import { isExternal } from '@/utils/validate'
@@ -224,24 +225,22 @@ onMounted(() => {
       :on-preview="handlePictureCardPreview"
       :class="{ hide: fileList.length >= limit }"
     >
-      <el-icon class="avatar-uploader-icon">
-        <plus />
-      </el-icon>
+      <Plus class="avatar-uploader-icon" />
     </el-upload>
     <!-- 上传提示 -->
     <div v-if="showTip && !disabled" class="el-upload__tip">
       请上传
       <template v-if="fileSize">
-        大小不超过 <b style="color: #f56c6c">{{ fileSize }}MB</b>
+        大小不超过 <b class="text-[#f56c6c]">{{ fileSize }}MB</b>
       </template>
       <template v-if="fileType">
-        格式为 <b style="color: #f56c6c">{{ fileType.join("/") }}</b>
+        格式为 <b class="text-[#f56c6c]">{{ fileType.join("/") }}</b>
       </template>
       的文件
     </div>
 
     <el-dialog v-model="dialogVisible" title="预览" width="800px" append-to-body>
-      <img :src="dialogImageUrl" style="display: block; max-width: 100%; margin: 0 auto">
+      <img :src="dialogImageUrl" class="block max-w-full mx-auto">
     </el-dialog>
   </div>
 </template>

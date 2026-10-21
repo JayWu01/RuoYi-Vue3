@@ -1,5 +1,6 @@
 import { defineComponent, h } from 'vue'
 import { makeMap } from '@/utils/index'
+import { formIcons } from './formIcons'
 
 const isAttr = makeMap(
   'accept,accept-charset,accesskey,action,align,alt,async,autocomplete,'
@@ -98,7 +99,7 @@ const componentChild = {
       //   }, () => '只能上传不超过' + conf.fileSize + conf.sizeUnit + '的' + conf.accept + '文件')
       // }
       if (conf['list-type'] === 'picture-card') {
-        return h(resolveComponent('el-icon'), option, () => h(resolveComponent('Plus')))
+        return h(resolveComponent('Plus'), option)
       } else {
         // option.size = "small"
         option.type = 'primary'
@@ -164,6 +165,9 @@ export default defineComponent({
       const val = confClone[key]
       if (dataObject[key]) {
         dataObject[key] = val
+      } else if (key === 'prefix-icon' || key === 'suffix-icon') {
+        const icon = formIcons[val]
+        if (icon) dataObject.attrs[key] = icon
       } else if (isAttr(key)) {
         dataObject.attrs[key] = val
       } else if (!isNotProps(key)) {

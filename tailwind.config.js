@@ -1,6 +1,6 @@
 export default {
-  content: ['./src/views/screen/**/*.{vue,js}'],
-  important: '#app .dashboard',
+  content: ['./index.html', './src/**/*.{vue,js}'],
+  important: true,
   corePlugins: {
     preflight: false
   },
@@ -29,6 +29,10 @@ export default {
       },
       fontFamily: {
         ui: ['Microsoft YaHei', 'PingFang SC', 'sans-serif']
+      },
+      zIndex: {
+        'panel-content': '10',
+        'panel-overlay': '20'
       },
       spacing: {
         12: '3.25rem',

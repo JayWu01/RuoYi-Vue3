@@ -1,4 +1,5 @@
 <script setup>
+import { RefreshCw, Search } from '@lucide/vue'
 import { importTable, listDbTable } from '@/api/tool/gen'
 
 const emit = defineEmits(['ok'])
@@ -81,7 +82,7 @@ defineExpose({
           v-model="queryParams.tableName"
           placeholder="请输入表名称"
           clearable
-          style="width: 180px"
+          class="w-[180px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -90,15 +91,15 @@ defineExpose({
           v-model="queryParams.tableComment"
           placeholder="请输入表描述"
           clearable
-          style="width: 180px"
+          class="w-[180px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">
+        <el-button type="primary" :icon="Search" @click="handleQuery">
           搜索
         </el-button>
-        <el-button icon="Refresh" @click="resetQuery">
+        <el-button :icon="RefreshCw" @click="resetQuery">
           重置
         </el-button>
       </el-form-item>

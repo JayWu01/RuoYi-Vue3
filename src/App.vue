@@ -1,6 +1,12 @@
 <script setup>
+import { setLucideProps } from '@lucide/vue'
 import useSettingsStore from '@/store/modules/settings'
 import { handleThemeStyle } from '@/utils/theme'
+
+setLucideProps({
+  size: '1em',
+  strokeWidth: 2
+})
 
 onMounted(() => {
   nextTick(() => {

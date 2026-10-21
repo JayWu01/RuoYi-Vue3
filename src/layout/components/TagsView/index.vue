@@ -1,4 +1,5 @@
 <script setup>
+import { ArrowLeft, ArrowRight, ChevronDown, CircleX, Maximize, RotateCw, X } from '@lucide/vue'
 import usePermissionStore from '@/store/modules/permission'
 import useSettingsStore from '@/store/modules/settings'
 import useTagsViewStore from '@/store/modules/tagsView'
@@ -342,7 +343,7 @@ function handleScroll() {
       :class="{ disabled: !canScrollLeft }"
       @click="scrollLeft"
     >
-      <el-icon><arrow-left /></el-icon>
+      <ArrowLeft />
     </span>
 
     <!-- 标签滚动区 -->
@@ -366,15 +367,15 @@ function handleScroll() {
         <svg-icon
           v-if="tagsIcon && tag.meta && tag.meta.icon && tag.meta.icon !== '#'"
           :icon-class="tag.meta.icon"
-          style="margin-right: 3px"
+          class="mr-[3px]"
         />
         {{ tag.title }}
         <span
           v-if="!isAffix(tag)"
-          class="tags-close-btn"
+          class="tags-close-btn group"
           @click.prevent.stop="closeSelectedTag(tag)"
         >
-          <close class="el-icon-close" />
+          <X class="transition-colors group-hover:text-white" />
         </span>
       </router-link>
     </ScrollPane>
@@ -385,7 +386,7 @@ function handleScroll() {
       :class="{ disabled: !canScrollRight }"
       @click="scrollRight"
     >
-      <el-icon><arrow-right /></el-icon>
+      <ArrowRight />
     </span>
 
     <!-- 下拉操作菜单 -->
@@ -396,31 +397,31 @@ function handleScroll() {
       @command="handleDropdownCommand"
     >
       <span class="tags-action-btn">
-        <el-icon><arrow-down /></el-icon>
+        <ChevronDown />
       </span>
       <template #dropdown>
         <el-dropdown-menu class="tags-dropdown-menu">
           <el-dropdown-item v-if="!isAffix(selectedDropdownTag)" command="close">
-            <close style="width: 1em; height: 1em" />关闭当前
+            <X class="mr-1" />关闭当前
           </el-dropdown-item>
           <el-dropdown-item command="closeOthers">
-            <circle-close style="width: 1em; height: 1em" />关闭其他
+            <CircleX class="mr-1" />关闭其他
           </el-dropdown-item>
           <el-dropdown-item command="closeLeft" :disabled="isFirstView()">
-            <back style="width: 1em; height: 1em" />关闭左侧
+            <ArrowLeft class="mr-1" />关闭左侧
           </el-dropdown-item>
           <el-dropdown-item command="closeRight" :disabled="isLastView()">
-            <right style="width: 1em; height: 1em" />关闭右侧
+            <ArrowRight class="mr-1" />关闭右侧
           </el-dropdown-item>
           <el-dropdown-item command="closeAll">
-            <circle-close style="width: 1em; height: 1em" />全部关闭
+            <CircleX class="mr-1" />全部关闭
           </el-dropdown-item>
           <el-dropdown-item command="fullscreen" divided>
             <template v-if="!isFullscreen">
-              <full-screen style="width: 1em; height: 1em" />全屏显示
+              <Maximize class="mr-1" />全屏显示
             </template>
             <template v-else>
-              <close style="width: 1em; height: 1em" />退出全屏
+              <X class="mr-1" />退出全屏
             </template>
           </el-dropdown-item>
         </el-dropdown-menu>
@@ -433,28 +434,28 @@ function handleScroll() {
       title="刷新页面"
       @click="refreshSelectedTag(selectedDropdownTag)"
     >
-      <el-icon><refresh-right /></el-icon> 刷新
+      <RotateCw /> 刷新
     </span>
 
     <!-- 右键上下文菜单 -->
     <ul v-show="visible" :style="{ left: `${left}px`, top: `${top}px` }" class="contextmenu">
       <li @click="refreshSelectedTag(selectedTag)">
-        <refresh-right style="width: 1em; height: 1em" />刷新页面
+        <RotateCw class="mr-1" />刷新页面
       </li>
       <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">
-        <close style="width: 1em; height: 1em" />关闭当前
+        <X class="mr-1" />关闭当前
       </li>
       <li @click="closeOthersTags">
-        <circle-close style="width: 1em; height: 1em" />关闭其他
+        <CircleX class="mr-1" />关闭其他
       </li>
       <li v-if="!isFirstView()" @click="closeLeftTags">
-        <back style="width: 1em; height: 1em" />关闭左侧
+        <ArrowLeft class="mr-1" />关闭左侧
       </li>
       <li v-if="!isLastView()" @click="closeRightTags">
-        <right style="width: 1em; height: 1em" />关闭右侧
+        <ArrowRight class="mr-1" />关闭右侧
       </li>
       <li @click="closeAllTags(selectedTag)">
-        <circle-close style="width: 1em; height: 1em" />全部关闭
+        <CircleX class="mr-1" />全部关闭
       </li>
     </ul>
   </div>
@@ -757,22 +758,8 @@ $tags-bar-height: 34px;
       transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
       cursor: pointer;
 
-      .el-icon-close {
-        width: 1em;
-        height: 1em;
-        vertical-align: 0;
-        line-height: 1;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-      }
-
       &:hover {
         background-color: var(--tags-close-hover, #b4bccc);
-
-        .el-icon-close {
-          color: #fff;
-        }
       }
     }
   }

@@ -1,4 +1,5 @@
 <script setup name="Dict">
+import { CircleHelp, Download, Pencil, Plus, RefreshCw, Search, Settings2, Trash2 } from '@lucide/vue'
 import {
   addType,
   delType,
@@ -192,7 +193,7 @@ getList()
           v-model="queryParams.dictName"
           placeholder="请输入字典名称"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -201,7 +202,7 @@ getList()
           v-model="queryParams.dictType"
           placeholder="请输入字典类型"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -210,7 +211,7 @@ getList()
           v-model="queryParams.status"
           placeholder="字典状态"
           clearable
-          style="width: 240px"
+          class="w-[240px]"
         >
           <el-option
             v-for="dict in sys_normal_disable"
@@ -220,7 +221,7 @@ getList()
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="创建时间" style="width: 308px">
+      <el-form-item label="创建时间" class="w-[308px]">
         <el-date-picker
           v-model="dateRange"
           value-format="YYYY-MM-DD"
@@ -231,10 +232,10 @@ getList()
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">
+        <el-button type="primary" :icon="Search" @click="handleQuery">
           搜索
         </el-button>
-        <el-button icon="Refresh" @click="resetQuery">
+        <el-button :icon="RefreshCw" @click="resetQuery">
           重置
         </el-button>
       </el-form-item>
@@ -246,7 +247,7 @@ getList()
           v-hasPermi="['system:dict:add']"
           type="primary"
           plain
-          icon="Plus"
+          :icon="Plus"
           @click="handleAdd"
         >
           新增
@@ -257,7 +258,7 @@ getList()
           v-hasPermi="['system:dict:edit']"
           type="success"
           plain
-          icon="Edit"
+          :icon="Pencil"
           :disabled="single"
           @click="handleUpdate"
         >
@@ -269,7 +270,7 @@ getList()
           v-hasPermi="['system:dict:remove']"
           type="danger"
           plain
-          icon="Delete"
+          :icon="Trash2"
           :disabled="multiple"
           @click="handleDelete"
         >
@@ -281,7 +282,7 @@ getList()
           v-hasPermi="['system:dict:export']"
           type="warning"
           plain
-          icon="Download"
+          :icon="Download"
           @click="handleExport"
         >
           导出
@@ -292,7 +293,7 @@ getList()
           v-hasPermi="['system:dict:remove']"
           type="danger"
           plain
-          icon="Refresh"
+          :icon="RefreshCw"
           @click="handleRefreshCache"
         >
           刷新缓存
@@ -312,7 +313,7 @@ getList()
       />
       <el-table-column label="字典类型" align="center" :show-overflow-tooltip="true">
         <template #default="scope">
-          <a class="link-type" style="cursor: pointer" @click="handleViewData(scope.row)">{{
+          <a class="link-type cursor-pointer" @click="handleViewData(scope.row)">{{
             scope.row.dictType
           }}</a>
         </template>
@@ -339,7 +340,7 @@ getList()
             v-hasPermi="['system:dict:edit']"
             link
             type="primary"
-            icon="Edit"
+            :icon="Pencil"
             @click="handleUpdate(scope.row)"
           >
             修改
@@ -348,7 +349,7 @@ getList()
             v-hasPermi="['system:dict:edit']"
             link
             type="primary"
-            icon="Operation"
+            :icon="Settings2"
             @click="handleDataList(scope.row)"
           >
             列表
@@ -357,7 +358,7 @@ getList()
             v-hasPermi="['system:dict:remove']"
             link
             type="primary"
-            icon="Delete"
+            :icon="Trash2"
             @click="handleDelete(scope.row)"
           >
             删除
@@ -385,7 +386,7 @@ getList()
           <template #label>
             <span>
               <el-tooltip content="数据存储中的Key值，如：sys_user_sex" placement="top">
-                <el-icon><question-filled /></el-icon>
+                <CircleHelp />
               </el-tooltip>
               字典类型
             </span>

@@ -1,4 +1,5 @@
 <script setup>
+import { LoaderCircle } from '@lucide/vue'
 import { ElMessageBox } from 'element-plus'
 import { getCodeImg, register } from '@/api/login'
 import defaultSettings from '@/settings'
@@ -143,7 +144,7 @@ getCode()
           size="large"
           auto-complete="off"
           placeholder="验证码"
-          style="width: 63%"
+          class="w-[63%]"
           @keyup.enter="handleRegister"
         >
           <template #prefix>
@@ -154,18 +155,21 @@ getCode()
           <img :src="codeUrl" class="register-code-img" @click="getCode">
         </div>
       </el-form-item>
-      <el-form-item style="width: 100%">
+      <el-form-item class="w-full">
         <el-button
           :loading="loading"
           size="large"
           type="primary"
-          style="width: 100%"
+          class="w-full"
           @click.prevent="handleRegister"
         >
+          <template #loading>
+            <LoaderCircle class="animate-spin" />
+          </template>
           <span v-if="!loading">注 册</span>
           <span v-else>注 册 中...</span>
         </el-button>
-        <div style="float: right">
+        <div class="float-right">
           <router-link class="link-type" to="/login">
             使用已有账户登录
           </router-link>

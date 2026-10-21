@@ -1,4 +1,5 @@
 <script setup>
+import { FileText, List, LoaderCircle } from '@lucide/vue'
 import { listData } from '@/api/system/dict/data'
 
 const props = defineProps({
@@ -53,9 +54,7 @@ function loadData() {
     <!-- 自定义标题 -->
     <template #header>
       <div class="drawer-head">
-        <el-icon style="color: #5b9bd5; margin-right: 8px">
-          <List />
-        </el-icon>
+        <List class="mr-2 text-[#5b9bd5]" />
         <span class="drawer-head-name">{{ row.dictName }}</span>
         <span class="drawer-head-type">{{ row.dictType }}</span>
       </div>
@@ -64,17 +63,13 @@ function loadData() {
     <div class="drawer-wrap">
       <!-- 加载中 -->
       <div v-if="loading" class="drawer-loading">
-        <el-icon class="is-loading">
-          <Loading />
-        </el-icon>
+        <LoaderCircle class="animate-spin" />
         <span>加载中...</span>
       </div>
 
       <!-- 空数据 -->
       <div v-else-if="!dataList.length" class="drawer-empty">
-        <el-icon style="font-size: 36px">
-          <Document />
-        </el-icon>
+        <FileText :size="36" class="mx-auto mb-2 block" />
         <div>暂无字典数据</div>
       </div>
 
@@ -187,10 +182,6 @@ function loadData() {
   color: var(--dict-drawer-subtext-color, #bbb);
   padding: 60px 0;
   font-size: 13px;
-}
-.drawer-empty .el-icon {
-  display: block;
-  margin: 0 auto 8px;
 }
 .stat-row {
   margin-bottom: 16px;
