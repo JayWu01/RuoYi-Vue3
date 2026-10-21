@@ -7,14 +7,6 @@ const props = defineProps({
 })
 
 const rankType = defineModel('rankType', { type: String, default: 'callPolice' })
-const dateRange = defineModel('dateRange', { type: Array, default: () => [] })
-
-const dateRangeModel = computed({
-  get: () => dateRange.value ?? [],
-  set: (value) => {
-    dateRange.value = value ?? []
-  }
-})
 
 const rankTabList = [
   { label: '接处警', value: 'callPolice' },
@@ -69,23 +61,6 @@ const barColor = (index) => {
         >
           {{ tab.label }}
         </button>
-      </div>
-
-      <div class="mb-2 flex shrink-0 items-center gap-2 px-3">
-        <span class="whitespace-nowrap text-sm text-muted">日期范围</span>
-        <el-date-picker
-          v-model="dateRangeModel"
-          type="daterange"
-          format="YYYY-MM-DD"
-          value-format="YYYY-MM-DD"
-          range-separator="~"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          clearable
-          size="small"
-          popper-class="dashboard-popper"
-          class="dashboard-date-picker min-w-0 flex-1"
-        />
       </div>
 
       <div class="min-h-0 flex-1 overflow-y-auto px-3 pb-2">

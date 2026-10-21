@@ -60,8 +60,13 @@ const createYesterdayRange = () => {
   return [yesterday, yesterday]
 }
 
+// query.value.startDate 和 endDate 就是本面板的全局时间
+const createQueryDateRange = () => {
+  return [query.value.startDate, query.value.endDate]
+}
+
 const rankDataFilter = shallowRef({
-  dateRange: createYesterdayRange()
+  dateRange: createQueryDateRange()
 })
 
 const rankDateRange = computed({
@@ -84,9 +89,9 @@ const toDayTimeRange = (dateRange) => {
   return {}
 }
 
-const createRankDataQuery = filter => ({
+const createRankDataQuery = () => ({
   ...query.value,
-  ...toDayTimeRange(filter.dateRange),
+  ...toDayTimeRange(createQueryDateRange),
   rankType: rankType.value
 })
 
@@ -94,7 +99,7 @@ const getRankTrendParams = () => ({
   ...createPanelQuery(rankFilter.value),
   rankType: rankType.value
 })
-const getRankDataParams = () => createRankDataQuery(rankDataFilter.value)
+const getRankDataParams = () => createRankDataQuery()
 const getJuvenileParams = () => createPanelQuery(juvenileFilter.value)
 
 const getPanelParams = () => ({
@@ -254,7 +259,6 @@ onMounted(reloadAll)
         <div class="grid min-h-0">
           <UnitRankPanel
             v-model:rank-type="rankType"
-            v-model:date-range="rankDateRange"
             :data="dashboard.rankData"
           />
         </div>
