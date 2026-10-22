@@ -38,6 +38,11 @@ const rows = computed(() => {
 
 const maxValue = computed(() => Math.max(0, ...rows.value.map(row => row.value)))
 
+const totalValue = computed(() => {
+  const total = rows.value.reduce((sum, row) => sum + row.value, 0)
+  return Math.round(total * 100) / 100
+})
+
 const barWidthStyle = (value) => {
   if (!maxValue.value || !value) return '0%'
   return `${Math.max((value / maxValue.value) * 100, 4)}%`
@@ -140,6 +145,18 @@ const barColor = (index) => {
               <td class="border border-[#1e4a73] px-2 py-1.5" />
             </tr>
           </tbody>
+          <tfoot v-if="rows.length" class="sticky bottom-0 z-10">
+            <tr class="bg-[#0e3a61]">
+              <td class="w-14 border border-[#1e4a73] px-2 py-1.5 text-center text-slate-400"></td>
+              <td class="border border-[#1e4a73] px-2 py-1.5 text-center font-bold text-slate-100">
+                总计
+              </td>
+              <td class="border border-[#1e4a73] px-2 py-1.5 text-right font-bold text-chart-yellow">
+                {{ totalValue }}
+              </td>
+              <td class="border border-[#1e4a73] px-2 py-1.5" />
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>
