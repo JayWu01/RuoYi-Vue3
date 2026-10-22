@@ -89,15 +89,17 @@ onMounted(renderChart)
       <div ref="chartRef" class="absolute inset-0 z-panel-content" />
 
       <div
-        class="absolute z-panel-overlay pointer-events-auto rounded-md border border-[#2f80d1]/50 bg-gradient-to-b from-[#124072]/85 to-[#0a2a52]/85 px-2 py-1 shadow-[0_0_10px_rgba(47,128,209,.25)] top-[6px] left-[calc(80%_-_110px)]"
+        class="absolute top-[6px] right-2 z-panel-overlay pointer-events-auto rounded-md border border-[#2f80d1]/50 bg-gradient-to-b from-[#124072]/85 to-[#0a2a52]/85 px-2 py-1 shadow-[0_0_10px_rgba(47,128,209,.25)]"
       >
-        <div class="flex items-center gap-2">
-          <span class="text-[12px] text-[#8fb8e6] whitespace-nowrap">非预警未成年人数</span>
-          <AnimatedStatistic
-            :value="unwarnedCount"
-            class="font-bold"
-            :value-style="{ color: '#ff4d4f', fontSize: '1.25rem', lineHeight: '1.2', fontWeight: 700 }"
-          />
+        <div class="flex flex-col items-start gap-0.5">
+          <div class="flex items-center gap-2">
+            <span class="text-[12px] text-[#8fb8e6] whitespace-nowrap">非预警未成年人数</span>
+            <AnimatedStatistic
+              :value="unwarnedCount"
+              class="font-bold"
+              :value-style="{ color: '#ff4d4f', fontSize: '1.25rem', lineHeight: '1.2', fontWeight: 700 }"
+            />
+          </div>
           <div class="flex items-center gap-1 text-[12px] text-[#a9c6e4]">
             <span>环比</span>
             <TrendValue
