@@ -90,12 +90,38 @@ const handleFileRemove = (file, fileList) => {
   selectedFile.value = null
 }
 
+// 下载后端返回的失败/提醒明细（Base64 xlsx，避免二次鉴权）
+function downloadFailFile(data) {
+  if (!data || !data.failFileBase64) {
+    return
+  }
+  try {
+    const binary = atob(data.failFileBase64)
+    const bytes = new Uint8Array(binary.length)
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i)
+    }
+    const blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = data.failFileName || '导入失败数据.xlsx'
+    document.body.appendChild(link)
+    link.click()
+    URL.revokeObjectURL(link.href)
+    document.body.removeChild(link)
+  } catch (e) {
+    // 下载失败不影响导入结果提示
+  }
+}
+
 // 上传成功
 function handleSuccess(response) {
   visible.value = false
   isUploading.value = false
   selectedFile.value = null
   uploadRef.value?.clearFiles()
+  // 有失败/提醒数据时，自动下载明细文件供录入人员核对
+  downloadFailFile(response?.data)
   proxy.$alert(
     `<div style='overflow:auto;overflow-x:hidden;max-height:70vh;padding:10px 20px 0;'>${response.msg}</div>`,
     '导入结果',
