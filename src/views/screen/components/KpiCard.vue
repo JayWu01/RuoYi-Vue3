@@ -23,7 +23,7 @@ const props = defineProps({
   },
   rate: {
     type: [String, Number],
-    default: '-'
+    default: ''
   },
   tone: {
     type: String,
@@ -53,7 +53,10 @@ const isUp = computed(() => isTrendUp(props.rate))
         {{ title }}
       </div>
       <AnimatedStatistic class="block text-3xl leading-8 tracking-wider text-white" :value="value" />
-      <div class="mt-1 flex items-center gap-1 whitespace-nowrap text-xs leading-4 text-muted">
+      <div
+        v-if="rate !== '' && rate !== null && rate !== undefined"
+        class="mt-1 flex items-center gap-1 whitespace-nowrap text-xs leading-4 text-muted"
+      >
         {{ note }}
         <TrendValue
           :value="rate"
