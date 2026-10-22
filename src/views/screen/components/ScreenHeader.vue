@@ -28,7 +28,7 @@ defineEmits(['fullscreen', 'export', 'update:panel'])
 
 const PANEL_TABS = [
   { value: 'swat', label: '特巡警' },
-  { value: 'subBureau', label: '分县局' }
+  // { value: 'subBureau', label: '分县局' }
 ]
 </script>
 
