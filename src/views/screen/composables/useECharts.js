@@ -16,7 +16,8 @@ import {
 } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
-import { computed, onBeforeUnmount, onMounted, shallowRef } from 'vue'
+import { computed, onBeforeUnmount, onMounted, shallowRef, watch } from 'vue'
+import { useScreenScale } from './useScreenScale'
 
 echarts.use([
   BarChart,
@@ -44,9 +45,15 @@ const MAX_DEVICE_PIXEL_RATIO = 2
 export function useECharts(elementRef) {
   const chart = shallowRef(null)
   const reducedMotion = usePreferredReducedMotion()
+  const screenScale = useScreenScale()
   const animation = computed(() => (reducedMotion.value === 'reduce'
     ? { animation: false }
     : CHART_ANIMATION))
+  // 画布被放大时提高 canvas 分辨率，避免大屏下图表发虚
+  const devicePixelRatio = computed(() => {
+    const ratio = (window.devicePixelRatio || 1) * Math.max(1, screenScale.value)
+    return Math.min(MAX_DEVICE_PIXEL_RATIO, Math.round(ratio * 4) / 4)
+  })
   let lastOption = null
   let resizeFrame = 0
 
@@ -59,7 +66,7 @@ export function useECharts(elementRef) {
     if (!chart.value) {
       chart.value = echarts.init(element, null, {
         renderer: 'canvas',
-        devicePixelRatio: Math.min(window.devicePixelRatio || 1, MAX_DEVICE_PIXEL_RATIO),
+        devicePixelRatio: devicePixelRatio.value,
         useDirtyRect: true
       })
       /* 元素晚于首次 setOption 获得尺寸时，补一次完整初始化 */
@@ -112,6 +119,16 @@ export function useECharts(elementRef) {
   }
 
   useResizeObserver(elementRef, resize)
+
+  // 缩放比例变化后 canvas 的分辨率需要重新按新比例创建
+  watch(devicePixelRatio, () => {
+    if (!chart.value) {
+      return
+    }
+    chart.value.dispose()
+    chart.value = null
+    ensureChart()
+  })
 
   onMounted(() => {
     resize()

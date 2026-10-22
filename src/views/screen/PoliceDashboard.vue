@@ -1,6 +1,7 @@
 <script setup>
 import { useFullscreen } from '@vueuse/core'
 import { onBeforeUnmount, ref, shallowRef, watch, watchEffect } from 'vue'
+import ScreenAdapter from './components/ScreenAdapter.vue'
 import ScreenHeader from './components/ScreenHeader.vue'
 import { toggleScreenTheme, useScreenTheme } from './composables/useScreenTheme'
 import SubBureau from './unit/SubBureau.vue'
@@ -64,37 +65,42 @@ const exportData = () => {
 </script>
 
 <template>
-  <div class="dashboard" :data-theme="theme">
-    <div class="flex min-h-screen w-full flex-col overflow-x-hidden font-ui text-scr-fg lg:h-screen lg:overflow-y-auto">
-      <ScreenHeader
-        v-model:panel="activePanel"
-        :update-time="updateTime"
-        :loading="loading"
-        :fullscreen="isFullscreen"
-        :theme="theme"
-        :filter-open="filterOpen"
-        :filter-summary="filterSummary"
-        :exportable="activePanel === 'swat'"
-        @fullscreen="toggle"
-        @refresh="reloadActive"
-        @toggle-theme="toggleScreenTheme"
-        @toggle-filter="toggleFilter"
-        @export="exportData"
-      />
+  <div class="dashboard h-screen w-full" :data-theme="theme">
+    <ScreenAdapter v-slot="{ enabled }" :width="1920" :height="1080">
+      <div
+        class="flex w-full flex-col overflow-x-hidden font-ui text-scr-fg"
+        :class="enabled ? 'h-full' : 'min-h-screen lg:h-screen lg:overflow-y-auto'"
+      >
+        <ScreenHeader
+          v-model:panel="activePanel"
+          :update-time="updateTime"
+          :loading="loading"
+          :fullscreen="isFullscreen"
+          :theme="theme"
+          :filter-open="filterOpen"
+          :filter-summary="filterSummary"
+          :exportable="activePanel === 'swat'"
+          @fullscreen="toggle"
+          @refresh="reloadActive"
+          @toggle-theme="toggleScreenTheme"
+          @toggle-filter="toggleFilter"
+          @export="exportData"
+        />
 
-      <SWAT
-        v-if="activePanel === 'swat'"
-        ref="swatRef"
-        @loading-change="loading = $event"
-        @update-time-change="updateTime = $event"
-        @filter-change="handleFilterChange"
-      />
-      <SubBureau
-        v-else
-        ref="subBureauRef"
-        @loading-change="loading = $event"
-        @filter-change="handleFilterChange"
-      />
-    </div>
+        <SWAT
+          v-if="activePanel === 'swat'"
+          ref="swatRef"
+          @loading-change="loading = $event"
+          @update-time-change="updateTime = $event"
+          @filter-change="handleFilterChange"
+        />
+        <SubBureau
+          v-else
+          ref="subBureauRef"
+          @loading-change="loading = $event"
+          @filter-change="handleFilterChange"
+        />
+      </div>
+    </ScreenAdapter>
   </div>
 </template>
