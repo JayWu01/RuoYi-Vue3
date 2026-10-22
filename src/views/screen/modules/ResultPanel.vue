@@ -47,12 +47,12 @@ const doorPullText = computed(() => {
         </div>
 
         <div v-else key="content" class="stat-grid">
-          <ResultCard label="抓获网逃数" tone="cyan" :value="props.data.netFugitiveCount" :loading="loading" />
-          <ResultCard label="抓获团伙数" tone="green" :value="props.data.gangCount" :loading="loading" />
-          <ResultCard label="抓获现行" tone="amber" :value="props.data.currentArrestMinor" :loading="loading" />
-          <ResultCard label="检查车辆" tone="blue" :value="props.data.checkCarCount ?? '-'" :loading="loading" />
-          <ResultCard label="打开车门数" tone="purple" :value="props.data.openDoorCount ?? '-'" :loading="loading" />
-          <ResultCard label="发现贵重物品" tone="yellow" :value="doorPullText" :loading="loading" />
+          <ResultCard label="抓获网逃数" :value="props.data.netFugitiveCount" :loading="loading" />
+          <ResultCard label="抓获团伙数" :value="props.data.gangCount" :loading="loading" />
+          <ResultCard label="抓获现行" :value="props.data.currentArrestMinor" :loading="loading" />
+          <ResultCard label="检查车辆" :value="props.data.checkCarCount ?? '-'" :loading="loading" />
+          <ResultCard label="打开车门数" :value="props.data.openDoorCount ?? '-'" :loading="loading" />
+          <ResultCard label="发现贵重物品" :value="doorPullText" :loading="loading" />
         </div>
       </Transition>
     </div>

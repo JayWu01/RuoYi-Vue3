@@ -181,7 +181,7 @@ const handleHeaderAction = (key) => {
         <SlidersHorizontal :size="14" :stroke-width="2" class="shrink-0" aria-hidden="true" />
         <span class="shrink-0 text-xs font-semibold leading-none max-[640px]:hidden">筛选</span>
         <span
-          class="max-w-[230px] truncate text-[10.5px] leading-none tabular-nums max-[1279px]:hidden"
+          class="max-w-[230px] truncate text-[10.5px] leading-none tabular-nums max-[1330px]:hidden"
           :class="filterOpen ? 'text-scr-accent opacity-80' : 'text-scr-faint'"
         >{{ filterSummary }}</span>
         <ChevronDown
@@ -198,11 +198,11 @@ const handleHeaderAction = (key) => {
       <div class="grid size-[34px] shrink-0 place-items-center rounded-[10px] bg-scr-accent-gradient text-scr-on-accent shadow-[0_6px_18px_var(--scr-accent-glow)] max-[1023px]:size-[30px] max-[1023px]:rounded-[9px] max-[640px]:size-7 max-[640px]:rounded-lg" aria-hidden="true">
         <Shield :size="19" :stroke-width="2.2" />
       </div>
-      <div class="min-w-0">
+      <div class="min-w-0 flex flex-col gap-1">
         <h1 class="m-0 whitespace-nowrap text-[17px] font-bold leading-[1.2] tracking-[0.5px] text-scr-fg max-[1023px]:text-base max-[768px]:text-[15.5px] max-[640px]:text-[15px] max-[640px]:tracking-[0.3px]">
           街面巡防质效
         </h1>
-        <p class="mt-0.5 whitespace-nowrap text-[9.5px] font-medium leading-[1.2] tracking-[2.4px] text-scr-faint max-[1023px]:hidden">
+        <p class="my-0 whitespace-nowrap text-[9.5px] font-medium leading-none tracking-[2.4px] text-scr-faint max-[1023px]:hidden">
           POLICE STATION DAILY WORK DATA CENTER
         </p>
       </div>

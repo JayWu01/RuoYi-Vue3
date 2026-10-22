@@ -10,10 +10,6 @@ defineProps({
     type: [String, Number],
     default: '-'
   },
-  tone: {
-    type: String,
-    default: 'cyan'
-  },
   loading: {
     type: Boolean,
     default: false
@@ -22,7 +18,7 @@ defineProps({
 </script>
 
 <template>
-  <article class="stat-tile" :class="`tone-${tone}`" :aria-busy="loading || undefined">
+  <article class="stat-tile" :aria-busy="loading || undefined">
     <span class="s-label" :title="label">{{ label }}</span>
     <AnimatedStatistic class="s-value" :value="value" :loading="loading" />
   </article>

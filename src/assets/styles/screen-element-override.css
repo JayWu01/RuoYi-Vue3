@@ -114,6 +114,7 @@
 }
 .dashboard .dashboard-date-picker .el-range-input {
   color: var(--scr-text-1) !important;
+  font-family: var(--scr-font-numeric);
   font-variant-numeric: tabular-nums;
 }
 .dashboard .dashboard-date-picker .el-range-input::placeholder {
@@ -239,6 +240,7 @@
 .dashboard-popper .el-date-table td .el-date-table-cell__text {
   border-radius: 7px;
   color: var(--scr-text-2);
+  font-family: var(--scr-font-numeric);
   font-variant-numeric: tabular-nums;
 }
 .dashboard-popper .el-date-table td.available:hover .el-date-table-cell__text,
@@ -282,6 +284,7 @@
 }
 .dashboard-popper .el-time-spinner__item {
   color: var(--scr-text-2);
+  font-family: var(--scr-font-numeric);
 }
 .dashboard-popper .el-time-spinner__item.is-active {
   color: var(--scr-accent);

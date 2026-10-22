@@ -7,10 +7,13 @@ import {
   createAreaGradient,
   createBarGradient,
   createDashboardTooltip,
-  createSliderZoom
+  createSliderZoom,
+  NUMERIC_FONT_FAMILY,
+  TEXT_FONT_FAMILY
 } from '../charts/shared'
 import ChartTypeToggle from '../components/ChartTypeToggle.vue'
 import ScreenPanel from '../components/ScreenPanel.vue'
+import { useChartTooltipCarousel } from '../composables/useChartTooltipCarousel'
 import { useECharts } from '../composables/useECharts'
 import { useScreenTheme } from '../composables/useScreenTheme'
 
@@ -37,7 +40,8 @@ const props = defineProps({
   gridBottom: { type: Number, default: 56 },
   xAxisRotate: { type: Number, default: 0 },
   legendLeft: { type: [String, Number], default: 'center' },
-  barWidth: { type: Number, default: 10 }
+  barWidth: { type: Number, default: 10 },
+  carouselDelay: { type: Number, default: 0 }
 })
 
 const emit = defineEmits(['changeMonthRange', 'updateUnit'])
@@ -47,7 +51,7 @@ const { theme } = useScreenTheme()
 const palette = computed(() => getScreenPalette(theme.value))
 
 const chartRef = useTemplateRef('chartRef')
-const { setOption } = useECharts(chartRef)
+const { chart, setOption } = useECharts(chartRef)
 
 const isBar = computed(() => chartType.value === 'bar')
 const hasData = computed(() => Boolean(props.data?.xAxis?.length && props.data?.seriesList?.length))
@@ -130,7 +134,7 @@ const renderChart = () => {
     animationDurationUpdate: 320,
     animationEasing: 'cubicOut',
     animationEasingUpdate: 'cubicOut',
-    textStyle: { fontFamily: '"PingFang SC","Microsoft YaHei",sans-serif' },
+    textStyle: { fontFamily: TEXT_FONT_FAMILY },
     legend: {
       show: true,
       top: 4,
@@ -139,7 +143,7 @@ const renderChart = () => {
       itemWidth: 7,
       itemHeight: 7,
       itemGap: 14,
-      textStyle: { color: colors.text3, fontSize: 10.5 },
+      textStyle: { color: colors.text3, fontSize: 10.5, fontFamily: TEXT_FONT_FAMILY },
       inactiveColor: colors.legendInactive
     },
     tooltip: createDashboardTooltip('axis', colors),
@@ -160,6 +164,7 @@ const renderChart = () => {
       axisLabel: {
         color: colors.text3,
         fontSize: 10,
+        fontFamily: NUMERIC_FONT_FAMILY,
         rotate: props.xAxisRotate,
         hideOverlap: true
       }
@@ -171,7 +176,7 @@ const renderChart = () => {
       ...(axisScale ? { max: axisScale.max, interval: axisScale.interval } : {}),
       splitNumber: 4,
       splitLine: { lineStyle: { color: colors.splitLine } },
-      axisLabel: { color: colors.text3, fontSize: 10 },
+      axisLabel: { color: colors.text3, fontSize: 10, fontFamily: NUMERIC_FONT_FAMILY },
       axisLine: { show: false },
       axisTick: { show: false }
     },
@@ -186,6 +191,13 @@ const renderChart = () => {
 
 watch([() => props.data, chartType, palette], renderChart)
 onMounted(renderChart)
+
+useChartTooltipCarousel({
+  chart,
+  count: computed(() => props.data?.xAxis?.length ?? 0),
+  chartRef,
+  delay: props.carouselDelay
+})
 </script>
 
 <template>

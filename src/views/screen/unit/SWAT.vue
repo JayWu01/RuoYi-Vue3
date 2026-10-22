@@ -243,6 +243,7 @@ defineExpose({
           unit="(单位：起)"
           :data="dashboard.rank"
           :loading="panelLoading('rank')"
+          :carousel-delay="1600"
           show-filters
           :month-range="rankFilter.monthRange"
           :unit-options="cityBranchUnitOptions"
@@ -264,6 +265,7 @@ defineExpose({
           unit="(单位：人)"
           :data="dashboard.juvenile"
           :loading="panelLoading('juvenile')"
+          :carousel-delay="3200"
           show-filters
           :month-range="juvenileFilter.monthRange"
           :unit-options="cityBranchUnitOptions"

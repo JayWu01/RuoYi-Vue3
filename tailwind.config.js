@@ -49,7 +49,8 @@ export default {
         'scr-accent-gradient': 'var(--scr-accent-gradient)'
       },
       fontFamily: {
-        ui: ['-apple-system', 'BlinkMacSystemFont', 'PingFang SC', 'Microsoft YaHei', 'sans-serif']
+        ui: ['var(--scr-font-text)'],
+        numeric: ['var(--scr-font-numeric)']
       },
       borderRadius: {
         'scr-card': 'var(--scr-radius-card)',

@@ -152,6 +152,7 @@ defineExpose({
         show-filters
         :show-unit-filter="false"
         :month-range="rankTrendFilter.monthRange"
+        :carousel-delay="0"
         @change-month-range="updateRankMonthRange"
       />
 
@@ -164,6 +165,7 @@ defineExpose({
         show-filters
         :show-unit-filter="false"
         :month-range="juvenileTrendFilter.monthRange"
+        :carousel-delay="1600"
         @change-month-range="updateJuvenileMonthRange"
       />
     </section>

@@ -17,7 +17,7 @@ const chars = computed(() => props.value.split(''))
 
 <template>
   <span
-    class="ticking-clock inline-flex items-center whitespace-nowrap leading-none tabular-nums"
+    class="ticking-clock inline-flex items-center whitespace-nowrap font-numeric leading-none tabular-nums"
     role="timer"
     :aria-label="`${label} ${value}`"
   >

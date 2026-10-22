@@ -5,10 +5,6 @@ import AnimatedStatistic from './AnimatedStatistic.vue'
 import TrendValue from './TrendValue.vue'
 
 const props = defineProps({
-  icon: {
-    type: [Object, Function],
-    required: true
-  },
   title: {
     type: String,
     required: true
@@ -24,10 +20,6 @@ const props = defineProps({
   rate: {
     type: [String, Number],
     default: '-'
-  },
-  tone: {
-    type: String,
-    default: 'cyan'
   },
   loading: {
     type: Boolean,
@@ -51,11 +43,8 @@ const rateTone = computed(() => {
 </script>
 
 <template>
-  <article class="kpi" :class="`tone-${tone}`">
-    <div class="kpi-top">
-      <span class="kpi-label">{{ title }}</span>
-      <component :is="icon" class="kpi-ico" :size="14" :stroke-width="2" aria-hidden="true" />
-    </div>
+  <article class="kpi" :aria-busy="loading || undefined">
+    <span class="kpi-label">{{ title }}</span>
 
     <AnimatedStatistic class="kpi-value" :value="value" :loading="loading" />
 

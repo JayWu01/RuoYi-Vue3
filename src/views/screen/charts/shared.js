@@ -6,6 +6,9 @@
  */
 import { graphic } from 'echarts/core'
 
+export const TEXT_FONT_FAMILY = '"PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif'
+export const NUMERIC_FONT_FAMILY = '"DIN Alternate", "Bahnschrift", "SF Mono", "Roboto Mono", Menlo, Consolas, monospace'
+
 /** #rrggbb / #rgb / rgba() 统一转成带 alpha 的 rgba() */
 function withAlpha(color, alpha) {
   const hex = String(color ?? '').trim()
@@ -53,9 +56,11 @@ export const createDashboardTooltip = (trigger = 'axis', palette) => ({
   borderColor: palette.tooltipBorder,
   borderWidth: 1,
   padding: [8, 12],
+  confine: true,
   textStyle: {
     color: palette.tooltipText,
-    fontSize: 11
+    fontSize: 11,
+    fontFamily: TEXT_FONT_FAMILY
   },
   axisPointer: trigger === 'axis'
     ? {
@@ -131,7 +136,8 @@ export function createSliderZoom({ show, endPercent, showDataShadow = true }, pa
       },
       textStyle: {
         color: palette.text3,
-        fontSize: 10
+        fontSize: 10,
+        fontFamily: NUMERIC_FONT_FAMILY
       }
     },
     {
