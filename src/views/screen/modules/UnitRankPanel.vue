@@ -92,7 +92,7 @@ const barColor = (index) => {
       </div>
 
       <div class="min-h-0 flex-1 overflow-y-auto px-3 pb-2">
-        <table class="w-full table-fixed border-collapse text-[19px]">
+        <table class="w-full table-fixed border-collapse text-[17px]">
           <thead class="sticky top-0 z-10">
             <tr class="bg-[#0e3a61]">
               <th class="w-14 border border-[#1e4a73] px-2 py-1.5 font-bold text-slate-100">
@@ -101,14 +101,17 @@ const barColor = (index) => {
               <th class="border border-[#1e4a73] px-2 py-1.5 font-bold text-slate-100">
                 名称
               </th>
-              <th class="w-[46%] border border-[#1e4a73] px-2 py-1.5 font-bold text-slate-100">
+              <th class="w-[36%] border border-[#1e4a73] px-2 py-1.5 font-bold text-slate-100">
                 数据
+              </th>
+              <th class="w-[20%] border border-[#1e4a73] px-2 py-1.5 font-bold text-slate-100">
+                环比量(率)
               </th>
             </tr>
           </thead>
           <tbody>
             <tr v-if="!rows.length">
-              <td colspan="3" class="border border-[#1e4a73] px-2 py-6 text-center text-slate-400">
+              <td colspan="4" class="border border-[#1e4a73] px-2 py-6 text-center text-slate-400">
                 {{ emptyText }}
               </td>
             </tr>
@@ -134,6 +137,7 @@ const barColor = (index) => {
                   <span class="w-12 shrink-0 text-right font-bold text-white">{{ row.value }}</span>
                 </div>
               </td>
+              <td class="border border-[#1e4a73] px-2 py-1.5" />
             </tr>
           </tbody>
         </table>
