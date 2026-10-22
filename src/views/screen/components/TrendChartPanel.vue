@@ -14,6 +14,7 @@ const props = defineProps({
   },
   showChartToggle: { type: Boolean, default: true },
   showFilters: { type: Boolean, default: false },
+  showUnitFilter: { type: Boolean, default: true },
   monthRange: { type: Array, default: null },
   unitOptions: { type: Array, default: () => [] },
   deptId: { type: [String, Number], default: null },
@@ -150,6 +151,7 @@ onMounted(renderChart)
         @update:model-value="emit('change-month-range', $event)"
       />
       <el-select
+        v-if="showUnitFilter"
         popper-class="dashboard-popper"
         class="dashboard-select min-w-0 flex-1"
         :model-value="deptId ?? ''"

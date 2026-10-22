@@ -3,10 +3,14 @@ import { computed } from 'vue'
 import ScreenPanel from '../components/ScreenPanel.vue'
 
 const props = defineProps({
-  data: { type: Object, default: () => ({ yAxis: [], series: [] }) }
+  data: { type: Object, default: () => ({ yAxis: [], series: [] }) },
+  unitOptions: { type: Array, default: () => [] },
+  showUnitFilter: { type: Boolean, default: false },
+  emptyText: { type: String, default: '暂无数据' }
 })
 
 const rankType = defineModel('rankType', { type: String, default: 'callPolice' })
+const unitId = defineModel('unitId', { type: [String, Number], default: null })
 
 const rankTabList = [
   { label: '接处警', value: 'callPolice' },
@@ -20,6 +24,10 @@ const handleTabChange = (value) => {
   if (value !== rankType.value) {
     rankType.value = value
   }
+}
+
+const handleUnitChange = (value) => {
+  unitId.value = value === '' ? null : value
 }
 
 const rows = computed(() => {
@@ -46,6 +54,26 @@ const barColor = (index) => {
 <template>
   <ScreenPanel title="警务站排名" unit="(单位：起)">
     <div class="flex min-h-0 h-full flex-col">
+      <div v-if="showUnitFilter" class="mb-2 flex shrink-0 items-center gap-2 px-3">
+        <span class="whitespace-nowrap text-xs text-muted">分县局</span>
+        <el-select
+          :model-value="unitId ?? ''"
+          popper-class="dashboard-popper"
+          class="dashboard-select min-w-0 flex-1"
+          size="small"
+          placeholder="全部单位"
+          @update:model-value="handleUnitChange"
+        >
+          <el-option label="全部单位" value="" />
+          <el-option
+            v-for="option in unitOptions"
+            :key="option.deptId"
+            :label="option.deptName"
+            :value="option.deptId"
+          />
+        </el-select>
+      </div>
+
       <div class="mb-2 flex shrink-0 gap-1.5 px-3" role="tablist" aria-label="排名维度">
         <button
           v-for="tab in rankTabList"
@@ -81,7 +109,7 @@ const barColor = (index) => {
           <tbody>
             <tr v-if="!rows.length">
               <td colspan="3" class="border border-[#1e4a73] px-2 py-6 text-center text-slate-400">
-                暂无数据
+                {{ emptyText }}
               </td>
             </tr>
             <tr
