@@ -13,14 +13,43 @@ defineProps({
   fullscreen: {
     type: Boolean,
     default: false
+  },
+  panel: {
+    type: String,
+    default: 'swat'
+  },
+  exportable: {
+    type: Boolean,
+    default: true
   }
 })
 
-defineEmits(['fullscreen', 'export'])
+defineEmits(['fullscreen', 'export', 'update:panel'])
+
+const PANEL_TABS = [
+  { value: 'swat', label: '特巡警' },
+  { value: 'subBureau', label: '分县局' }
+]
 </script>
 
 <template>
   <header class="relative flex min-h-header items-center justify-center border-b border-x-0 border-t-0 border-line/50 after:absolute after:bottom-[-2px] after:left-1/4 after:h-0.5 after:w-1/2 after:bg-gradient-to-r after:from-transparent after:via-accent after:to-transparent after:shadow-header after:content-empty max-lg:justify-start max-md:flex-col max-md:items-start max-md:gap-2 max-md:py-3">
+    <div class="flex items-center gap-1 p-0.5 max-md:mb-1 xl:absolute xl:left-4 xl:top-1/2 xl:z-panel-content xl:-translate-y-1/2">
+      <button
+        v-for="tab in PANEL_TABS"
+        :key="tab.value"
+        type="button"
+        :aria-pressed="panel === tab.value"
+        class="inline-flex cursor-pointer items-center justify-center rounded-md border-0 px-3 py-1 text-xs font-medium tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent/60"
+        :class="panel === tab.value
+          ? 'bg-accent/15 text-accent shadow-[0_0_0.5rem_rgba(32,181,241,0.25)]'
+          : 'bg-transparent text-[#b7cfdd] hover:bg-field hover:text-accent'"
+        @click="$emit('update:panel', tab.value)"
+      >
+        {{ tab.label }}
+      </button>
+    </div>
+
     <div class="flex items-center gap-2 max-lg:ml-4 max-lg:text-left max-md:ml-0">
       <div aria-hidden="true" class="hidden h-16 w-48 items-center lg:flex xl:w-56 2xl:w-64">
         <span class="relative flex h-12 w-full items-center">
@@ -85,6 +114,7 @@ defineEmits(['fullscreen', 'export'])
         </button>
 
         <button
+          v-if="exportable"
           type="button"
           aria-label="导出数据"
           title="导出数据"
