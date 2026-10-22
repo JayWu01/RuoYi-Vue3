@@ -19,43 +19,56 @@ const doorPullText = computed(() => {
 
 <template>
   <ScreenPanel title="战果类数据">
-    <div class="grid h-full min-h-0 grid-cols-3 grid-rows-2 gap-2 p-2 max-sm:grid-cols-2">
-      <ResultCard
-        :icon="Target"
-        label="抓获网逃数"
-        tone="cyan"
-        :value="props.data.netFugitiveCount"
-      />
-      <ResultCard
-        :icon="Users"
-        label="抓获团伙数"
-        tone="orange"
-        :value="props.data.gangCount"
-      />
-      <ResultCard
-        :icon="Medal"
-        label="抓获现行"
-        tone="yellow"
-        :value="props.data.currentArrestMinor"
-      />
-      <ResultCard
-        :icon="Medal"
-        label="检查车辆"
-        tone="green"
-        :value="props.data.checkCarCount ?? '-'"
-      />
-      <ResultCard
-        :icon="Target"
-        label="打开车门数"
-        tone="yellow"
-        :value="props.data.openDoorCount ?? '-'"
-      />
-      <ResultCard
-        :icon="Target"
-        label="发现贵重物品"
-        tone="yellow"
-        :value="doorPullText"
-      />
+    <div class="grid h-full min-h-0 grid-rows-[1fr_auto_1fr] gap-x-2 gap-y-1.5 p-2">
+      <div class="grid min-h-0 grid-cols-3 gap-2">
+        <ResultCard
+          :icon="Target"
+          label="抓获网逃数"
+          tone="cyan"
+          :value="props.data.netFugitiveCount"
+        />
+        <ResultCard
+          :icon="Users"
+          label="抓获团伙数"
+          tone="orange"
+          :value="props.data.gangCount"
+        />
+        <ResultCard
+          :icon="Medal"
+          label="抓获现行"
+          tone="yellow"
+          :value="props.data.currentArrestMinor"
+        />
+      </div>
+
+      <div class="flex min-w-0 items-center gap-2 px-1">
+        <span class="h-3 w-0.5 shrink-0 rounded-full bg-chart-yellow" />
+        <span class="shrink-0 text-[0.6875rem] font-medium tracking-[0.18em] text-chart-yellow">
+          拉门护安
+        </span>
+        <span class="h-px min-w-0 flex-1 bg-gradient-to-r from-line-muted to-transparent" />
+      </div>
+
+      <div class="grid min-h-0 grid-cols-3 gap-2">
+        <ResultCard
+          :icon="Medal"
+          label="检查车辆"
+          tone="green"
+          :value="props.data.checkCarCount ?? '-'"
+        />
+        <ResultCard
+          :icon="Target"
+          label="打开车门数"
+          tone="yellow"
+          :value="props.data.openDoorCount ?? '-'"
+        />
+        <ResultCard
+          :icon="Target"
+          label="发现贵重物品"
+          tone="yellow"
+          :value="doorPullText"
+        />
+      </div>
     </div>
   </ScreenPanel>
 </template>
