@@ -4,13 +4,16 @@ import { computed, onMounted, useTemplateRef, watch } from 'vue'
 import { getScreenPalette } from '../charts/palette'
 import {
   calcAxisMaxAndInterval,
-  createAreaGradient,
-  createBarGradient,
-  createDashboardTooltip,
+  createBarSeries,
+  createCategoryAxis,
+  createChartBase,
+  createChartGrid,
+  createChartLegend,
+  createChartTooltip,
+  createLineSeries,
   createSliderZoom,
-  NUMERIC_FONT_FAMILY,
-  TEXT_FONT_FAMILY
-} from '../charts/shared'
+  createValueAxis
+} from '../charts/spec'
 import ChartTypeToggle from '../components/ChartTypeToggle.vue'
 import ScreenPanel from '../components/ScreenPanel.vue'
 import { useChartTooltipCarousel } from '../composables/useChartTooltipCarousel'
@@ -63,45 +66,24 @@ const handleUnitChange = (value) => {
   emit('updateUnit', { deptId, deptName: unit?.deptName })
 }
 
-/* 折线：symbol 无点 + smooth + lttb 采样；单系列才加垂直渐变面积，多系列避免糊 */
-const buildLineSeries = seriesList => seriesList.map((item, index) => {
-  const color = palette.value.series[index % palette.value.series.length]
-  const series = {
-    name: item.name,
-    type: 'line',
-    smooth: true,
-    symbol: 'none',
-    sampling: 'lttb',
-    data: item.data,
-    lineStyle: { width: 2.5, color },
-    itemStyle: { color },
-    emphasis: { focus: 'series' },
-    animationDelay: index * 70
-  }
+/* 单系列才加垂直渐变面积，多系列避免糊 */
+const buildLineSeries = seriesList => seriesList.map((item, index) => createLineSeries({
+  name: item.name,
+  data: item.data,
+  color: palette.value.series[index % palette.value.series.length],
+  palette: palette.value,
+  showArea: seriesList.length === 1,
+  index
+}))
 
-  if (seriesList.length === 1) {
-    series.areaStyle = { color: createAreaGradient(color, palette.value.areaAlpha) }
-  }
-
-  return series
-})
-
-/* 柱状：圆角 + 垂直渐变；barWidth prop 作为最大柱宽，点位多时自动收窄避免相邻分类重叠 */
-const buildBarSeries = seriesList => seriesList.map((item, index) => {
-  const color = palette.value.series[index % palette.value.series.length]
-  return {
-    name: item.name,
-    type: 'bar',
-    barMaxWidth: props.barWidth,
-    data: item.data,
-    itemStyle: {
-      color: createBarGradient(color, palette.value.barAlpha),
-      borderRadius: [5, 5, 0, 0]
-    },
-    emphasis: { focus: 'series' },
-    animationDelay: index * 50
-  }
-})
+const buildBarSeries = seriesList => seriesList.map((item, index) => createBarSeries({
+  name: item.name,
+  data: item.data,
+  color: palette.value.series[index % palette.value.series.length],
+  palette: palette.value,
+  barWidth: props.barWidth,
+  index
+}))
 
 const renderChart = () => {
   const xAxis = props.data?.xAxis ?? []
@@ -110,6 +92,7 @@ const renderChart = () => {
   /* 空态：清空画布，空态文案由 HTML 覆盖层负责 */
   if (!xAxis.length || !seriesList.length) {
     setOption({
+      ...createChartBase(),
       legend: { show: false },
       tooltip: { show: false },
       xAxis: { show: false, type: 'category', data: [] },
@@ -130,62 +113,36 @@ const renderChart = () => {
   const barMode = isBar.value
 
   setOption({
+    ...createChartBase(),
     animationDuration: 700,
     animationDurationUpdate: 320,
     animationEasing: 'cubicOut',
     animationEasingUpdate: 'cubicOut',
-    textStyle: { fontFamily: TEXT_FONT_FAMILY },
-    legend: {
-      show: true,
-      top: 4,
-      left: props.legendLeft,
-      icon: 'circle',
-      itemWidth: 7,
-      itemHeight: 7,
-      itemGap: 14,
-      textStyle: { color: colors.text3, fontSize: 10.5, fontFamily: TEXT_FONT_FAMILY },
-      inactiveColor: colors.legendInactive
-    },
-    tooltip: createDashboardTooltip('axis', colors),
-    grid: {
+    legend: createChartLegend({ palette: colors, left: props.legendLeft }),
+    tooltip: createChartTooltip(colors, 'axis'),
+    grid: createChartGrid({
       left: props.gridLeft,
       right: props.gridRight,
       top: 34,
-      bottom: props.gridBottom,
-      containLabel: true
-    },
-    xAxis: {
-      show: true,
-      type: 'category',
+      bottom: props.gridBottom
+    }),
+    xAxis: createCategoryAxis({
+      palette: colors,
       data: xAxis,
       boundaryGap: barMode,
-      axisLine: { lineStyle: { color: colors.axisLine } },
-      axisTick: { show: false },
-      axisLabel: {
-        color: colors.text3,
-        fontSize: 10,
-        fontFamily: NUMERIC_FONT_FAMILY,
-        rotate: props.xAxisRotate,
-        hideOverlap: true
-      }
-    },
-    yAxis: {
-      show: true,
-      type: 'value',
-      min: 0,
-      ...(axisScale ? { max: axisScale.max, interval: axisScale.interval } : {}),
-      splitNumber: 4,
-      splitLine: { lineStyle: { color: colors.splitLine } },
-      axisLabel: { color: colors.text3, fontSize: 10, fontFamily: NUMERIC_FONT_FAMILY },
-      axisLine: { show: false },
-      axisTick: { show: false }
-    },
+      rotate: props.xAxisRotate
+    }),
+    yAxis: createValueAxis({
+      palette: colors,
+      max: axisScale?.max,
+      interval: axisScale?.interval
+    }),
     series: barMode ? buildBarSeries(seriesList) : buildLineSeries(seriesList),
-    dataZoom: createSliderZoom({
+    dataZoom: createSliderZoom(colors, {
       show: showSlider,
       endPercent,
       showDataShadow: props.showDataShadow
-    }, colors)
+    })
   })
 }
 

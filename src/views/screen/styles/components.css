@@ -1,224 +1,13 @@
 /* ==========================================================================
-   驾驶舱大屏主题 · dashboard-bigscreen-design skill
-   - 语义令牌：颜色 / 表面 / 文字 / 圆角 / 阴影 / 动效曲线
-   - 暗色为默认；亮色为同源扩展，画布与卡片均使用同一套变量
-   - 风格：glassmorphism + mesh 背景 + 青紫双主色 + 克制语义色
-   令牌同时挂在 .dashboard 与 <html data-screen-theme>，
-   以便 Element Plus 传送到 body 的弹层复用同一套颜色。
+   驾驶舱大屏 · 组件层（skill: dashboard-bigscreen-design / components.md）
+   - 玻璃卡片 / Chip / Pill / KPI 磁贴 / 进度条排行 / 图例
+   - 筛选浮层 / 环形图 / 骨架屏 / 交互原子
+   - 动态流 / 预警行 / 地图节点 / 信息卡 / 胶囊导航
+   所有组件只引用 tokens.css 的语义变量，禁止硬编码颜色
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. 主题令牌
-   -------------------------------------------------------------------------- */
-
-.dashboard[data-theme="dark"],
-html[data-screen-theme="dark"] {
-  color-scheme: dark;
-
-  /* 背景层 */
-  --scr-canvas: #070b16;
-  --scr-mesh-1: rgba(30, 58, 138, 0.42);
-  --scr-mesh-2: rgba(76, 29, 149, 0.32);
-  --scr-mesh-3: rgba(6, 182, 212, 0.16);
-
-  /* 玻璃表面（3 级） */
-  --scr-surface-1: rgba(255, 255, 255, 0.035);
-  --scr-surface-2: rgba(255, 255, 255, 0.06);
-  --scr-surface-3: rgba(255, 255, 255, 0.09);
-  --scr-field: rgba(255, 255, 255, 0.04);
-  --scr-field-hover: rgba(255, 255, 255, 0.07);
-  --scr-line: rgba(255, 255, 255, 0.08);
-  --scr-line-strong: rgba(255, 255, 255, 0.14);
-  --scr-hairline: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
-  --scr-glass: linear-gradient(180deg, var(--scr-surface-2), var(--scr-surface-1));
-  --scr-glass-strong: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02));
-  --scr-panel: linear-gradient(180deg, rgba(22, 30, 55, 0.97), rgba(12, 18, 35, 0.97));
-  --scr-popover: rgba(14, 20, 38, 0.94);
-  --scr-popover-line: rgba(255, 255, 255, 0.12);
-  --scr-track: rgba(255, 255, 255, 0.09);
-  --scr-scroll-thumb: rgba(255, 255, 255, 0.14);
-  --scr-scroll-thumb-hover: rgba(255, 255, 255, 0.22);
-  --scr-mask: rgba(7, 11, 22, 0.6);
-
-  /* 文字（3 级） */
-  --scr-text-1: #f1f5f9;
-  --scr-text-2: #aab4c5;
-  --scr-text-3: #67748a;
-
-  /* 主色：青 + 紫 */
-  --scr-accent: #22d3ee;
-  --scr-accent-2: #a78bfa;
-  --scr-accent-soft: rgba(34, 211, 238, 0.12);
-  --scr-accent-line: rgba(34, 211, 238, 0.22);
-  --scr-accent-glow: rgba(34, 211, 238, 0.3);
-  --scr-accent-gradient: linear-gradient(135deg, var(--scr-accent), var(--scr-accent-2));
-  --scr-on-accent: #04121a;
-
-  /* 语义色 */
-  --scr-success: #34d399;
-  --scr-success-soft: rgba(52, 211, 153, 0.12);
-  --scr-success-line: rgba(52, 211, 153, 0.22);
-  --scr-warning: #fbbf24;
-  --scr-warning-soft: rgba(251, 191, 36, 0.12);
-  --scr-warning-line: rgba(251, 191, 36, 0.22);
-  --scr-danger: #fb7185;
-  --scr-danger-soft: rgba(251, 113, 133, 0.12);
-  --scr-danger-line: rgba(251, 113, 133, 0.22);
-  --scr-info: #60a5fa;
-  --scr-purple: #c084fc;
-  --scr-orange: #fb923c;
-  --scr-yellow: #fde047;
-  --scr-gray: #64748b;
-
-  /* 阴影 / 焦点 / 骨架 */
-  --scr-shadow-card: 0 10px 30px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  --scr-shadow-card-hover: 0 16px 44px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.09);
-  --scr-shadow-popover: 0 18px 50px rgba(0, 0, 0, 0.5);
-  --scr-skeleton-base: rgba(255, 255, 255, 0.055);
-  --scr-skeleton-shine: rgba(255, 255, 255, 0.11);
-  --scr-focus: rgba(34, 211, 238, 0.55);
-}
-
-.dashboard[data-theme="light"],
-html[data-screen-theme="light"] {
-  color-scheme: light;
-
-  --scr-canvas: #eef2f9;
-  --scr-mesh-1: rgba(37, 99, 235, 0.16);
-  --scr-mesh-2: rgba(124, 58, 237, 0.12);
-  --scr-mesh-3: rgba(8, 145, 178, 0.12);
-
-  --scr-surface-1: rgba(255, 255, 255, 0.58);
-  --scr-surface-2: rgba(255, 255, 255, 0.82);
-  --scr-surface-3: rgba(15, 23, 42, 0.05);
-  --scr-field: rgba(255, 255, 255, 0.76);
-  --scr-field-hover: #ffffff;
-  --scr-line: rgba(15, 23, 42, 0.09);
-  --scr-line-strong: rgba(15, 23, 42, 0.16);
-  --scr-hairline: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
-  --scr-glass: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.62));
-  --scr-glass-strong: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.66));
-  --scr-panel: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.97));
-  --scr-popover: rgba(255, 255, 255, 0.97);
-  --scr-popover-line: rgba(15, 23, 42, 0.1);
-  --scr-track: rgba(15, 23, 42, 0.06);
-  --scr-scroll-thumb: rgba(15, 23, 42, 0.16);
-  --scr-scroll-thumb-hover: rgba(15, 23, 42, 0.26);
-  --scr-mask: rgba(238, 242, 249, 0.6);
-
-  --scr-text-1: #0f172a;
-  --scr-text-2: #475569;
-  --scr-text-3: #64748b;
-
-  --scr-accent: #0e7490;
-  --scr-accent-2: #7c3aed;
-  --scr-accent-soft: rgba(14, 116, 144, 0.1);
-  --scr-accent-line: rgba(14, 116, 144, 0.24);
-  --scr-accent-glow: rgba(14, 116, 144, 0.22);
-  --scr-accent-gradient: linear-gradient(135deg, var(--scr-accent), var(--scr-accent-2));
-  --scr-on-accent: #ffffff;
-
-  --scr-success: #047857;
-  --scr-success-soft: rgba(4, 120, 87, 0.1);
-  --scr-success-line: rgba(4, 120, 87, 0.22);
-  --scr-warning: #b45309;
-  --scr-warning-soft: rgba(180, 83, 9, 0.1);
-  --scr-warning-line: rgba(180, 83, 9, 0.22);
-  --scr-danger: #be123c;
-  --scr-danger-soft: rgba(190, 18, 60, 0.1);
-  --scr-danger-line: rgba(190, 18, 60, 0.22);
-  --scr-info: #2563eb;
-  --scr-purple: #7e22ce;
-  --scr-orange: #c2410c;
-  --scr-yellow: #a16207;
-  --scr-gray: #64748b;
-
-  --scr-shadow-card: 0 10px 30px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  --scr-shadow-card-hover: 0 18px 44px rgba(15, 23, 42, 0.1), inset 0 1px 0 #ffffff;
-  --scr-shadow-popover: 0 18px 50px rgba(15, 23, 42, 0.14);
-  --scr-skeleton-base: rgba(15, 23, 42, 0.06);
-  --scr-skeleton-shine: rgba(15, 23, 42, 0.1);
-  --scr-focus: rgba(14, 116, 144, 0.35);
-}
-
-/* 与主题无关的节奏令牌 */
-.dashboard {
-  --scr-radius-card: 16px;
-  --scr-radius-tile: 12px;
-  --scr-radius-control: 10px;
-  --scr-font-text: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
-  --scr-font-numeric: "DIN Alternate", "Bahnschrift", "SF Mono", "Roboto Mono", "Menlo", Consolas, monospace;
-  --scr-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --scr-ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
-  --scr-dur-fast: 160ms;
-  --scr-dur-base: 240ms;
-  --scr-dur-slow: 420ms;
-  --scr-header-height: 4.25rem;
-}
-
-/* 大屏独立路由：兜住移动端 overscroll / 首帧白底 */
-html[data-screen-theme] body {
-  background-color: var(--scr-canvas);
-}
-
-/* --------------------------------------------------------------------------
-   2. 画布与 mesh 背景
-   -------------------------------------------------------------------------- */
-
-.dashboard {
-  min-height: 100vh;
-  color: var(--scr-text-1);
-  font-family: var(--scr-font-text);
-  -webkit-font-smoothing: antialiased;
-  background:
-    radial-gradient(1400px 780px at 8% -12%, var(--scr-mesh-1), transparent 62%),
-    radial-gradient(1200px 800px at 110% 2%, var(--scr-mesh-2), transparent 58%),
-    radial-gradient(1100px 720px at 50% 118%, var(--scr-mesh-3), transparent 58%),
-    var(--scr-canvas);
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-}
-
-.dashboard ::selection {
-  background: var(--scr-accent-soft);
-  color: var(--scr-text-1);
-}
-
-.dashboard ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-.dashboard ::-webkit-scrollbar-track {
-  background: transparent;
-}
-.dashboard ::-webkit-scrollbar-thumb {
-  background: var(--scr-scroll-thumb);
-  border-radius: 6px;
-}
-.dashboard ::-webkit-scrollbar-thumb:hover {
-  background: var(--scr-scroll-thumb-hover);
-}
-
-/* 数字统一等宽，避免刷新时宽度跳动 */
-.dashboard :is(
-  .kpi-value,
-  .kpi-delta .val,
-  .s-value,
-  .rank-item .idx,
-  .rank-item .r-val,
-  .rank-item .r-pct,
-  .donut-total,
-  .donut-legend-row .v,
-  .donut-legend-row .p,
-  .panel-footer .strong
-) {
-  font-family: var(--scr-font-numeric);
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1;
-}
-
-/* --------------------------------------------------------------------------
-   3. 玻璃卡片
+   1. 玻璃卡片 Card
    -------------------------------------------------------------------------- */
 
 .dashboard .glass-card {
@@ -279,19 +68,30 @@ html[data-screen-theme] body {
   flex-shrink: 0;
   align-items: center;
   gap: 8px;
-  padding: 13px 16px 11px;
+  padding: 13px var(--scr-space-card) 11px;
+}
+.dashboard .card-head .ico {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--scr-line);
+  border-radius: 8px;
+  background: var(--scr-surface-3);
+  color: var(--scr-accent);
 }
 .dashboard .card-head h3 {
   margin: 0;
-  font-size: 14px;
-  font-weight: 650;
+  font-size: var(--scr-font-card-title);
+  font-weight: var(--scr-weight-title);
   letter-spacing: 0.5px;
   color: var(--scr-text-1);
   white-space: nowrap;
 }
 .dashboard .card-head .unit {
   margin-left: 1px;
-  font-size: 10.5px;
+  font-size: var(--scr-font-label);
   font-weight: 400;
   color: var(--scr-text-3);
   white-space: nowrap;
@@ -324,7 +124,7 @@ html[data-screen-theme] body {
 }
 
 /* --------------------------------------------------------------------------
-   4. Chip / Pill
+   2. Chip / Pill / 涨跌
    -------------------------------------------------------------------------- */
 
 .dashboard .chip {
@@ -332,11 +132,11 @@ html[data-screen-theme] body {
   align-items: center;
   gap: 5px;
   padding: 3px 9px;
-  border-radius: 999px;
+  border-radius: var(--scr-radius-pill);
   border: 1px solid var(--scr-line);
   background: var(--scr-surface-1);
   color: var(--scr-text-2);
-  font-size: 10.5px;
+  font-size: var(--scr-font-label);
   line-height: 1.25;
   white-space: nowrap;
   transition: color var(--scr-dur-fast) ease, background var(--scr-dur-fast) ease;
@@ -375,7 +175,7 @@ html[data-screen-theme] body {
   display: inline-flex;
   align-items: center;
   padding: 2px 8px;
-  border-radius: 999px;
+  border-radius: var(--scr-radius-pill);
   font-size: 9.5px;
   font-weight: 500;
   white-space: nowrap;
@@ -412,7 +212,7 @@ html[data-screen-theme] body {
 }
 
 /* --------------------------------------------------------------------------
-   5. KPI 磁贴 / 战果磁贴
+   3. KPI 磁贴 / 战果磁贴
    -------------------------------------------------------------------------- */
 
 .dashboard .kpi-grid {
@@ -423,7 +223,7 @@ html[data-screen-theme] body {
   grid-template-rows: repeat(2, minmax(0, 1fr));
   gap: 8px;
   min-height: 0;
-  padding: 0 16px 16px;
+  padding: 0 var(--scr-space-card) 16px;
 }
 
 .dashboard .kpi {
@@ -461,14 +261,14 @@ html[data-screen-theme] body {
   display: flex;
   align-items: baseline;
   gap: 3px;
-  font-size: clamp(24px, 1.55vw, 32px);
-  font-weight: 750;
+  font-size: var(--scr-font-kpi);
+  font-weight: var(--scr-weight-kpi);
   line-height: 1.05;
   color: var(--scr-text-1);
   letter-spacing: -0.2px;
 }
 .dashboard .kpi-value .unit {
-  font-size: 10.5px;
+  font-size: var(--scr-font-label);
   font-weight: 500;
   color: var(--scr-text-3);
 }
@@ -495,7 +295,7 @@ html[data-screen-theme] body {
   grid-template-rows: repeat(3, minmax(0, 1fr));
   gap: 8px;
   min-height: 0;
-  padding: 0 16px 16px;
+  padding: 0 var(--scr-space-card) 16px;
 }
 @media (min-width: 1536px) {
   .dashboard .stat-grid {
@@ -529,12 +329,12 @@ html[data-screen-theme] body {
 .dashboard .stat-tile .s-label {
   overflow: hidden;
   color: var(--scr-text-3);
-  font-size: 10.5px;
+  font-size: var(--scr-font-label);
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 .dashboard .stat-tile .s-value {
-  font-size: clamp(18px, 1.15vw, 22px);
+  font-size: var(--scr-font-tile);
   font-weight: 700;
   line-height: 1.1;
   color: var(--scr-text-1);
@@ -547,7 +347,7 @@ html[data-screen-theme] body {
 }
 
 /* --------------------------------------------------------------------------
-   6. 进度条排行
+   4. 进度条排行 Rank
    -------------------------------------------------------------------------- */
 
 .dashboard .rank-list {
@@ -557,7 +357,7 @@ html[data-screen-theme] body {
   gap: 11px;
   min-height: 0;
   overflow-y: auto;
-  padding: 2px 16px 16px;
+  padding: 2px var(--scr-space-card) 16px;
 }
 .dashboard .rank-item {
   min-width: 0;
@@ -569,7 +369,7 @@ html[data-screen-theme] body {
   align-items: center;
   gap: 8px;
   margin-bottom: 6px;
-  font-size: 11.5px;
+  font-size: var(--scr-font-body);
 }
 .dashboard .rank-item .idx {
   display: grid;
@@ -625,7 +425,7 @@ html[data-screen-theme] body {
 }
 
 /* --------------------------------------------------------------------------
-   7. 图例 / 空态
+   5. 图例 / 空态
    -------------------------------------------------------------------------- */
 
 .dashboard .legend {
@@ -660,21 +460,21 @@ html[data-screen-theme] body {
   gap: 8px;
   min-height: 0;
   color: var(--scr-text-3);
-  font-size: 11.5px;
+  font-size: var(--scr-font-body);
 }
 .dashboard .empty-state .empty-ico {
   display: grid;
   place-items: center;
   width: 34px;
   height: 34px;
-  border-radius: 10px;
+  border-radius: var(--scr-radius-control);
   border: 1px solid var(--scr-line);
   background: var(--scr-surface-1);
   color: var(--scr-text-3);
 }
 
 /* --------------------------------------------------------------------------
-   8. 交互原子：图标按钮 / 胶囊 Tab / 图表切换
+   6. 交互原子：图标按钮 / 胶囊 Tab / 图表切换
    -------------------------------------------------------------------------- */
 
 .dashboard .icon-btn {
@@ -728,10 +528,10 @@ html[data-screen-theme] body {
 .dashboard .pill-tab {
   padding: 5px 8px;
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: var(--scr-radius-pill);
   background: var(--scr-surface-1);
   color: var(--scr-text-2);
-  font-size: 11.5px;
+  font-size: var(--scr-font-body);
   line-height: 1.2;
   white-space: nowrap;
   cursor: pointer;
@@ -812,14 +612,7 @@ html[data-screen-theme] body {
 }
 
 /* --------------------------------------------------------------------------
-   9. 顶栏
-   顶栏布局、状态胶囊、筛选入口与动作组已在组件内使用 Tailwind 类实现。
-   -------------------------------------------------------------------------- */
-
-/* 筛选浮层入口和动作组样式见 ScreenHeader / ExpandingActionGroup */
-
-/* --------------------------------------------------------------------------
-   10. 筛选浮层（不占布局高度）
+   7. 筛选浮层（不占布局高度）
    -------------------------------------------------------------------------- */
 
 .dashboard .filter-scrim {
@@ -891,7 +684,7 @@ html[data-screen-theme] body {
 }
 .dashboard .field-label {
   color: var(--scr-text-3);
-  font-size: 10.5px;
+  font-size: var(--scr-font-label);
   letter-spacing: 0.4px;
   white-space: nowrap;
 }
@@ -905,11 +698,11 @@ html[data-screen-theme] body {
 .dashboard .filter-hint {
   margin-right: auto;
   color: var(--scr-text-3);
-  font-size: 10.5px;
+  font-size: var(--scr-font-label);
 }
 
 /* --------------------------------------------------------------------------
-   11. 环形图
+   8. 环形图
    -------------------------------------------------------------------------- */
 
 .dashboard .donut-wrap {
@@ -933,8 +726,8 @@ html[data-screen-theme] body {
 }
 .dashboard .donut-center .donut-total {
   color: var(--scr-text-1);
-  font-size: 26px;
-  font-weight: 750;
+  font-size: var(--scr-font-donut);
+  font-weight: var(--scr-weight-kpi);
   line-height: 1;
 }
 .dashboard .donut-center .donut-label {
@@ -994,10 +787,10 @@ html[data-screen-theme] body {
   flex-shrink: 0;
   align-items: center;
   gap: 10px;
-  padding: 10px 16px;
+  padding: 10px var(--scr-space-card);
   border-top: 1px solid var(--scr-line);
   color: var(--scr-text-3);
-  font-size: 10.5px;
+  font-size: var(--scr-font-label);
 }
 .dashboard .panel-footer .strong {
   color: var(--scr-text-1);
@@ -1005,7 +798,7 @@ html[data-screen-theme] body {
 }
 
 /* --------------------------------------------------------------------------
-   12. 骨架屏与加载态
+   9. 骨架屏与加载态
    -------------------------------------------------------------------------- */
 
 .dashboard .scr-skeleton {
@@ -1047,7 +840,7 @@ html[data-screen-theme] body {
 .dashboard .chart-skeleton .cs-wave {
   position: relative;
   height: 42%;
-  border-radius: 10px;
+  border-radius: var(--scr-radius-control);
   background: var(--scr-skeleton-base);
   overflow: hidden;
 }
@@ -1071,123 +864,261 @@ html[data-screen-theme] body {
   animation: scr-spin 1s linear infinite;
 }
 
-/* Vue Transition：骨架与内容交叉淡入 */
-.scr-swap-enter-active,
-.scr-swap-leave-active {
+/* --------------------------------------------------------------------------
+   10. 段落小标题 Section Title
+   -------------------------------------------------------------------------- */
+
+.dashboard .sec-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--scr-text-2);
+  font-size: var(--scr-font-body);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.dashboard .sec-title :is(i, svg) {
+  flex-shrink: 0;
+  color: var(--scr-accent);
+}
+
+/* --------------------------------------------------------------------------
+   11. 实时动态流 Feed
+   -------------------------------------------------------------------------- */
+
+.dashboard .feed {
+  flex: 1 1 0%;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 2px 14px 12px;
+}
+.dashboard .feed::-webkit-scrollbar {
+  width: 4px;
+}
+.dashboard .feed::-webkit-scrollbar-thumb {
+  background: var(--scr-surface-3);
+  border-radius: 4px;
+}
+.dashboard .feed-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: var(--scr-radius-control);
+  font-size: var(--scr-font-body);
+  transition: background var(--scr-dur-fast) ease;
+}
+.dashboard .feed-row:hover {
+  background: var(--scr-surface-2);
+}
+.dashboard .feed-row .time {
+  flex-shrink: 0;
+  width: 38px;
+  color: var(--scr-text-3);
+  font-family: var(--scr-font-numeric);
+  font-variant-numeric: tabular-nums;
+}
+.dashboard .feed-row .name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--scr-text-1);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dashboard .feed-row .amt {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   12. 预警行 Alert
+   -------------------------------------------------------------------------- */
+
+.dashboard .alert-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid transparent;
+  border-radius: var(--scr-radius-control);
+  font-size: var(--scr-font-body);
+  transition: background var(--scr-dur-fast) ease;
+}
+.dashboard .alert-row:hover {
+  background: var(--scr-surface-2);
+}
+.dashboard .alert-row .lv {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.dashboard .lv-red {
+  background: var(--scr-danger);
+  box-shadow: 0 0 8px var(--scr-danger);
+  animation: scr-blink 1.6s infinite;
+}
+.dashboard .lv-amber {
+  background: var(--scr-warning);
+  box-shadow: 0 0 8px var(--scr-warning);
+}
+.dashboard .lv-blue {
+  background: var(--scr-accent);
+  box-shadow: 0 0 8px var(--scr-accent);
+}
+.dashboard .alert-row .a-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--scr-text-1);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dashboard .alert-row .a-time {
+  flex-shrink: 0;
+  color: var(--scr-text-3);
+  font-size: var(--scr-font-label);
+}
+
+/* --------------------------------------------------------------------------
+   13. 地图节点 Map Node
+   -------------------------------------------------------------------------- */
+
+.dashboard .map-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+.dashboard .map-node .ring {
+  position: relative;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+.dashboard .map-node .ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 14px currentColor;
+}
+.dashboard .map-node .ring::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  opacity: 0.5;
+  animation: scr-ripple 2.6s infinite;
+}
+.dashboard .map-node .lbl {
+  position: absolute;
+  left: 16px;
+  top: -3px;
+  padding: 2px 7px;
+  border: 1px solid var(--scr-line);
+  border-radius: 6px;
+  background: var(--scr-popover);
+  color: var(--scr-text-1);
+  font-size: var(--scr-font-label);
+  white-space: nowrap;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+/* 居中信息卡（玻璃） */
+.dashboard .info-card {
+  position: absolute;
+  left: 50%;
+  top: 47%;
+  width: 320px;
+  transform: translate(-50%, -50%);
+  padding: 15px var(--scr-space-card);
+  border: 1px solid var(--scr-line-strong);
+  border-radius: 14px;
+  background: var(--scr-panel);
+  box-shadow: var(--scr-shadow-popover), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+.dashboard .info-card h4 {
+  margin: 0 0 11px;
+  background: var(--scr-accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  font-size: var(--scr-font-card-title);
+  font-weight: 700;
+  text-align: center;
+}
+.dashboard .info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--scr-line);
+  font-size: var(--scr-font-body);
+}
+.dashboard .info-row:last-child {
+  border-bottom: none;
+}
+.dashboard .info-row .k {
+  color: var(--scr-text-3);
+}
+.dashboard .info-row .v {
+  color: var(--scr-text-1);
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   14. 胶囊导航 Nav（pill）
+   -------------------------------------------------------------------------- */
+
+.dashboard .nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dashboard .nav-btn {
+  position: relative;
+  padding: 7px 15px;
+  border: 1px solid transparent;
+  border-radius: var(--scr-radius-pill);
+  background: transparent;
+  color: var(--scr-text-2);
+  font-size: 12.5px;
+  white-space: nowrap;
+  cursor: pointer;
   transition:
-    opacity 0.24s ease,
-    transform 0.24s var(--scr-ease-out);
+    color var(--scr-dur-base) ease,
+    background var(--scr-dur-base) ease,
+    border-color var(--scr-dur-base) ease;
 }
-.scr-swap-enter-from {
-  opacity: 0;
-  transform: translateY(4px);
+.dashboard .nav-btn:hover {
+  background: var(--scr-surface-2);
+  color: var(--scr-text-1);
 }
-.scr-swap-leave-to {
-  opacity: 0;
-  transform: translateY(-2px);
+.dashboard .nav-btn.active {
+  border-color: transparent;
+  background: var(--scr-accent-gradient);
+  color: var(--scr-on-accent);
+  font-weight: 600;
+  box-shadow: 0 4px 16px var(--scr-accent-glow);
 }
-
-.scr-fade-enter-active,
-.scr-fade-leave-active {
-  transition: opacity 0.2s ease;
-}
-.scr-fade-enter-from,
-.scr-fade-leave-to {
-  opacity: 0;
-}
-
-/* --------------------------------------------------------------------------
-   13. 动效关键帧
-   -------------------------------------------------------------------------- */
-
-@keyframes scr-blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.35;
-  }
-}
-
-@keyframes scr-progress {
-  0% {
-    transform: translateX(-110%);
-  }
-  100% {
-    transform: translateX(340%);
-  }
-}
-
-@keyframes scr-shimmer {
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-@keyframes scr-reveal {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes scr-rank-in {
-  from {
-    opacity: 0;
-    transform: translateX(-6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes scr-bar-grow {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
-@keyframes scr-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.dashboard .scr-reveal {
-  animation: scr-reveal 0.55s var(--scr-ease-out) both;
-  animation-delay: var(--scr-reveal-delay, 0ms);
-}
-
-/* 主题切换：View Transitions 交叉淡入（不支持时直接切换） */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 0.38s;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+.dashboard .nav-btn:disabled,
+.dashboard .nav-btn.disabled {
+  color: var(--scr-text-3);
+  cursor: default;
+  opacity: 0.6;
 }
 
 /* --------------------------------------------------------------------------
-   14. 响应式
+   15. 组件响应式
    -------------------------------------------------------------------------- */
-
-@media (min-width: 1280px) and (min-height: 900px) {
-  .dashboard .screen-main {
-    min-height: 0 !important;
-  }
-}
 
 @media (max-width: 1023px) {
-  .dashboard {
-    --scr-header-height: 3.75rem;
-  }
   .dashboard .filter-grid {
     grid-template-columns: 1fr 1fr;
   }
@@ -1211,10 +1142,6 @@ html[data-screen-theme] body {
 }
 
 @media (max-width: 640px) {
-  .dashboard {
-    --scr-header-height: 3.5rem;
-    background-attachment: scroll;
-  }
   .dashboard .filter-panel {
     top: calc(var(--scr-header-height) + 8px);
     left: 10px;
@@ -1250,25 +1177,5 @@ html[data-screen-theme] body {
   }
   .dashboard .stat-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-/* --------------------------------------------------------------------------
-   15. 减少动态效果
-   -------------------------------------------------------------------------- */
-
-@media (prefers-reduced-motion: reduce) {
-  .dashboard *,
-  .dashboard *::before,
-  .dashboard *::after {
-    animation-duration: 0.001ms !important;
-    animation-delay: 0ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    transition-delay: 0ms !important;
-  }
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none !important;
   }
 }

@@ -1,7 +1,7 @@
 /**
  * 大屏语义令牌（dashboard-bigscreen-design skill）
  *
- * 颜色全部指向 screen-theme.css 中 .dashboard[data-theme] / html[data-screen-theme]
+ * 颜色全部指向 screen/styles/tokens.css 中 .dashboard[data-theme] / html[data-screen-theme]
  * 暴露的 CSS 变量，因此同一套 class 在亮/暗主题下自动切换。
  * 这些令牌只服务于 /screen，后台页面不依赖它们。
  */

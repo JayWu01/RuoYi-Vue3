@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, useTemplateRef, watch } from 'vue'
 import { getScreenPalette } from '../charts/palette'
+import { createChartBase, createDonutSeries } from '../charts/spec'
 import { useECharts } from '../composables/useECharts'
 import { useScreenTheme } from '../composables/useScreenTheme'
 
@@ -62,37 +63,21 @@ const renderChart = () => {
     return
   }
 
-  const colors = palette.value
   setOption({
+    ...createChartBase(),
     animationDuration: 700,
     animationDurationUpdate: 320,
     animationEasing: 'cubicOut',
     animationEasingUpdate: 'cubicOut',
     series: [
-      {
-        type: 'pie',
-        radius: ['70%', '88%'],
-        center: ['50%', '50%'],
-        minAngle: 2,
-        padAngle: 2,
-        avoidLabelOverlap: true,
-        label: { show: false },
-        labelLine: { show: false },
-        itemStyle: { borderRadius: 7 },
-        emphasis: {
-          scale: true,
-          scaleSize: 4,
-          itemStyle: {
-            shadowBlur: 12,
-            shadowColor: colors.axisPointer
-          }
-        },
+      createDonutSeries({
+        palette: palette.value,
         data: items.value.map(item => ({
           name: item.name,
           value: item.value,
           itemStyle: { color: item.color }
         }))
-      }
+      })
     ]
   })
 

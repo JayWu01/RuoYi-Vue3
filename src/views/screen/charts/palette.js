@@ -1,5 +1,5 @@
 /**
- * 大屏图表色板 —— 与 screen-theme.css 的语义令牌一一对应。
+ * 大屏图表色板 —— 与 screen/styles/tokens.css 的语义令牌一一对应。
  * ECharts 画在 canvas 上读不到 CSS 变量，因此 JS 侧维护同一套双主题镜像。
  */
 
@@ -24,10 +24,11 @@ const dark = {
   text1: '#f1f5f9',
   text2: '#aab4c5',
   text3: '#67748a',
-  /* 坐标轴 / 网格 */
+  /* 坐标轴 / 网格 / 轨道 */
   axisLine: 'rgba(255, 255, 255, 0.08)',
   splitLine: 'rgba(255, 255, 255, 0.06)',
   axisPointer: 'rgba(34, 211, 238, 0.45)',
+  track: 'rgba(255, 255, 255, 0.06)',
   legendInactive: 'rgba(255, 255, 255, 0.25)',
   /* 玻璃 tooltip */
   tooltipBg: 'rgba(14, 20, 38, 0.92)',
@@ -70,6 +71,7 @@ const light = {
   axisLine: 'rgba(15, 23, 42, 0.10)',
   splitLine: 'rgba(15, 23, 42, 0.07)',
   axisPointer: 'rgba(8, 145, 178, 0.45)',
+  track: 'rgba(15, 23, 42, 0.06)',
   legendInactive: 'rgba(15, 23, 42, 0.28)',
   tooltipBg: 'rgba(255, 255, 255, 0.96)',
   tooltipBorder: 'rgba(15, 23, 42, 0.10)',

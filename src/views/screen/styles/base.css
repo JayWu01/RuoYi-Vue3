@@ -1,0 +1,222 @@
+/* ==========================================================================
+   驾驶舱大屏 · 基础层
+   - 画布与 mesh 渐变背景（skill: 3 层 radial-gradient + 近黑底色）
+   - 滚动条 / 选区 / 数字等宽
+   - 全局关键帧、过渡与减少动态效果
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. 画布与 mesh 背景
+   -------------------------------------------------------------------------- */
+
+.dashboard {
+  min-height: 100vh;
+  color: var(--scr-text-1);
+  font-family: var(--scr-font-text);
+  -webkit-font-smoothing: antialiased;
+  background:
+    radial-gradient(1400px 780px at 8% -12%, var(--scr-mesh-1), transparent 62%),
+    radial-gradient(1200px 800px at 110% 2%, var(--scr-mesh-2), transparent 58%),
+    radial-gradient(1100px 720px at 50% 118%, var(--scr-mesh-3), transparent 58%),
+    var(--scr-canvas);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+.dashboard ::selection {
+  background: var(--scr-accent-soft);
+  color: var(--scr-text-1);
+}
+
+.dashboard ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.dashboard ::-webkit-scrollbar-track {
+  background: transparent;
+}
+.dashboard ::-webkit-scrollbar-thumb {
+  background: var(--scr-scroll-thumb);
+  border-radius: 6px;
+}
+.dashboard ::-webkit-scrollbar-thumb:hover {
+  background: var(--scr-scroll-thumb-hover);
+}
+
+/* 数字统一等宽，避免刷新时宽度跳动 */
+.dashboard :is(
+  .kpi-value,
+  .kpi-delta .val,
+  .s-value,
+  .rank-item .idx,
+  .rank-item .r-val,
+  .rank-item .r-pct,
+  .donut-total,
+  .donut-legend-row .v,
+  .donut-legend-row .p,
+  .panel-footer .strong
+) {
+  font-family: var(--scr-font-numeric);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* --------------------------------------------------------------------------
+   2. Vue Transition：骨架与内容交叉淡入
+   -------------------------------------------------------------------------- */
+
+.scr-swap-enter-active,
+.scr-swap-leave-active {
+  transition:
+    opacity 0.24s ease,
+    transform 0.24s var(--scr-ease-out);
+}
+.scr-swap-enter-from {
+  opacity: 0;
+  transform: translateY(4px);
+}
+.scr-swap-leave-to {
+  opacity: 0;
+  transform: translateY(-2px);
+}
+
+.scr-fade-enter-active,
+.scr-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.scr-fade-enter-from,
+.scr-fade-leave-to {
+  opacity: 0;
+}
+
+/* --------------------------------------------------------------------------
+   3. 动效关键帧
+   -------------------------------------------------------------------------- */
+
+@keyframes scr-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes scr-progress {
+  0% {
+    transform: translateX(-110%);
+  }
+  100% {
+    transform: translateX(340%);
+  }
+}
+
+@keyframes scr-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes scr-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scr-rank-in {
+  from {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scr-bar-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes scr-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes scr-ripple {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.dashboard .scr-reveal {
+  animation: scr-reveal 0.55s var(--scr-ease-out) both;
+  animation-delay: var(--scr-reveal-delay, 0ms);
+}
+
+/* 主题切换：View Transitions 交叉淡入（不支持时直接切换） */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.38s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* --------------------------------------------------------------------------
+   4. 全局响应式
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 1280px) and (min-height: 900px) {
+  .dashboard .screen-main {
+    min-height: 0 !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .dashboard {
+    --scr-header-height: 3.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard {
+    --scr-header-height: 3.5rem;
+    background-attachment: scroll;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. 减少动态效果
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard *,
+  .dashboard *::before,
+  .dashboard *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}

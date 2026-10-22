@@ -1,0 +1,10 @@
+/* ==========================================================================
+   驾驶舱大屏样式入口（skill: dashboard-bigscreen-design）
+   顺序：设计令牌 → 基础层 → 组件层 → Element Plus 覆写
+   仅由 /screen 路由加载，后台页面不受影响
+   ========================================================================== */
+
+@import "./tokens.css";
+@import "./base.css";
+@import "./components.css";
+@import "./element-plus.css";

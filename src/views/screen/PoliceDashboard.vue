@@ -6,6 +6,7 @@ import ScreenHeader from './components/ScreenHeader.vue'
 import { toggleScreenTheme, useScreenTheme } from './composables/useScreenTheme'
 import SubBureau from './unit/SubBureau.vue'
 import SWAT from './unit/SWAT.vue'
+import './styles/index.css'
 
 const { isFullscreen, toggle } = useFullscreen(undefined, { autoExit: true })
 const { theme } = useScreenTheme()
