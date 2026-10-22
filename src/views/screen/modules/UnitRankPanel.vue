@@ -92,7 +92,7 @@ const barColor = (index) => {
       </div>
 
       <div class="min-h-0 flex-1 overflow-y-auto px-3 pb-2">
-        <table class="w-full table-fixed border-collapse text-[0.8125rem]">
+        <table class="w-full table-fixed border-collapse text-[19px]">
           <thead class="sticky top-0 z-10">
             <tr class="bg-[#0e3a61]">
               <th class="w-14 border border-[#1e4a73] px-2 py-1.5 font-bold text-slate-100">
@@ -131,7 +131,7 @@ const barColor = (index) => {
                       :style="{ width: barWidthStyle(row.value), background: barColor(index) }"
                     />
                   </div>
-                  <span class="w-9 shrink-0 text-right font-bold text-white">{{ row.value }}</span>
+                  <span class="w-12 shrink-0 text-right font-bold text-white">{{ row.value }}</span>
                 </div>
               </td>
             </tr>
