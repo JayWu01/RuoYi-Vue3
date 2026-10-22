@@ -5,18 +5,14 @@ import ScreenPanel from '../components/ScreenPanel.vue'
 
 const props = defineProps({
   data: { type: Object, default: () => ({ yAxis: [], series: [] }) },
-  loading: { type: Boolean, default: false }
+  loading: { type: Boolean, default: false },
+  unitOptions: { type: Array, default: () => [] },
+  showUnitFilter: { type: Boolean, default: false },
+  emptyText: { type: String, default: '暂无数据' }
 })
 
 const rankType = defineModel('rankType', { type: String, default: 'callPolice' })
-const dateRange = defineModel('dateRange', { type: Array, default: () => [] })
-
-const dateRangeModel = computed({
-  get: () => dateRange.value ?? [],
-  set: (value) => {
-    dateRange.value = value ?? []
-  }
-})
+const unitId = defineModel('unitId', { type: [String, Number], default: null })
 
 const rankTabList = [
   { label: '接处警', value: 'callPolice' },
@@ -30,6 +26,10 @@ const handleTabChange = (value) => {
   if (value !== rankType.value) {
     rankType.value = value
   }
+}
+
+const handleUnitChange = (value) => {
+  unitId.value = value === '' ? null : value
 }
 
 const rows = computed(() => {
@@ -77,21 +77,24 @@ const percentText = (value) => {
         </button>
       </div>
 
-      <div class="flex shrink-0 items-center gap-2 px-4 pb-3">
-        <span class="field-label">日期范围</span>
-        <el-date-picker
-          v-model="dateRangeModel"
-          type="daterange"
-          format="YYYY-MM-DD"
-          value-format="YYYY-MM-DD"
-          range-separator="~"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          clearable
-          size="small"
+      <div v-if="showUnitFilter" class="flex shrink-0 items-center gap-2 px-4 pb-3">
+        <span class="field-label">分县局</span>
+        <el-select
+          :model-value="unitId ?? ''"
           popper-class="dashboard-popper"
-          class="dashboard-date-picker min-w-0 flex-1"
-        />
+          class="dashboard-select min-w-0 flex-1"
+          size="small"
+          placeholder="全部单位"
+          @update:model-value="handleUnitChange"
+        >
+          <el-option label="全部单位" value="" />
+          <el-option
+            v-for="option in unitOptions"
+            :key="option.deptId"
+            :label="option.deptName"
+            :value="option.deptId"
+          />
+        </el-select>
       </div>
 
       <div class="panel-stack">
@@ -131,7 +134,7 @@ const percentText = (value) => {
             <span class="empty-ico">
               <ListOrdered :size="16" :stroke-width="1.8" aria-hidden="true" />
             </span>
-            <span>暂无数据</span>
+            <span>{{ emptyText }}</span>
           </div>
         </Transition>
       </div>

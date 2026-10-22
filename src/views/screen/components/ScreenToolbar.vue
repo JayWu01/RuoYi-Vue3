@@ -1,5 +1,6 @@
 <script setup>
-import { LoaderCircle, RefreshCw, Search } from '@lucide/vue'
+import { Calendar, LoaderCircle, RefreshCw, Search } from '@lucide/vue'
+import dayjs from 'dayjs'
 import { computed } from 'vue'
 import { PERIOD_OPTIONS } from '../constant'
 
@@ -54,6 +55,17 @@ const setUnit = (deptId) => {
     deptId: nextDeptId,
     deptName: unit?.deptName
   }
+}
+
+const setYesterday = () => {
+  const end = dayjs().hour(9).minute(0).second(0)
+  const start = end.subtract(1, 'day')
+  model.value = {
+    ...model.value,
+    startDate: start.format('YYYY-MM-DD HH:mm:ss'),
+    endDate: end.format('YYYY-MM-DD HH:mm:ss')
+  }
+  emit('submit')
 }
 </script>
 
@@ -110,6 +122,15 @@ const setUnit = (deptId) => {
 
     <div class="filter-actions">
       <span class="filter-hint">应用后将同步刷新全部数据面板</span>
+
+      <el-button
+        class="dashboard-action-button"
+        :disabled="loading"
+        @click="setYesterday"
+      >
+        <Calendar class="mr-1.5" :size="14" :stroke-width="2" />
+        昨日
+      </el-button>
 
       <el-button
         class="dashboard-action-button"

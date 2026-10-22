@@ -40,10 +40,23 @@ const props = defineProps({
   filterSummary: {
     type: String,
     default: ''
+  },
+  panel: {
+    type: String,
+    default: 'swat'
+  },
+  exportable: {
+    type: Boolean,
+    default: true
   }
 })
 
-const emit = defineEmits(['fullscreen', 'export', 'refresh', 'toggleTheme', 'toggleFilter'])
+const emit = defineEmits(['fullscreen', 'export', 'refresh', 'toggleTheme', 'toggleFilter', 'update:panel'])
+
+const PANEL_TABS = [
+  { value: 'swat', label: '特巡警' },
+  { value: 'subBureau', label: '分县局' }
+]
 
 const now = useNow()
 const clockText = computed(() => dayjs(now.value).format('HH:mm:ss'))
@@ -83,35 +96,42 @@ const updateLabel = computed(() => {
   return `${Math.floor(days / 365)} 年前更新`
 })
 
-const headerActions = computed(() => [
-  {
-    key: 'refresh',
-    label: '刷新',
-    aria: '刷新数据',
-    icon: RefreshCw,
-    disabled: props.loading,
-    spinning: props.loading
-  },
-  {
-    key: 'theme',
-    label: isDark.value ? '浅色' : '深色',
-    aria: isDark.value ? '切换为浅色模式' : '切换为深色模式',
-    icon: isDark.value ? Sun : Moon
-  },
-  {
-    key: 'fullscreen',
-    label: props.fullscreen ? '退出' : '全屏',
-    aria: props.fullscreen ? '退出全屏' : '全屏',
-    icon: props.fullscreen ? Minimize : Maximize
-  },
-  {
-    key: 'export',
-    label: '导出',
-    aria: '导出数据',
-    icon: FileDown,
-    disabled: props.loading
+const headerActions = computed(() => {
+  const actions = [
+    {
+      key: 'refresh',
+      label: '刷新',
+      aria: '刷新数据',
+      icon: RefreshCw,
+      disabled: props.loading,
+      spinning: props.loading
+    },
+    {
+      key: 'theme',
+      label: isDark.value ? '浅色' : '深色',
+      aria: isDark.value ? '切换为浅色模式' : '切换为深色模式',
+      icon: isDark.value ? Sun : Moon
+    },
+    {
+      key: 'fullscreen',
+      label: props.fullscreen ? '退出' : '全屏',
+      aria: props.fullscreen ? '退出全屏' : '全屏',
+      icon: props.fullscreen ? Minimize : Maximize
+    }
+  ]
+
+  if (props.exportable) {
+    actions.push({
+      key: 'export',
+      label: '导出',
+      aria: '导出数据',
+      icon: FileDown,
+      disabled: props.loading
+    })
   }
-])
+
+  return actions
+})
 
 const handleHeaderAction = (key) => {
   if (key === 'refresh') {
@@ -128,7 +148,28 @@ const handleHeaderAction = (key) => {
 
 <template>
   <header class="sticky top-0 z-30 grid min-h-[var(--scr-header-height)] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4 border-b border-scr-line bg-scr-glass-strong px-5 backdrop-blur-[20px] max-[1023px]:gap-2.5 max-[1023px]:px-3.5 max-[640px]:gap-2 max-[640px]:px-3">
-    <div class="flex min-w-0 items-center justify-self-start">
+    <div class="flex min-w-0 items-center justify-self-start gap-2">
+      <!-- 分县局入口隐藏时只剩一个面板，不显示单选标签 -->
+      <div
+        v-if="PANEL_TABS.length > 1"
+        class="flex items-center gap-1 rounded-full border border-scr-line bg-scr-surface p-0.5"
+        role="tablist"
+        aria-label="单位类型"
+      >
+        <button
+          v-for="tab in PANEL_TABS"
+          :key="tab.value"
+          type="button"
+          role="tab"
+          :aria-selected="panel === tab.value"
+          class="inline-flex h-7 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent px-3 text-xs font-semibold text-scr-muted transition-colors duration-150 hover:text-scr-fg"
+          :class="panel === tab.value ? 'bg-scr-accent-soft text-scr-accent' : ''"
+          @click="emit('update:panel', tab.value)"
+        >
+          {{ tab.label }}
+        </button>
+      </div>
+
       <button
         type="button"
         class="inline-flex h-[34px] min-w-0 cursor-pointer items-center gap-2 rounded-full border border-scr-line bg-scr-surface px-3 text-scr-muted transition-colors duration-150 hover:border-scr-line-strong hover:bg-scr-surface-2 hover:text-scr-fg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--scr-focus)] max-[640px]:size-8 max-[640px]:justify-center max-[640px]:p-0"
