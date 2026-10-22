@@ -26,10 +26,12 @@ export default {
           fg: 'var(--scr-text-1)',
           muted: 'var(--scr-text-2)',
           faint: 'var(--scr-text-3)',
+          'on-accent': 'var(--scr-on-accent)',
           accent: {
             DEFAULT: 'var(--scr-accent)',
             2: 'var(--scr-accent-2)',
-            soft: 'var(--scr-accent-soft)'
+            soft: 'var(--scr-accent-soft)',
+            line: 'var(--scr-accent-line)'
           },
           success: 'var(--scr-success)',
           warning: 'var(--scr-warning)',
@@ -39,6 +41,12 @@ export default {
           orange: 'var(--scr-orange)',
           yellow: 'var(--scr-yellow)'
         }
+      },
+      backgroundImage: {
+        'scr-glass': 'var(--scr-glass)',
+        'scr-glass-strong': 'var(--scr-glass-strong)',
+        'scr-panel': 'var(--scr-panel)',
+        'scr-accent-gradient': 'var(--scr-accent-gradient)'
       },
       fontFamily: {
         ui: ['-apple-system', 'BlinkMacSystemFont', 'PingFang SC', 'Microsoft YaHei', 'sans-serif']
@@ -80,11 +88,21 @@ export default {
         'scr-breathe': {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.55' }
+        },
+        'scr-blink': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.35' }
+        },
+        'scr-progress': {
+          '0%': { transform: 'translateX(-110%)' },
+          '100%': { transform: 'translateX(340%)' }
         }
       },
       animation: {
         'scr-shimmer': 'scr-shimmer 1.6s cubic-bezier(0.22, 1, 0.36, 1) infinite',
-        'scr-breathe': 'scr-breathe 1.5s ease-in-out infinite'
+        'scr-breathe': 'scr-breathe 1.5s ease-in-out infinite',
+        'scr-blink': 'scr-blink 2.4s ease-in-out infinite',
+        'scr-progress': 'scr-progress 1.2s var(--scr-ease-out) infinite'
       },
       content: {
         empty: '\'\''

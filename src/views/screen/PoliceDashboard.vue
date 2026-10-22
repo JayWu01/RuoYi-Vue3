@@ -248,6 +248,7 @@ onMounted(reloadAll)
         :filter-open="filterOpen"
         :filter-summary="filterSummary"
         @fullscreen="toggle"
+        @refresh="reloadAll"
         @toggle-theme="toggleScreenTheme"
         @toggle-filter="toggleFilter"
         @export="exportData"

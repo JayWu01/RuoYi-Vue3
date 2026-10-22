@@ -199,8 +199,6 @@ html[data-screen-theme] body {
 
 /* 数字统一等宽，避免刷新时宽度跳动 */
 .dashboard :is(
-  .header-clock,
-  .header-item,
   .kpi-value,
   .kpi-delta .val,
   .s-value,
@@ -886,258 +884,10 @@ html[data-screen-theme] body {
 
 /* --------------------------------------------------------------------------
    9. 顶栏
+   顶栏布局、状态胶囊、筛选入口与动作组已在组件内使用 Tailwind 类实现。
    -------------------------------------------------------------------------- */
 
-.dashboard .screen-header {
-  position: sticky;
-  top: 0;
-  z-index: 30;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  align-items: center;
-  gap: 16px;
-  min-height: var(--scr-header-height);
-  padding: 0 20px;
-  border-bottom: 1px solid var(--scr-line);
-  background: var(--scr-glass-strong);
-  -webkit-backdrop-filter: blur(20px) saturate(1.15);
-  backdrop-filter: blur(20px) saturate(1.15);
-}
-
-.dashboard .header-progress {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 2px;
-  overflow: hidden;
-  pointer-events: none;
-}
-.dashboard .header-progress::before {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 30%;
-  background: linear-gradient(90deg, transparent, var(--scr-accent), var(--scr-accent-2), transparent);
-  animation: scr-progress 1.2s var(--scr-ease-out) infinite;
-}
-
-.dashboard .header-left {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  justify-self: start;
-}
-.dashboard .header-brand {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  justify-self: center;
-  gap: 10px;
-}
-.dashboard .header-right {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  justify-self: end;
-  gap: 12px;
-  color: var(--scr-text-3);
-  font-size: 10.5px;
-}
-.dashboard .brand-mark {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  background: var(--scr-accent-gradient);
-  color: var(--scr-on-accent);
-  box-shadow: 0 6px 18px var(--scr-accent-glow);
-}
-.dashboard .brand-title {
-  margin: 0;
-  color: var(--scr-text-1);
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-.dashboard .brand-sub {
-  margin: 2px 0 0;
-  color: var(--scr-text-3);
-  font-size: 9.5px;
-  font-weight: 500;
-  letter-spacing: 2.4px;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-.dashboard .header-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--scr-text-3);
-  white-space: nowrap;
-}
-.dashboard .header-clock {
-  color: var(--scr-text-1);
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-.dashboard .header-right :is(.header-clock, .header-updated) {
-  transition:
-    opacity 0.18s ease,
-    transform 0.18s var(--scr-ease-out);
-}
-@media (min-width: 641px) {
-  .dashboard .header-right.is-dock-open :is(.header-clock, .header-updated) {
-    opacity: 0;
-    transform: translateY(-2px);
-  }
-}
-
-/* 筛选触发器：左侧入口，点击打开浮层 */
-.dashboard .filter-trigger {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-  height: 34px;
-  padding: 0 12px;
-  border: 1px solid var(--scr-line);
-  border-radius: 999px;
-  background: var(--scr-surface-1);
-  color: var(--scr-text-2);
-  cursor: pointer;
-  transition:
-    color var(--scr-dur-fast) ease,
-    background var(--scr-dur-fast) ease,
-    border-color var(--scr-dur-fast) ease;
-}
-.dashboard .filter-trigger:hover {
-  border-color: var(--scr-line-strong);
-  background: var(--scr-surface-2);
-  color: var(--scr-text-1);
-}
-.dashboard .filter-trigger:focus-visible {
-  outline: 2px solid var(--scr-focus);
-  outline-offset: 2px;
-}
-.dashboard .filter-trigger.is-active {
-  border-color: var(--scr-accent-line);
-  background: var(--scr-accent-soft);
-  color: var(--scr-accent);
-}
-.dashboard .filter-trigger-label {
-  flex-shrink: 0;
-  font-size: 12px;
-  font-weight: 600;
-}
-.dashboard .filter-summary {
-  max-width: 230px;
-  overflow: hidden;
-  color: var(--scr-text-3);
-  font-size: 10.5px;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.dashboard .filter-trigger.is-active .filter-summary {
-  color: var(--scr-accent);
-  opacity: 0.8;
-}
-.dashboard .filter-chevron {
-  flex-shrink: 0;
-  color: var(--scr-text-3);
-  transition: transform 0.26s var(--scr-ease-out);
-}
-.dashboard .filter-chevron.is-open {
-  transform: rotate(180deg);
-}
-
-/* 动作坞：默认收起，hover / focus / 点击后向左展开 */
-.dashboard .action-dock {
-  position: relative;
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  margin-left: 2px;
-}
-.dashboard .action-dock-trigger {
-  border-radius: 999px;
-}
-.dashboard .action-dock-trigger svg {
-  transition: transform 0.3s var(--scr-ease-out);
-}
-.dashboard .action-dock.is-open .action-dock-trigger svg {
-  transform: rotate(90deg);
-}
-.dashboard .action-dock-items {
-  position: absolute;
-  right: 100%;
-  top: 50%;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  padding: 3px;
-  border: 1px solid var(--scr-line);
-  border-radius: 999px;
-  background: var(--scr-popover);
-  box-shadow: var(--scr-shadow-card);
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(6px, -50%);
-  transition:
-    opacity 0.2s ease,
-    transform 0.32s var(--scr-ease-out);
-  -webkit-backdrop-filter: blur(18px) saturate(1.15);
-  backdrop-filter: blur(18px) saturate(1.15);
-}
-.dashboard .action-dock.is-open .action-dock-items {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translate(0, -50%);
-}
-.dashboard .action-dock-items .icon-btn {
-  width: 30px;
-  height: 30px;
-  border-color: transparent;
-  border-radius: 999px;
-  background: transparent;
-}
-.dashboard .action-dock-items .icon-btn:hover {
-  background: var(--scr-surface-2);
-}
-.dashboard .action-dock-items > * {
-  opacity: 0;
-  transform: translateX(4px);
-  transition:
-    opacity 0.16s ease,
-    transform 0.26s var(--scr-ease-out);
-}
-.dashboard .action-dock.is-open .action-dock-items > * {
-  opacity: 1;
-  transform: none;
-}
-.dashboard .action-dock.is-open .action-dock-items > :nth-child(1) {
-  transition-delay: 0.03s;
-}
-.dashboard .action-dock.is-open .action-dock-items > :nth-child(2) {
-  transition-delay: 0.06s;
-}
-.dashboard .action-dock.is-open .action-dock-items > :nth-child(3) {
-  transition-delay: 0.09s;
-}
-
-.dashboard .theme-toggle svg {
-  transition: transform 0.3s var(--scr-ease-out);
-}
-.dashboard .theme-toggle:hover svg {
-  transform: rotate(18deg);
-}
+/* 筛选浮层入口和动作组样式见 ScreenHeader / ExpandingActionGroup */
 
 /* --------------------------------------------------------------------------
    10. 筛选浮层（不占布局高度）
@@ -1417,21 +1167,6 @@ html[data-screen-theme] body {
   opacity: 0;
 }
 
-.scr-icon-enter-active,
-.scr-icon-leave-active {
-  transition:
-    opacity 0.16s ease,
-    transform 0.2s var(--scr-ease-out);
-}
-.scr-icon-enter-from {
-  opacity: 0;
-  transform: rotate(-45deg) scale(0.7);
-}
-.scr-icon-leave-to {
-  opacity: 0;
-  transform: rotate(45deg) scale(0.7);
-}
-
 /* --------------------------------------------------------------------------
    13. 动效关键帧
    -------------------------------------------------------------------------- */
@@ -1529,37 +1264,9 @@ html[data-screen-theme] body {
   }
 }
 
-@media (max-width: 1279px) {
-  .dashboard .filter-summary {
-    display: none;
-  }
-}
-
 @media (max-width: 1023px) {
   .dashboard {
     --scr-header-height: 3.75rem;
-  }
-  .dashboard .screen-header {
-    gap: 10px;
-    padding: 0 14px;
-  }
-  .dashboard .header-live,
-  .dashboard .header-updated {
-    display: none;
-  }
-  .dashboard .header-brand {
-    gap: 8px;
-  }
-  .dashboard .brand-mark {
-    width: 30px;
-    height: 30px;
-    border-radius: 9px;
-  }
-  .dashboard .brand-title {
-    font-size: 16px;
-  }
-  .dashboard .header-clock {
-    font-size: 13px;
   }
   .dashboard .filter-grid {
     grid-template-columns: 1fr 1fr;
@@ -1583,65 +1290,10 @@ html[data-screen-theme] body {
   }
 }
 
-@media (max-width: 768px) {
-  .dashboard .brand-sub {
-    display: none;
-  }
-  .dashboard .brand-title {
-    font-size: 15.5px;
-  }
-  .dashboard .header-clock {
-    font-size: 12.5px;
-  }
-}
-
 @media (max-width: 640px) {
   .dashboard {
     --scr-header-height: 3.5rem;
     background-attachment: scroll;
-  }
-  .dashboard .screen-header {
-    gap: 8px;
-    padding: 0 12px;
-  }
-  .dashboard .header-brand {
-    gap: 7px;
-  }
-  .dashboard .brand-mark {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-  }
-  .dashboard .brand-title {
-    font-size: 15px;
-    letter-spacing: 0.3px;
-  }
-  .dashboard .header-right {
-    gap: 8px;
-  }
-  .dashboard .filter-trigger {
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-  }
-  .dashboard .filter-trigger-label,
-  .dashboard .filter-chevron {
-    display: none;
-  }
-  .dashboard .action-dock-items {
-    top: calc(100% + 8px);
-    right: 0;
-    transform: translateY(-4px);
-  }
-  .dashboard .action-dock.is-open .action-dock-items {
-    transform: translateY(0);
-  }
-  .dashboard .action-dock-items > * {
-    transform: translateY(4px);
-  }
-  .dashboard .action-dock.is-open .action-dock-items > * {
-    transform: none;
   }
   .dashboard .filter-panel {
     top: calc(var(--scr-header-height) + 8px);
