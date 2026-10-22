@@ -1,5 +1,6 @@
 <script setup>
-import { LoaderCircle, RefreshCw, Search } from '@lucide/vue'
+import { Calendar, LoaderCircle, RefreshCw, Search } from '@lucide/vue'
+import dayjs from 'dayjs'
 import { computed } from 'vue'
 import { PERIOD_OPTIONS } from '../constant'
 
@@ -55,6 +56,17 @@ const setUnit = (deptId) => {
     deptName: unit?.deptName
   }
 }
+
+const setYesterday = () => {
+  const end = dayjs().hour(9).minute(0).second(0)
+  const start = end.subtract(1, 'day')
+  model.value = {
+    ...model.value,
+    startDate: start.format('YYYY-MM-DD HH:mm:ss'),
+    endDate: end.format('YYYY-MM-DD HH:mm:ss')
+  }
+  emit('submit')
+}
 </script>
 
 <template>
@@ -90,6 +102,14 @@ const setUnit = (deptId) => {
           :value="unit.deptId"
         />
       </el-select>
+      <el-button
+        class="dashboard-action-button"
+        :disabled="loading"
+        @click="setYesterday"
+      >
+        <Calendar class="mr-1 inline-block align-middle" :size="16" :stroke-width="1.8" />
+        昨日
+      </el-button>
       <el-segmented
         :model-value="model.statType"
         :options="PERIOD_OPTIONS"
