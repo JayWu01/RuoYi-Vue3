@@ -1,12 +1,15 @@
 <script setup>
+import { watchDebounced } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
-import { computed, shallowRef } from 'vue'
+import { computed, onMounted, shallowRef } from 'vue'
+import { getRankList } from '../api/policeDashboard'
 import ScreenToolbar from '../components/ScreenToolbar.vue'
 import TrendChartPanel from '../components/TrendChartPanel.vue'
 import { createInitialQuery } from '../constant'
 import MinorDistributionPanel from '../modules/MinorDistributionPanel.vue'
 import ResultPanel from '../modules/ResultPanel.vue'
 import UnitRankPanel from '../modules/UnitRankPanel.vue'
+import { normalizeRankList } from '../utils/normalizeScreenData'
 
 // 分县局面板暂未接入数据，先持有独立的查询条件与单位列表，不与 SWAT 面板共享状态
 const query = shallowRef(createInitialQuery())
@@ -33,10 +36,12 @@ const updateJuvenileMonthRange = (monthRange) => {
   juvenileTrendFilter.value = { ...juvenileTrendFilter.value, monthRange: monthRange ?? null }
 }
 
-// 右侧排名：全部单位时统计分县局，选中具体分县局时统计其下辖派出所
-const rankData = shallowRef({ yAxis: [], series: [] })
+// 右侧排名：已接入 /policeScreen/getRankList，部门全部来自 sys_dept，没数据的单位补 0
+const rankData = shallowRef(normalizeRankList(null))
 const rankType = shallowRef('callPolice')
+const rankDimension = shallowRef('station')
 const rankUnitId = shallowRef(null)
+const rankLoading = shallowRef(false)
 // 示例分县局占位，后续替换为分县局单位接口
 const rankUnitOptions = [
   { deptId: 301, deptName: '红谷滩分局' },
@@ -52,11 +57,40 @@ const rankEmptyText = computed(() => {
 
 const isQueryValid = computed(() => Boolean(query.value.startDate && query.value.endDate))
 
-// 分县局数据接口接入前，查询仅做条件校验，暂不发起请求
+// 排名面板：时间取顶部工具栏的日期范围，切指标/维度时自动重查
+const loadRankData = async () => {
+  rankLoading.value = true
+  try {
+    const response = await getRankList({
+      startDate: query.value.startDate,
+      endDate: query.value.endDate,
+      rankType: rankType.value,
+      rankDimension: rankDimension.value
+    })
+    rankData.value = normalizeRankList(response)
+  } catch (error) {
+    console.error('警务站排名请求失败：', error)
+  } finally {
+    rankLoading.value = false
+  }
+}
+
+watchDebounced([rankType, rankDimension], () => {
+  void loadRankData()
+}, { debounce: 120 })
+
+onMounted(() => {
+  void loadRankData()
+})
+
+// 除右侧排名面板已接入 getRankList 外，其余分县局面板仍待接入；
+// 点查询时只刷新已接线的排名
 const loadData = () => {
   if (!isQueryValid.value) {
     ElMessage.warning('请选择完整的日期范围')
+    return
   }
+  void loadRankData()
 }
 
 const resetQuery = () => {
@@ -64,7 +98,9 @@ const resetQuery = () => {
   rankTrendFilter.value = { monthRange: null }
   juvenileTrendFilter.value = { monthRange: null }
   rankType.value = 'callPolice'
+  rankDimension.value = 'station'
   rankUnitId.value = null
+  void loadRankData()
 }
 </script>
 
@@ -112,6 +148,7 @@ const resetQuery = () => {
     <div class="grid min-h-0">
       <UnitRankPanel
         v-model:rank-type="rankType"
+        v-model:rank-dimension="rankDimension"
         v-model:unit-id="rankUnitId"
         :data="rankData"
         :unit-options="rankUnitOptions"

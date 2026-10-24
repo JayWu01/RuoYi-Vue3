@@ -83,13 +83,47 @@ export function normalizeJuvenile(data) {
 }
 
 export function normalizeRankList(data) {
+  const items = Array.isArray(data?.items) ? data.items : []
+
+  // 新结构：后端已按部门（sys_dept）算好排名/环比/单站平均
+  if (items.length) {
+    return {
+      dimension: String(data?.dimension ?? 'station'),
+      rankType: String(data?.rankType ?? ''),
+      items: items.map(item => ({
+        deptId: item?.deptId ?? null,
+        unitName: String(item?.unitName ?? ''),
+        countNum: Number(item?.countNum) || 0,
+        // 「其他单位」汇总行 rank/avgNum/stationCount 为 null，原样保留
+        rank: item?.rank ?? null,
+        ratioText: String(item?.ratioText ?? '-'),
+        increaseNum: Number(item?.increaseNum) || 0,
+        stationCount: item?.stationCount ?? null,
+        avgNum: item?.avgNum ?? null
+      }))
+    }
+  }
+
+  // 兼容旧结构（yAxis + series），按顺序自己补排名
   const yAxis = Array.isArray(data?.yAxis) ? data.yAxis.map(item => String(item ?? '')) : []
   const series = toNumberSeries(data?.series)
+  const ratioSeries = Array.isArray(data?.ratioSeries) ? data.ratioSeries : []
+  const increaseSeries = toNumberSeries(data?.increaseSeries)
   const length = Math.min(yAxis.length, series.length)
 
   return {
-    yAxis: yAxis.slice(0, length),
-    series: series.slice(0, length)
+    dimension: String(data?.dimension ?? 'station'),
+    rankType: String(data?.rankType ?? ''),
+    items: yAxis.slice(0, length).map((name, index) => ({
+      deptId: null,
+      unitName: name,
+      countNum: series[index] ?? 0,
+      rank: index + 1,
+      ratioText: String(ratioSeries[index] ?? '-'),
+      increaseNum: increaseSeries[index] ?? 0,
+      stationCount: 0,
+      avgNum: 0
+    }))
   }
 }
 

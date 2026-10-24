@@ -32,6 +32,7 @@ const {
   rankFilter,
   juvenileFilter,
   rankType,
+  rankDimension,
   alarmChartType,
   rankChartType,
   juvenileChartType,
@@ -81,9 +82,12 @@ const rankDateRange = computed({
 
 const toDayTimeRange = (dateRange) => {
   if (Array.isArray(dateRange) && dateRange.length === 2 && dateRange[0] && dateRange[1]) {
+    // query 里是 "YYYY-MM-DD HH:mm:ss"，这里统一裁到当天
+    const start = String(dateRange[0]).slice(0, 10)
+    const end = String(dateRange[1]).slice(0, 10)
     return {
-      startDate: `${dateRange[0]} 00:00:00`,
-      endDate: `${dateRange[1]} 23:59:59`
+      startDate: `${start} 00:00:00`,
+      endDate: `${end} 23:59:59`
     }
   }
   return {}
@@ -91,8 +95,9 @@ const toDayTimeRange = (dateRange) => {
 
 const createRankDataQuery = () => ({
   ...query.value,
-  ...toDayTimeRange(createQueryDateRange),
-  rankType: rankType.value
+  ...toDayTimeRange(createQueryDateRange()),
+  rankType: rankType.value,
+  rankDimension: rankDimension.value
 })
 
 const getRankTrendParams = () => ({
@@ -121,7 +126,7 @@ const reloadJuvenilePanel = () => {
 }
 
 watchDebounced(rankFilter, reloadRankTrendPanel, { deep: true, debounce: 120 })
-watchDebounced([rankDataFilter, rankType], reloadRankDataPanel, { deep: true, debounce: 120 })
+watchDebounced([rankDataFilter, rankType, rankDimension], reloadRankDataPanel, { deep: true, debounce: 120 })
 watchDebounced(juvenileFilter, reloadJuvenilePanel, { deep: true, debounce: 120 })
 
 const loadData = () => {
@@ -254,6 +259,7 @@ onMounted(reloadAll)
     <div class="grid min-h-0">
       <UnitRankPanel
         v-model:rank-type="rankType"
+        v-model:rank-dimension="rankDimension"
         :data="dashboard.rankData"
       />
     </div>

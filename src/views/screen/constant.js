@@ -47,8 +47,9 @@ export const createEmptyDashboard = () => ({
     seriesList: []
   },
   rankData: {
-    yAxis: [],
-    series: []
+    dimension: 'station',
+    rankType: '',
+    items: []
   },
   juvenile: {
     xAxis: [],

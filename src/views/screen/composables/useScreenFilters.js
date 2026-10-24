@@ -16,6 +16,8 @@ export function useScreenFilters() {
   const rankFilter = shallowRef(createPanelFilter())
   const juvenileFilter = shallowRef(createPanelFilter())
   const rankType = shallowRef('callPolice')
+  // 排名维度：station=警务站（默认），dept=区块大队
+  const rankDimension = shallowRef('station')
   const alarmChartType = shallowRef('line')
   const rankChartType = shallowRef('line')
   const juvenileChartType = shallowRef('line')
@@ -71,6 +73,7 @@ export function useScreenFilters() {
     rankFilter.value = createPanelFilter()
     juvenileFilter.value = createPanelFilter()
     rankType.value = 'callPolice'
+    rankDimension.value = 'station'
     alarmChartType.value = 'line'
     rankChartType.value = 'line'
     juvenileChartType.value = 'line'
@@ -81,6 +84,7 @@ export function useScreenFilters() {
     rankFilter,
     juvenileFilter,
     rankType,
+    rankDimension,
     alarmChartType,
     rankChartType,
     juvenileChartType,
