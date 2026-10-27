@@ -2,7 +2,9 @@
 import { Download, Pencil, Plus, RefreshCw, Search, Trash2, Upload } from '@lucide/vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { computed, getCurrentInstance, reactive, ref, watch } from 'vue'
-import { addStrikeCurrent, delStrikeCurrent, getStrikeCurrent, listStrikeCurrent, updateStrikeCurrent } from '@/api/bussiness/strikeCurrent'
+import { addStrikeCurrent, delStrikeCurrent, getCurrentDept, getStrikeCurrent, listStrikeCurrent, updateStrikeCurrent } from '@/api/bussiness/strikeCurrent'
+import { deptTreeSelect } from '@/api/system/user'
+import ExcelImportDialog from '@/components/ExcelImportDialog/index.vue'
 
 const { proxy } = getCurrentInstance()
 
@@ -15,7 +17,6 @@ const ids = ref([])
 
 const queryFormRef = ref(null)
 const formRef = ref(null)
-const uploadRef = ref(null)
 
 const queryParams = reactive({
   pageNum: 1,
@@ -47,9 +48,57 @@ const showColumns = reactive({
 const open = ref(false)
 const title = ref('')
 
+// ===== 单位（部门）相关 =====
+const deptOptions = ref([])
+const currentDept = ref({ deptId: null, deptName: '', admin: false })
+const importRef = ref(null)
+
+// 加载当前登录用户的数据归属部门；管理员额外加载树状部门表用于选择
+const loadDeptContext = async () => {
+  try {
+    const res = await getCurrentDept()
+    currentDept.value = res.data || { deptId: null, deptName: '', admin: false }
+    if (currentDept.value.admin) {
+      const tree = await deptTreeSelect()
+      deptOptions.value = tree.data || []
+    }
+  } catch (e) {
+    // 部门信息加载失败不阻断页面
+  }
+}
+
+// 新增时的默认单位：普通用户固定本人部门并回显，管理员留空待选择
+const applyDefaultUnit = () => {
+  if (currentDept.value.admin) {
+    form.unitDeptId = null
+    form.unitName = ''
+  } else {
+    form.unitDeptId = currentDept.value.deptId
+    form.unitName = currentDept.value.deptName
+  }
+}
+
+// 管理员在树里选完部门后，同步显示部门名称
+const handleUnitChange = (deptId) => {
+  const find = (list) => {
+    for (const node of list) {
+      if (node.id === deptId) return node
+      if (node.children && node.children.length) {
+        const hit = find(node.children)
+        if (hit) return hit
+      }
+    }
+    return null
+  }
+  const hit = find(deptOptions.value)
+  form.unitName = hit ? hit.label : ''
+}
+
 const defaultFormState = () => ({
   id: null,
   strikeDate: null,
+  unitDeptId: null,
+  unitName: '',
   crimeRed: 0,
   crimeOrange: 0,
   crimeYellow: 0,
@@ -172,6 +221,12 @@ const rules = {
     { required: true, message: '请填写普通现行嫌疑人数', trigger: 'blur' }
   ],
   strikeDate: [{ required: true, message: '打击日期不能为空', trigger: 'blur' }],
+  unitDeptId: [
+    { validator: (rule, value, callback) => {
+      if (currentDept.value.admin && !value) callback(new Error('请选择所属单位'))
+      else callback()
+    }, trigger: 'change' }
+  ],
   netFugitiveCase: [
     { validator: (rule, value, callback) => {
       if (form.netFugitiveCount > 0 && !value) callback(new Error('追网逃有数据时案情必填'))
@@ -190,9 +245,6 @@ const personDialogVisible = ref(false)
 const personForm = reactive({ personList: [] })
 const carDialogVisible = ref(false)
 const carForm = reactive({ carList: [] })
-const importOpen = ref(false)
-const uploadUrl = ref(`${import.meta.env.VITE_APP_BASE_API}/police/strikeCurrent/importData`)
-const fileList = ref([])
 
 // personType转中文
 const getPersonTypeName = (type) => {
@@ -334,6 +386,7 @@ const handleSelectionChange = (val) => {
 
 const handleAdd = () => {
   resetForm()
+  applyDefaultUnit()
   title.value = '新增警务站打击现行数据'
   open.value = true
 }
@@ -557,24 +610,16 @@ const handleExport = () => {
 }
 
 const handleImport = () => {
-  importOpen.value = true
+  importRef.value?.open()
 }
 
-const downloadTemplate = () => {
-  console.log('downloadTemplate')
-}
-
-const uploadSuccess = () => {
-  ElMessage.success('导入成功')
-  importOpen.value = false
+// 导入完成（成功/部分成功）后刷新列表；失败明细文件由导入组件自动下载
+const handleImportSuccess = () => {
   getList()
 }
 
-const uploadError = () => {
-  ElMessage.error('导入失败')
-}
-
 getList()
+loadDeptContext()
 </script>
 
 <template>
@@ -729,6 +774,26 @@ getList()
       <el-form ref="formRef" :model="form" :rules="rules" label-width="140px">
         <el-form-item label="打击日期" prop="strikeDate">
           <el-date-picker v-model="form.strikeDate" value-format="YYYY-MM-DD" type="date" placeholder="请选择打击日期" />
+        </el-form-item>
+
+        <!-- 所属单位：管理员可从树状部门表选择；警务站用户自动回显本部门且只读 -->
+        <el-form-item label="所属单位" prop="unitDeptId">
+          <el-tree-select
+            v-if="currentDept.admin"
+            v-model="form.unitDeptId"
+            :data="deptOptions"
+            :props="{ value: 'id', label: 'label', children: 'children' }"
+            value-key="id"
+            placeholder="请选择所属单位"
+            clearable
+            check-strictly
+            class="w-[320px]"
+            @change="handleUnitChange"
+          />
+          <div v-else class="flex items-center gap-2">
+            <el-input :model-value="form.unitName" class="w-[320px]" disabled />
+            <span class="text-xs text-[#909399]">部门ID：{{ form.unitDeptId ?? '-' }}（自动带出，不可修改）</span>
+          </div>
         </el-form-item>
 
         <el-divider content-position="left">
@@ -1072,31 +1137,15 @@ getList()
       </template>
     </el-dialog>
 
-    <!-- 导入弹窗 -->
-    <el-dialog v-model="importOpen" title="警务站打击现行数据导入" width="500px">
-      <el-upload
-        ref="uploadRef"
-        :action="uploadUrl"
-        :on-success="uploadSuccess"
-        :on-error="uploadError"
-        :file-list="fileList"
-      >
-        <el-button type="primary">
-          选择文件
-        </el-button>
-        <template #tip>
-          <el-link type="text" @click="downloadTemplate">
-            下载模板
-          </el-link>
-        </template>
-      </el-upload>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="importOpen = false">
-            取消
-          </el-button>
-        </div>
-      </template>
-    </el-dialog>
+    <!-- 导入弹窗（复用通用组件：支持下载模板、部分成功、失败明细自动下载） -->
+    <ExcelImportDialog
+      ref="importRef"
+      title="警务站打击现行数据导入"
+      action="/police/strikeCurrent/importData"
+      template-action="/police/strikeCurrent/importTemplate"
+      template-file-name="警务站打击现行数据模板"
+      update-support-label="更新已经存在的数据（同单位同日期）"
+      @success="handleImportSuccess"
+    />
   </div>
 </template>

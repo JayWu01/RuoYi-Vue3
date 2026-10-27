@@ -68,9 +68,9 @@ export function buildScreenCsv(dashboard) {
   pushTrendSection(rows, '未成年人数据趋势', dashboard.juvenile)
 
   rows.push(['警务站排名'])
-  rows.push(['排名', '警务站', '数值'])
-  ;(dashboard.rankData?.yAxis || []).forEach((name, index) => {
-    rows.push([index + 1, name, dashboard.rankData?.series?.[index] ?? ''])
+  rows.push(['排名', '单位', '数值', '环比'])
+  ;(dashboard.rankData?.items || []).forEach((item) => {
+    rows.push([item.rank ?? '', item.unitName ?? '', item.countNum ?? '', item.ratioText ?? '-'])
   })
 
   return `\uFEFF${rows.map(row => row.map(escapeCsvValue).join(',')).join('\n')}`

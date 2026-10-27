@@ -39,6 +39,17 @@ export function delStrikeCurrent(ids) {
 }
 
 /**
+ * 当前登录用户的数据归属部门（新增页面回显单位用）
+ * 返回 { deptId, deptName, admin }
+ */
+export function getCurrentDept() {
+  return request({
+    url: '/police/strikeCurrent/currentDept',
+    method: 'get'
+  })
+}
+
+/**
  * 导出
  * @param {object} params
  */
