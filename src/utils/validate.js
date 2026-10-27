@@ -110,6 +110,52 @@ export function isString(str) {
 }
 
 /**
+ * 身份证严格校验（18/15位，18位校验末位校验码）
+ * 不做 trim：含空白字符（空格、全角空格、制表符等）一律判为不合法，
+ * 防止“首尾空格被静默裁掉后入库”的脏数据问题。
+ * @param {string} idCard
+ * @returns {boolean}
+ */
+export function validIdCard(idCard) {
+  if (typeof idCard !== 'string' || !idCard) {
+    return false
+  }
+  const reg18 = /^[1-9]\d{5}(18|19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{3}[\dX]$/i
+  const reg15 = /^[1-9]\d{7}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{3}$/
+  if (!reg18.test(idCard) && !reg15.test(idCard)) {
+    return false
+  }
+  if (idCard.length === 18) {
+    const weight = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2]
+    const checkCode = ['1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2']
+    let sum = 0
+    for (let i = 0; i < 17; i++) {
+      sum += parseInt(idCard[i]) * weight[i]
+    }
+    return checkCode[sum % 11] === idCard[17].toUpperCase()
+  }
+  return true
+}
+
+/**
+ * 身份证校验，返回错误提示文案；校验通过返回空字符串
+ * @param {string} idCard
+ * @returns {string}
+ */
+export function getIdCardError(idCard) {
+  if (typeof idCard !== 'string' || idCard === '') {
+    return '身份证不能为空'
+  }
+  if (/\s/.test(idCard)) {
+    return '身份证不应包含空格'
+  }
+  if (!validIdCard(idCard)) {
+    return '身份证格式不正确'
+  }
+  return ''
+}
+
+/**
  * @param {Array} arg
  * @returns {boolean}
  */

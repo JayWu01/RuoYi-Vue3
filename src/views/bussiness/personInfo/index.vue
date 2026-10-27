@@ -1,9 +1,10 @@
 <script setup>
 import { Pencil, Plus, RefreshCw, Search, Trash2 } from '@lucide/vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getCurrentInstance, ref } from 'vue'
+import { getCurrentInstance, nextTick, ref } from 'vue'
 // 导入api，增加 getDuplicateList
 import { addPersonInfo, delPersonInfo, getDuplicateList, listPersonInfo, updatePersonInfo } from '@/api/bussiness/personInfo'
+import { getIdCardError } from '@/utils/validate'
 
 const { proxy } = getCurrentInstance()
 const personInfoRef = ref(null)
@@ -40,6 +41,23 @@ const personInfo = ref({
   alarmTime: null
 })
 
+/**
+ * 表单校验规则：身份证号
+ * 校验逻辑与打击现行/团伙嫌疑人等处保持一致（非空、无空白字符、18/15位格式及校验码）
+ */
+const rules = {
+  cardNo: [
+    {
+      required: true,
+      trigger: ['blur', 'change'],
+      validator: (_rule, value, callback) => {
+        const error = getIdCardError(value)
+        callback(error ? new Error(error) : undefined)
+      }
+    }
+  ]
+}
+
 /** 查询列表 */
 function getList() {
   loading.value = true
@@ -66,6 +84,7 @@ function handleAdd() {
   reset()
   title.value = '新增警单人员信息'
   open.value = true
+  nextTick(() => personInfoRef.value?.clearValidate())
 }
 
 /** 修改 */
@@ -74,6 +93,7 @@ function handleUpdate(row) {
   title.value = '修改警单人员信息'
   personInfo.value = { ...row }
   open.value = true
+  nextTick(() => personInfoRef.value?.clearValidate())
 }
 
 /** 提交表单（核心改造） */
@@ -224,7 +244,7 @@ getList()
 
     <!-- 新增/编辑弹窗 -->
     <el-dialog v-model="open" :title="title" width="700px" append-to-body>
-      <el-form ref="personInfoRef" :model="personInfo" label-width="100px">
+      <el-form ref="personInfoRef" :model="personInfo" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="警单编号" prop="alarmId">

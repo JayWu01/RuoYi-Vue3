@@ -5,6 +5,7 @@ import { computed, getCurrentInstance, reactive, ref, watch } from 'vue'
 import { addStrikeCurrent, delStrikeCurrent, getCurrentDept, getStrikeCurrent, listStrikeCurrent, updateStrikeCurrent } from '@/api/bussiness/strikeCurrent'
 import { deptTreeSelect } from '@/api/system/user'
 import ExcelImportDialog from '@/components/ExcelImportDialog/index.vue'
+import { getIdCardError } from '@/utils/validate'
 
 const { proxy } = getCurrentInstance()
 
@@ -185,17 +186,10 @@ const buildNormalSuspectList = () => {
 
 // 单条身份证校验（团伙+普通现行共用）
 const checkSingleIdCard = (person) => {
-  person.idCardError = ''
-  const val = person.idCard?.trim()
-  if (!val) {
-    person.idCardError = '身份证不能为空'
-    return false
-  }
-  if (!checkIdCard(val)) {
-    person.idCardError = '身份证格式错误'
-    return false
-  }
-  return true
+  // 不裁剪首尾空格，但保证一定是字符串
+  person.idCard = typeof person.idCard === 'string' ? person.idCard : (person.idCard ?? '')
+  person.idCardError = getIdCardError(person.idCard)
+  return !person.idCardError
 }
 
 // 团伙业务校验：每个团伙嫌疑人数 >=3
@@ -292,41 +286,10 @@ const buildPersonList = () => {
   form.personList = newList
 }
 
-// 身份证严格校验 18/15位
-const checkIdCard = (idCard) => {
-  if (!idCard) return false
-  idCard = idCard.trim()
-  const reg18 = /^[1-9]\d{5}(18|19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{3}[\dX]$/i
-  const reg15 = /^[1-9]\d{7}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{3}$/
-  if (!reg18.test(idCard) && !reg15.test(idCard)) {
-    return false
-  }
-  if (idCard.length === 18) {
-    const weight = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2]
-    const checkCode = ['1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2']
-    let sum = 0
-    for (let i = 0; i < 17; i++) {
-      sum += parseInt(idCard[i]) * weight[i]
-    }
-    const mod = sum % 11
-    const lastChar = idCard[17].toUpperCase()
-    if (checkCode[mod] !== lastChar) {
-      return false
-    }
-  }
-  return true
-}
-
+// 敲打未成年人员身份证（子表）
 const handleIdCardBlur = (row) => {
-  row.idCardError = ''
-  const val = row.idCard?.trim()
-  if (!val) {
-    row.idCardError = '身份证不能为空'
-    return
-  }
-  if (!checkIdCard(val)) {
-    row.idCardError = '身份证格式不正确'
-  }
+  row.idCard = typeof row.idCard === 'string' ? row.idCard : (row.idCard ?? '')
+  row.idCardError = getIdCardError(row.idCard)
 }
 
 const handleIdCardInput = (row) => {
@@ -454,15 +417,10 @@ const submitForm = async () => {
   // 校验敲打未成年身份证
   if (form.personList.length > 0) {
     form.personList.forEach((item) => {
-      item.idCardError = ''
-      const val = item.idCard?.trim()
-      if (!val) {
-        item.idCardError = '身份证不能为空'
-        hasError = true
-      } else if (!checkIdCard(val)) {
-        item.idCardError = '身份证格式不正确'
-        hasError = true
-      }
+      // 与失焦校验保持一致：不 trim，空白字符直接判错
+      item.idCard = typeof item.idCard === 'string' ? item.idCard : (item.idCard ?? '')
+      item.idCardError = getIdCardError(item.idCard)
+      if (item.idCardError) hasError = true
     })
     if (hasError) {
       ElMessage.error('请检查敲打未成年身份证填写')
@@ -521,9 +479,24 @@ const submitForm = async () => {
   doSave()
 }
 
+// 人员弹窗身份证失焦校验
+const handlePersonDialogIdCardBlur = (row) => {
+  row.idCard = typeof row.idCard === 'string' ? row.idCard : (row.idCard ?? '')
+  row.idCardError = getIdCardError(row.idCard)
+}
+
 const confirmPerson = () => {
-  if (personForm.personList.some(x => !x.idCard)) {
-    ElMessage.error('身份证号不能为空！')
+  // 与其余身份证输入处保持一致的校验：非空、无空白字符、18/15位格式及校验码
+  let firstError = ''
+  personForm.personList.forEach((row) => {
+    row.idCard = typeof row.idCard === 'string' ? row.idCard : (row.idCard ?? '')
+    row.idCardError = getIdCardError(row.idCard)
+    if (row.idCardError && !firstError) {
+      firstError = row.idCardError
+    }
+  })
+  if (firstError) {
+    ElMessage.error(firstError)
     return
   }
   personDialogVisible.value = false
@@ -1099,7 +1072,17 @@ loadDeptContext()
         <el-table-column label="序号" type="index" width="60" />
         <el-table-column label="身份证号">
           <template #default="{ row }">
-            <el-input v-model="row.idCard" placeholder="身份证号必填" />
+            <div class="flex items-center gap-2">
+              <el-input
+                v-model="row.idCard"
+                placeholder="身份证号必填"
+                class="flex-1"
+                @blur="handlePersonDialogIdCardBlur(row)"
+              />
+              <span v-if="row.idCardError" class="text-xs text-[#f56c6c] whitespace-nowrap">
+                {{ row.idCardError }}
+              </span>
+            </div>
           </template>
         </el-table-column>
       </el-table>
