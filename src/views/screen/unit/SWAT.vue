@@ -1,7 +1,7 @@
 <script setup>
 import { useDocumentVisibility, useIntervalFn, watchDebounced } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
-import { computed, onMounted, shallowRef, watch } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import ScreenToolbar from '../components/ScreenToolbar.vue'
 import TrendChartPanel from '../components/TrendChartPanel.vue'
 import { useDashboardData } from '../composables/useDashboardData'
@@ -49,53 +49,9 @@ const visibility = useDocumentVisibility()
 const specialPoliceUnitOptions = computed(() => dashboard.value.specialPoliceUnits)
 const cityBranchUnitOptions = computed(() => dashboard.value.cityBranchUnits)
 
-const formatDay = (date) => {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
-
-const createYesterdayRange = () => {
-  const yesterday = formatDay(new Date(Date.now() - 24 * 60 * 60 * 1000))
-  return [yesterday, yesterday]
-}
-
-// query.value.startDate 和 endDate 就是本面板的全局时间
-const createQueryDateRange = () => {
-  return [query.value.startDate, query.value.endDate]
-}
-
-const rankDataFilter = shallowRef({
-  dateRange: createQueryDateRange()
-})
-
-const rankDateRange = computed({
-  get: () => rankDataFilter.value.dateRange,
-  set: (value) => {
-    rankDataFilter.value = {
-      ...rankDataFilter.value,
-      dateRange: value ?? []
-    }
-  }
-})
-
-const toDayTimeRange = (dateRange) => {
-  if (Array.isArray(dateRange) && dateRange.length === 2 && dateRange[0] && dateRange[1]) {
-    // query 里是 "YYYY-MM-DD HH:mm:ss"，这里统一裁到当天
-    const start = String(dateRange[0]).slice(0, 10)
-    const end = String(dateRange[1]).slice(0, 10)
-    return {
-      startDate: `${start} 00:00:00`,
-      endDate: `${end} 23:59:59`
-    }
-  }
-  return {}
-}
-
+// 排名面板直接沿用顶部工具栏的全局日期范围（含时分秒），不做日期裁剪
 const createRankDataQuery = () => ({
   ...query.value,
-  ...toDayTimeRange(createQueryDateRange()),
   rankType: rankType.value,
   rankDimension: rankDimension.value
 })
@@ -126,7 +82,7 @@ const reloadJuvenilePanel = () => {
 }
 
 watchDebounced(rankFilter, reloadRankTrendPanel, { deep: true, debounce: 120 })
-watchDebounced([rankDataFilter, rankType, rankDimension], reloadRankDataPanel, { deep: true, debounce: 120 })
+watchDebounced([rankType, rankDimension], reloadRankDataPanel, { debounce: 120 })
 watchDebounced(juvenileFilter, reloadJuvenilePanel, { deep: true, debounce: 120 })
 
 const loadData = () => {
@@ -149,9 +105,7 @@ const handleJuvenileUnit = payload => updateJuvenileUnit(payload)
 
 const resetQuery = () => {
   resetFilters()
-  rankDataFilter.value = {
-    dateRange: createYesterdayRange()
-  }
+  void reloadRankDataPanel()
   void reloadSummary(query.value)
 }
 

@@ -179,33 +179,39 @@ const ratioClass = (row) => {
         <table class="w-full table-fixed border-collapse text-[17px]">
           <thead class="sticky top-0 z-10">
             <tr class="bg-[#0e3a61]">
+              <th class="w-11 whitespace-nowrap border border-[#1e4a73] px-1 py-1.5 font-bold text-slate-100">
+                序号
+              </th>
               <th class="w-11 border border-[#1e4a73] px-1 py-1.5 font-bold text-slate-100">
                 排名
               </th>
               <th class="w-[30%] border border-[#1e4a73] px-2 py-1.5 font-bold text-slate-100">
                 名称
               </th>
-              <th class="border border-[#1e4a73] px-2 py-1.5 font-bold text-slate-100">
+              <th class="w-[28%] border border-[#1e4a73] px-2 py-1.5 font-bold text-slate-100">
                 数据
                 <span class="ml-1 text-[0.625rem] font-normal text-slate-400">{{ dimensionHint }}</span>
               </th>
-              <th class="w-[92px] border border-[#1e4a73] px-1 py-1.5 font-bold text-slate-100">
+              <th class="w-[112px] border border-[#1e4a73] px-1 py-1.5 font-bold text-slate-100">
                 环比
               </th>
             </tr>
           </thead>
           <tbody>
             <tr v-if="!rows.length">
-              <td colspan="4" class="border border-[#1e4a73] px-2 py-6 text-center text-slate-400">
+              <td colspan="5" class="border border-[#1e4a73] px-2 py-6 text-center text-slate-400">
                 {{ emptyText }}
               </td>
             </tr>
             <tr
-              v-for="row in rows"
+              v-for="(row, index) in rows"
               :key="row.deptId ?? row.name"
               class="transition-colors hover:bg-[#123a60]/60"
               :class="row.name === '合计' ? 'bg-[#0e3a61]/70' : ''"
             >
+              <td class="border border-[#1e4a73] px-1 py-1.5 text-center text-slate-300">
+                {{ row.name === '合计' ? '-' : index + 1 }}
+              </td>
               <td class="border border-[#1e4a73] px-1 py-1.5 text-center font-bold">
                 <span :class="row.rank != null && row.rank <= 3 ? 'text-[#ffc048]' : 'text-slate-300'">{{ row.rank ?? '-' }}</span>
               </td>
@@ -247,18 +253,6 @@ const ratioClass = (row) => {
               </td>
             </tr>
           </tbody>
-          <tfoot v-if="rows.length" class="sticky bottom-0 z-10">
-            <tr class="bg-[#0e3a61]">
-              <td class="w-14 border border-[#1e4a73] px-2 py-1.5 text-center text-slate-400"></td>
-              <td class="border border-[#1e4a73] px-2 py-1.5 text-center font-bold text-slate-100">
-                总计
-              </td>
-              <td class="border border-[#1e4a73] px-2 py-1.5 text-right font-bold text-chart-yellow">
-                {{ totalValue }}
-              </td>
-              <td class="border border-[#1e4a73] px-2 py-1.5" />
-            </tr>
-          </tfoot>
         </table>
       </div>
     </div>
