@@ -254,6 +254,8 @@ export function getJuvenileTrend(config = {}) {
  *   policeDispatch?: number
  *   // 110派警环比百分比，带正负号，例 "+18%" "-5%"
  *   policeDispatchRatio?: string
+ *   // 自处率，例 "85.23%"
+ *   SelfRelianceRate?: string
  * }
  * ```
  *

@@ -362,6 +362,11 @@ type getAlarmKpiResponse = {
    */
 
   policeDispatchRatio?: string;
+  /**
+   * 自处率，例 "85.23%"
+   */
+
+  SelfRelianceRate?: string;
 };
 type getAlarmKpiExtraConfig = Omit<AxiosRequestConfig, 'data' | 'params'> & {
   data: ComponentTypes.PoliceStatQueryDTO;
@@ -484,6 +489,8 @@ type getAlarmKpiExtraConfig = Omit<AxiosRequestConfig, 'data' | 'params'> & {
  *   policeDispatch?: number
  *   // 110派警环比百分比，带正负号，例 "+18%" "-5%"
  *   policeDispatchRatio?: string
+ *   // 自处率，例 "85.23%"
+ *   SelfRelianceRate?: string
  * }
  * ```
  *

@@ -1,5 +1,6 @@
 <script setup>
 import { Bell, ClipboardList, Percent, Phone, Share2 } from '@lucide/vue'
+import { computed } from 'vue'
 import KpiCard from '../components/KpiCard.vue'
 import ScreenPanel from '../components/ScreenPanel.vue'
 
@@ -8,6 +9,17 @@ const props = defineProps({
     type: Object,
     required: true
   }
+})
+
+// 后端字段名首字母大写（AlarmCardVO.SelfRelianceRate），值为 "85.23%" 形式的字符串
+const selfRelianceRate = computed(() => {
+  const value = props.data?.SelfRelianceRate ?? props.data?.selfRelianceRate
+
+  if (value === null || value === undefined || value === '') {
+    return '-'
+  }
+
+  return typeof value === 'number' ? `${value}%` : String(value)
 })
 </script>
 
@@ -26,7 +38,7 @@ const props = defineProps({
         :icon="Percent"
         title="自处率"
         tone="cyan"
-        value="null"
+        :value="selfRelianceRate"
       />
       <KpiCard
         class="col-span-2 max-sm:col-span-1"
