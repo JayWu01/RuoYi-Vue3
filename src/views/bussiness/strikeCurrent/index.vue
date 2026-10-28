@@ -43,7 +43,11 @@ const showColumns = reactive({
   doorPullAmount: true,
   netFugitiveCount: true,
   correctMinorCount: true,
-  unitName: true
+  unitName: true,
+  personText: true,
+  carNos: true,
+  gangCaseText: true,
+  suspectText: true
 })
 
 const open = ref(false)
@@ -703,6 +707,10 @@ loadDeptContext()
       <el-table-column v-show="showColumns.doorPullAmount" label="检查车内贵重物品（元）" prop="doorPullAmount" />
       <el-table-column v-show="showColumns.netFugitiveCount" label="抓网逃数" prop="netFugitiveCount" />
       <el-table-column v-show="showColumns.correctMinorCount" label="送矫未成年数量" prop="correctMinorCount" />
+      <el-table-column v-show="showColumns.gangCaseText" label="团伙案情明细" prop="gangCaseText" min-width="200" show-overflow-tooltip />
+      <el-table-column v-show="showColumns.suspectText" label="嫌疑人明细" prop="suspectText" min-width="220" show-overflow-tooltip />
+      <el-table-column v-show="showColumns.personText" label="人员明细" prop="personText" min-width="220" show-overflow-tooltip />
+      <el-table-column v-show="showColumns.carNos" label="检查车辆车牌号" prop="carNos" min-width="160" show-overflow-tooltip />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="{ row }">
           <el-button
