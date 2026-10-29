@@ -15,11 +15,13 @@ import ResultPanel from '../modules/ResultPanel.vue'
 import UnitRankPanel from '../modules/UnitRankPanel.vue'
 import { exportScreenCsv } from '../utils/exportScreenData'
 
-const emit = defineEmits(['loadingChange', 'updateTimeChange', 'filterChange'])
+const emit = defineEmits(['loadingChange', 'updateTimeChange', 'filterChange', 'statusChange'])
 
 const {
   dashboard,
+  errors,
   errorMessage,
+  hasError,
   updateTime,
   isLoading: loading,
   loading: moduleLoading,
@@ -89,14 +91,6 @@ onBeforeUnmount(() => {
   bodyScrollLocked.value = false
 })
 
-/* 面板入场：按顺序轻微上浮，避免整页同时出现 */
-const vReveal = {
-  mounted(el, binding) {
-    el.style.setProperty('--scr-reveal-delay', `${(Number(binding.value) || 0) * 55}ms`)
-    el.classList.add('scr-reveal')
-  }
-}
-
 const createRankDataQuery = () => ({
   ...query.value,
   rankType: rankType.value
@@ -125,6 +119,10 @@ const reloadRankDataPanel = () => {
 
 const reloadJuvenilePanel = () => {
   void reloadJuvenile(getJuvenileParams())
+}
+
+const retrySummary = () => {
+  void reloadMetrics(query.value, getPanelParams())
 }
 
 watchDebounced(rankFilter, reloadRankTrendPanel, { deep: true, debounce: 120 })
@@ -178,6 +176,9 @@ watch(errorMessage, (message) => {
 
 watch(loading, value => emit('loadingChange', value), { immediate: true })
 watch(updateTime, value => emit('updateTimeChange', value), { immediate: true })
+watch([hasError, loading], () => {
+  emit('statusChange', hasError.value ? 'stale' : 'live')
+}, { immediate: true })
 watch([filterOpen, filterSummary], () => {
   emit('filterChange', { open: filterOpen.value, summary: filterSummary.value })
 }, { immediate: true })
@@ -201,84 +202,93 @@ defineExpose({
 
 <template>
   <main
-    class="screen-main grid min-h-0 flex-1 grid-cols-1 gap-4 p-4 max-lg:grid-rows-[56.5rem_auto_48.75rem] lg:min-h-[84rem] lg:grid-cols-2 xl:grid-cols-layout-desktop 2xl:grid-cols-layout-wide max-sm:gap-3 max-sm:p-3"
+    class="screen-main grid min-h-0 flex-1 grid-cols-1 gap-4 p-4 max-lg:grid-rows-[56.5rem_auto_48.75rem] lg:min-h-[84rem] lg:grid-cols-2 lg:max-xl:grid-rows-[50rem_32rem] xl:grid-cols-layout-desktop 2xl:grid-cols-layout-wide max-sm:gap-3 max-sm:p-3"
     :aria-busy="loading || undefined"
   >
     <div class="grid min-h-0 grid-rows-layout-mobile-left gap-4 lg:row-span-2 lg:grid-rows-layout-left xl:row-span-1">
       <AlarmKpiPanel
-        v-reveal="1"
+        :reveal-index="0"
         :data="dashboard.alarmKpi"
         :loading="panelLoading('alarmKpi')"
+        :error="errors.alarmKpi"
+        @retry="retrySummary"
       />
       <ResultPanel
-        v-reveal="2"
+        :reveal-index="1"
         :data="dashboard.result"
         :loading="panelLoading('result')"
+        :error="errors.result"
+        @retry="retrySummary"
       />
       <MinorDistributionPanel
-        v-reveal="3"
+        :reveal-index="2"
         :data="dashboard.pie"
         :loading="panelLoading('pie')"
+        :error="errors.pie"
+        @retry="retrySummary"
       />
     </div>
 
     <section class="grid min-h-0 grid-rows-layout-mobile-stack gap-4 lg:grid-rows-layout-stack max-sm:grid-rows-[20rem_40rem]">
       <TrendChartPanel
         v-model:chart-type="alarmChartType"
-        v-reveal="1"
+        :reveal-index="0"
         title="接处警趋势变化"
         unit="(单位：起)"
         :data="dashboard.lineAlarm"
         :loading="panelLoading('lineAlarm')"
+        :error="errors.lineAlarm"
         :slider-threshold="30"
         :slider-window="30"
-        :show-data-shadow="false"
+        @retry="retrySummary"
       />
 
-      <div class="grid grid-cols-2 min-h-0 gap-4 max-sm:grid-cols-1 max-sm:grid-rows-2">
+      <div class="grid min-h-0 grid-cols-1 gap-4 xl:grid-cols-2">
         <TrendChartPanel
           v-model:chart-type="rankChartType"
-          v-reveal="2"
+          :reveal-index="1"
           title="抢盗窃数据趋势"
           unit="(单位：起)"
           :data="dashboard.rank"
           :loading="panelLoading('rank')"
-          :carousel-delay="1600"
+          :error="errors.rank"
+          :carousel="false"
           show-filters
           :month-range="rankFilter.monthRange"
           :unit-options="cityBranchUnitOptions"
           :dept-id="rankFilter.deptId"
-          :scale-axis="true"
-          :grid-left="42"
+          :grid-left="40"
           :grid-right="18"
-          :grid-bottom="70"
-          :x-axis-rotate="30"
+          :grid-bottom="38"
+          :x-axis-rotate="0"
           :legend-left="12"
           @change-month-range="handleRankMonthRange"
           @update-unit="handleRankUnit"
+          @retry="reloadRankTrendPanel"
         />
 
         <TrendChartPanel
           v-model:chart-type="juvenileChartType"
-          v-reveal="3"
+          :reveal-index="2"
           title="未成年人数趋势"
           unit="(单位：人)"
           :data="dashboard.juvenile"
           :loading="panelLoading('juvenile')"
-          :carousel-delay="3200"
+          :error="errors.juvenile"
+          :carousel="false"
           show-filters
           :month-range="juvenileFilter.monthRange"
           :unit-options="cityBranchUnitOptions"
           :dept-id="juvenileFilter.deptId"
-          :scale-axis="true"
-          :grid-left="42"
+          :grid-left="40"
           :grid-right="18"
-          :grid-bottom="70"
-          :x-axis-rotate="30"
+          :grid-bottom="38"
+          :x-axis-rotate="0"
           :legend-left="12"
-          :bar-width="7"
+          :bar-width="10"
           @change-month-range="handleJuvenileMonthRange"
           @update-unit="handleJuvenileUnit"
+          @retry="reloadJuvenilePanel"
         />
       </div>
     </section>
@@ -286,9 +296,11 @@ defineExpose({
     <div class="grid min-h-0">
       <UnitRankPanel
         v-model:rank-type="rankType"
-        v-reveal="1"
+        :reveal-index="0"
         :data="dashboard.rankData"
         :loading="panelLoading('rankData')"
+        :error="errors.rankData"
+        @retry="reloadRankDataPanel"
       />
     </div>
   </main>

@@ -14,24 +14,23 @@
   --el-segmented-item-hover-bg-color: var(--scr-surface-2);
   --el-segmented-item-active-bg-color: var(--scr-surface-3);
   --el-border-radius-base: 999px;
-  height: 32px;
-  padding: 3px;
+  height: 38px;
+  padding: 4px;
   border: 1px solid var(--scr-line) !important;
   background-color: var(--scr-field) !important;
 }
 .dashboard .dashboard-period .el-segmented__item {
   border-radius: 999px;
-  font-size: 12px;
+  font-size: var(--scr-font-label);
   transition: color 0.22s ease;
 }
 .dashboard .dashboard-period .el-segmented__item-label {
-  padding: 0 6px;
+  padding: 0 8px;
   font-weight: 500;
 }
 .dashboard .dashboard-period .el-segmented__item-selected {
   border-radius: 999px;
-  background: var(--scr-accent-gradient) !important;
-  box-shadow: 0 2px 10px var(--scr-accent-glow);
+  background: var(--scr-accent) !important;
 }
 .dashboard .dashboard-period .el-segmented__item.is-selected .el-segmented__item-label {
   color: var(--scr-on-accent) !important;
@@ -62,7 +61,7 @@
   --el-border-color-hover: var(--scr-accent);
   --el-fill-color-blank: var(--scr-field);
   --el-color-primary: var(--scr-accent);
-  font-size: 12px;
+  font-size: var(--scr-font-field);
 }
 
 .dashboard :is(
@@ -70,8 +69,8 @@
   .dashboard-date-picker.el-range-editor,
   .dashboard-select .el-select__wrapper
 ) {
-  min-height: 32px;
-  border-radius: 9px;
+  min-height: 38px;
+  border-radius: var(--scr-radius-control);
   background-color: var(--scr-field) !important;
   box-shadow: 0 0 0 1px var(--scr-line) inset !important;
   transition: box-shadow 0.22s ease, background-color 0.22s ease;
@@ -98,7 +97,7 @@
   .dashboard-select .el-select__caret
 ) {
   color: var(--scr-text-1) !important;
-  font-size: 12px;
+  font-size: var(--scr-font-field);
 }
 .dashboard :is(
   .dashboard-date-picker .el-range-separator,
@@ -124,13 +123,13 @@
 
 /* ---------- 按钮 ---------- */
 .dashboard .dashboard-action-button {
-  height: 32px;
-  padding: 0 14px;
+  height: 38px;
+  padding: 0 16px;
   border: 1px solid var(--scr-line-strong) !important;
-  border-radius: 10px !important;
+  border-radius: var(--scr-radius-control) !important;
   background-color: var(--scr-surface-2) !important;
   color: var(--scr-text-2) !important;
-  font-size: 12.5px;
+  font-size: var(--scr-font-field);
   font-weight: 500;
   transition:
     color 0.22s ease,
@@ -148,15 +147,14 @@
 }
 .dashboard .dashboard-action-button-primary {
   border-color: transparent !important;
-  background: var(--scr-accent-gradient) !important;
+  background: var(--scr-accent) !important;
   color: var(--scr-on-accent) !important;
   font-weight: 600;
-  box-shadow: 0 4px 16px var(--scr-accent-glow);
 }
 .dashboard .dashboard-action-button-primary:hover {
-  background: var(--scr-accent-gradient) !important;
+  background: var(--scr-accent) !important;
   color: var(--scr-on-accent) !important;
-  filter: brightness(1.08);
+  filter: brightness(1.06);
 }
 .dashboard .dashboard-action-button.is-disabled,
 .dashboard .dashboard-action-button.is-disabled:hover {
@@ -193,7 +191,7 @@
 
 .dashboard-popper.el-popper {
   border: 1px solid var(--scr-popover-line) !important;
-  border-radius: 12px !important;
+  border-radius: var(--scr-radius-card) !important;
   background: var(--scr-popover) !important;
   color: var(--scr-text-1);
   box-shadow: var(--scr-shadow-popover);
@@ -238,9 +236,10 @@
   font-weight: 500;
 }
 .dashboard-popper .el-date-table td .el-date-table-cell__text {
-  border-radius: 7px;
+  border-radius: var(--scr-radius-control);
   color: var(--scr-text-2);
   font-family: var(--scr-font-numeric);
+  font-size: var(--scr-font-label);
   font-variant-numeric: tabular-nums;
 }
 .dashboard-popper .el-date-table td.available:hover .el-date-table-cell__text,
@@ -263,7 +262,7 @@
   .el-year-table td.start-date .el-date-table-cell__text,
   .el-year-table td.end-date .el-date-table-cell__text
 ) {
-  background: var(--scr-accent-gradient);
+  background: var(--scr-accent);
   color: var(--scr-on-accent);
   font-weight: 600;
 }
@@ -285,6 +284,7 @@
 .dashboard-popper .el-time-spinner__item {
   color: var(--scr-text-2);
   font-family: var(--scr-font-numeric);
+  font-size: var(--scr-font-label);
 }
 .dashboard-popper .el-time-spinner__item.is-active {
   color: var(--scr-accent);
@@ -296,6 +296,7 @@
 /* 下拉选项 */
 .dashboard-popper .el-select-dropdown__item {
   color: var(--scr-text-2);
+  font-size: var(--scr-font-field);
 }
 .dashboard-popper .el-select-dropdown__item.is-hovering {
   background-color: var(--scr-surface-2);
@@ -317,7 +318,7 @@
 }
 .dashboard-popper ::-webkit-scrollbar-thumb {
   background: var(--scr-scroll-thumb);
-  border-radius: 5px;
+  border-radius: var(--scr-radius-pill);
 }
 .dashboard-popper ::-webkit-scrollbar-track {
   background: transparent;
@@ -375,7 +376,7 @@
 
 .dashboard-popper .el-picker-panel__footer .el-button:is(.is-plain, .el-button--primary) {
   border-color: transparent !important;
-  background: var(--scr-accent-gradient) !important;
+  background: var(--scr-accent) !important;
   color: var(--scr-on-accent) !important;
   font-weight: 600;
 }

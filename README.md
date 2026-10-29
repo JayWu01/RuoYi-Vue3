@@ -30,7 +30,7 @@
 | 状态管理  | Pinia 3                                                                            |
 | 路由      | Vue Router 4                                                                       |
 | 样式方案  | Tailwind CSS 3.4、Sass                                                             |
-| 图表      | ECharts 5.6                                                                        |
+| 图表      | vccs 1.0（Vue 版 Recharts）                                                        |
 | HTTP 请求 | Axios                                                                              |
 | 常用工具  | VueUse、dayjs、file-saver、js-cookie、jsencrypt、fuse.js、SortableJS、vuedraggable |
 | 代码规范  | ESLint（@antfu/eslint-config）                                                     |

@@ -58,6 +58,7 @@ export function useDashboardData() {
   const versions = createRequestVersions()
 
   const isLoading = computed(() => Object.values(loading).some(Boolean))
+  const hasError = computed(() => Object.values(errors).some(Boolean))
   const errorMessage = computed(() =>
     Object.keys(errors)
       .filter(key => errors[key])
@@ -137,6 +138,7 @@ export function useDashboardData() {
     dashboard,
     errors,
     errorMessage,
+    hasError,
     updateTime,
     isLoading,
     loading,

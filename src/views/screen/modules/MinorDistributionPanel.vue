@@ -1,16 +1,15 @@
 <script setup>
 /**
- * 罪错未成年分布：纯 SVG 环图（替代 ECharts pie，减少一个 canvas 实例）
- * 中心总人数 + 右侧图例（名称 / 数值 / 占比）+ 底部非预警与环比信息。
+ * 罪错未成年分布：环形图 + 中心总人数
+ * 右侧图例（名称 / 数值 / 占比）+ 底部非预警与环比信息。
  */
 import { ChartPie } from '@lucide/vue'
 import { computed, ref } from 'vue'
-import { getScreenPalette } from '../charts/palette'
 import AnimatedStatistic from '../components/AnimatedStatistic.vue'
 import DonutChart from '../components/DonutChart.vue'
 import ScreenPanel from '../components/ScreenPanel.vue'
 import TrendValue from '../components/TrendValue.vue'
-import { useScreenTheme } from '../composables/useScreenTheme'
+import { useScreenPalette } from '../composables/useScreenPalette'
 import { MINOR_LEVELS } from '../constant'
 import { isTrendUp } from '../utils/trend'
 
@@ -22,11 +21,20 @@ const props = defineProps({
   loading: {
     type: Boolean,
     default: false
+  },
+  error: {
+    type: Boolean,
+    default: false
+  },
+  revealIndex: {
+    type: Number,
+    default: 0
   }
 })
 
-const { theme } = useScreenTheme()
-const palette = computed(() => getScreenPalette(theme.value))
+const emit = defineEmits(['retry'])
+
+const palette = useScreenPalette()
 
 const activeIndex = ref(null)
 
@@ -59,12 +67,12 @@ const trendClass = up => (up ? 'trend-up-bad' : 'trend-down-good')
 </script>
 
 <template>
-  <ScreenPanel title="罪错未成年分布" unit="(单位：人)" :loading="loading">
+  <ScreenPanel title="罪错未成年分布" unit="(单位：人)" :loading="loading" :error="error" :reveal-index="revealIndex" @retry="emit('retry')">
     <div class="panel-stack">
       <Transition name="scr-swap">
         <div v-if="showSkeleton" key="skeleton" class="flex min-h-0 flex-1 flex-col" aria-hidden="true">
           <div class="flex min-h-0 flex-1 items-center gap-3 px-4 pb-2">
-            <span class="scr-skeleton is-circle shrink-0" style="width: 158px; height: 158px" />
+            <span class="scr-skeleton is-circle shrink-0" style="width: 164px; height: 164px" />
             <div class="flex min-w-0 flex-1 flex-col gap-3">
               <div v-for="index in 5" :key="index" class="flex items-center gap-2">
                 <span class="scr-skeleton is-circle" style="width: 7px; height: 7px" />
@@ -81,11 +89,11 @@ const trendClass = up => (up ? 'trend-up-bad' : 'trend-down-good')
         </div>
 
         <div v-else key="content" class="flex min-h-0 flex-1 flex-col">
-          <div v-if="hasData" class="flex min-h-0 flex-1 items-center gap-3 px-4 pb-2">
+          <div v-if="hasData" class="minor-dist-body flex min-h-0 flex-1 items-center gap-3 px-4 pb-2">
             <div class="shrink-0">
               <DonutChart
                 :data="donutData"
-                :size="158"
+                :size="164"
                 :active-index="activeIndex"
                 aria-label="罪错未成年等级分布环形图"
                 @hover="activeIndex = $event"
@@ -126,9 +134,9 @@ const trendClass = up => (up ? 'trend-up-bad' : 'trend-down-good')
           </div>
 
           <div class="panel-footer">
-            <span class="chip warn">
+            <span class="chip plain">
               <span class="d" />
-              非预警 <b class="strong">{{ unwarnedCount }}</b> 人
+              非预警 <b class="strong">{{ unwarnedCount }}</b>
             </span>
             <span class="inline-flex items-center gap-1">
               环比

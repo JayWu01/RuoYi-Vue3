@@ -24,9 +24,9 @@ const isDigit = char => /^\d$/.test(char)
         class="digit-cell relative inline-grid h-[1.12em] w-[1ch] place-items-center overflow-hidden"
       >
         <Transition
-          enter-active-class="transition duration-300 ease-scr-out"
+          enter-active-class="transition duration-scr-base ease-scr-out"
           enter-from-class="opacity-0 translate-y-[0.7em] blur-[2px]"
-          leave-active-class="transition duration-300 ease-scr-out"
+          leave-active-class="transition duration-scr-base ease-scr-out"
           leave-to-class="opacity-0 -translate-y-[0.7em] blur-[2px]"
         >
           <span :key="`${char}-${rollSeed}`" class="digit-char [grid-area:1/1] leading-none">{{ char }}</span>

@@ -47,7 +47,7 @@ const handleFocus = (event, key) => {
 <template>
   <div
     ref="toolbarRef"
-    class="expanding-actions box-border inline-flex h-9 shrink-0 items-center justify-between gap-0.5 whitespace-nowrap rounded-full border border-scr-line bg-scr-surface p-[3px] max-[1023px]:h-[34px] max-[768px]:w-auto max-[768px]:justify-center max-[640px]:h-8 max-[640px]:p-0.5"
+    class="expanding-actions box-border inline-flex h-[34px] shrink-0 items-center justify-between gap-0.5 whitespace-nowrap rounded-full border border-scr-line bg-scr-surface p-[3px] max-[1023px]:h-[34px] max-[768px]:w-auto max-[768px]:justify-center max-[640px]:h-8 max-[640px]:p-0.5"
     :class="widthClass"
     role="group"
     aria-label="页面操作"
@@ -58,7 +58,7 @@ const handleFocus = (event, key) => {
       v-for="action in actions"
       :key="action.key"
       type="button"
-      class="expanding-action inline-flex h-[30px] shrink-0 cursor-pointer items-center justify-center gap-0 rounded-full border-0 bg-transparent px-[7px] text-scr-faint transition-all duration-300 ease-scr-out hover:text-scr-fg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--scr-focus)] disabled:cursor-not-allowed disabled:opacity-[0.45] max-[1023px]:h-7 max-[768px]:px-1.5 max-[640px]:h-[26px] max-[640px]:px-1"
+      class="expanding-action inline-flex h-[28px] shrink-0 cursor-pointer items-center justify-center gap-0 rounded-full border-0 bg-transparent px-[7px] text-scr-faint transition-all duration-scr-base ease-scr-out hover:text-scr-fg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--scr-focus)] disabled:cursor-not-allowed disabled:opacity-[0.45] max-[1023px]:h-[26px] max-[768px]:px-1.5 max-[640px]:h-[24px] max-[640px]:px-1"
       :class="activeAction === action.key
         ? 'is-expanded gap-1.5 bg-scr-surface-3 px-2.5 text-scr-fg max-[768px]:gap-0 max-[768px]:bg-transparent max-[768px]:px-1.5 max-[640px]:px-1'
         : ''"
@@ -70,9 +70,9 @@ const handleFocus = (event, key) => {
       @click="emit('select', action.key)"
     >
       <Transition
-        enter-active-class="transition duration-200 ease-scr-out"
+        enter-active-class="transition duration-scr-base ease-scr-out"
         enter-from-class="opacity-0 -rotate-45 scale-75"
-        leave-active-class="transition duration-150 ease-in"
+        leave-active-class="transition duration-scr-fast ease-in"
         leave-to-class="opacity-0 rotate-45 scale-75"
         mode="out-in"
       >
@@ -88,13 +88,13 @@ const handleFocus = (event, key) => {
       </Transition>
 
       <span
-        class="expanding-action-label inline-block max-w-0 overflow-hidden whitespace-nowrap text-[11px] font-semibold leading-none opacity-0 blur-[2px] transition-all duration-300 max-[768px]:hidden"
+        class="expanding-action-label inline-block max-w-0 overflow-hidden whitespace-nowrap text-scr-status font-semibold leading-none opacity-0 blur-[2px] transition-all duration-scr-base max-[768px]:hidden"
         :class="activeAction === action.key
-          ? 'max-w-9 translate-y-0 opacity-100 blur-none'
+          ? 'max-w-10 translate-y-0 opacity-100 blur-none'
           : 'translate-y-[3px]'"
       >
         <Transition
-          enter-active-class="transition duration-150 ease-scr-out"
+          enter-active-class="transition duration-scr-fast ease-scr-out"
           enter-from-class="opacity-0 translate-y-0.5 blur-[2px]"
           leave-active-class="transition duration-100 ease-in"
           leave-to-class="opacity-0 -translate-y-0.5 blur-[2px]"

@@ -1,9 +1,7 @@
 <script setup>
-import { computed, onBeforeUnmount, onMounted, useTemplateRef, watch } from 'vue'
-import { getScreenPalette } from '../charts/palette'
-import { createChartBase, createDonutSeries } from '../charts/spec'
-import { useECharts } from '../composables/useECharts'
-import { useScreenTheme } from '../composables/useScreenTheme'
+import { Cell, Pie, PieChart, Sector } from 'vccs'
+import { computed } from 'vue'
+import { useScreenPalette } from '../composables/useScreenPalette'
 
 const props = defineProps({
   data: {
@@ -28,10 +26,7 @@ const props = defineProps({
 
 const emit = defineEmits(['hover'])
 
-const chartRef = useTemplateRef('chartRef')
-const { chart, setOption } = useECharts(chartRef)
-const { theme } = useScreenTheme()
-const palette = computed(() => getScreenPalette(theme.value))
+const palette = useScreenPalette()
 
 const items = computed(() => props.data.map((item, index) => ({
   name: String(item?.name ?? ''),
@@ -44,73 +39,6 @@ const total = computed(() => items.value.reduce((sum, item) => sum + item.value,
 const activeSegment = computed(() => (
   items.value.find((_, index) => index === props.activeIndex) ?? null
 ))
-
-const syncHighlight = (index) => {
-  const instance = chart.value
-  if (!instance) {
-    return
-  }
-
-  instance.dispatchAction({ type: 'downplay', seriesIndex: 0 })
-  if (typeof index === 'number' && index >= 0) {
-    instance.dispatchAction({ type: 'highlight', seriesIndex: 0, dataIndex: index })
-  }
-}
-
-const renderChart = () => {
-  if (!items.value.length) {
-    setOption({ series: [] })
-    return
-  }
-
-  setOption({
-    ...createChartBase(),
-    animationDuration: 700,
-    animationDurationUpdate: 320,
-    animationEasing: 'cubicOut',
-    animationEasingUpdate: 'cubicOut',
-    series: [
-      createDonutSeries({
-        palette: palette.value,
-        data: items.value.map(item => ({
-          name: item.name,
-          value: item.value,
-          itemStyle: { color: item.color }
-        }))
-      })
-    ]
-  })
-
-  syncHighlight(props.activeIndex)
-}
-
-const bindEvents = (instance) => {
-  if (!instance) {
-    return
-  }
-
-  instance.off('mouseover')
-  instance.off('mouseout')
-  instance.off('globalout')
-  instance.on('mouseover', (params) => {
-    if (params.componentType === 'series') {
-      emit('hover', params.dataIndex)
-    }
-  })
-  instance.on('mouseout', () => emit('hover', null))
-  instance.on('globalout', () => emit('hover', null))
-}
-
-watch([items, palette], renderChart)
-watch(() => props.activeIndex, syncHighlight)
-watch(chart, instance => bindEvents(instance))
-onMounted(renderChart)
-
-onBeforeUnmount(() => {
-  chart.value?.off('mouseover')
-  chart.value?.off('mouseout')
-  chart.value?.off('globalout')
-})
 </script>
 
 <template>
@@ -120,7 +48,43 @@ onBeforeUnmount(() => {
     role="img"
     :aria-label="ariaLabel"
   >
-    <div ref="chartRef" class="donut-canvas" />
+    <div class="donut-canvas">
+      <PieChart
+        v-if="items.length"
+        :data="items"
+        :margin="{ top: 0, right: 0, bottom: 0, left: 0 }"
+        :title="ariaLabel"
+      >
+        <Pie
+          data-key="value"
+          name-key="name"
+          :active-index="activeIndex ?? undefined"
+          inner-radius="70%"
+          outer-radius="88%"
+          :padding-angle="2"
+          :corner-radius="7"
+          :min-angle="2"
+          stroke="none"
+          @mouseenter="(_, index) => emit('hover', index)"
+          @mouseleave="emit('hover', null)"
+        >
+          <template #activeShape="shape">
+            <Sector
+              :cx="shape.cx"
+              :cy="shape.cy"
+              :inner-radius="shape.innerRadius"
+              :outer-radius="shape.outerRadius + 3"
+              :start-angle="shape.startAngle"
+              :end-angle="shape.endAngle"
+              :corner-radius="shape.cornerRadius"
+              :fill="shape.fill"
+              stroke="none"
+            />
+          </template>
+          <Cell v-for="item in items" :key="item.name" :fill="item.color" />
+        </Pie>
+      </PieChart>
+    </div>
 
     <div class="donut-center">
       <slot :total="total" :active="activeSegment">

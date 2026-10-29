@@ -16,6 +16,11 @@ const props = defineProps({
   minWidth: {
     type: Number,
     default: 1280
+  },
+  // 缩放比过低时同样回退流式，避免字被缩到近距也读不清
+  minScale: {
+    type: Number,
+    default: 0.85
   }
 })
 
@@ -26,13 +31,14 @@ const { width: hostWidth, height: hostHeight } = useElementSize(hostRef)
 const availableWidth = computed(() => hostWidth.value || window.innerWidth)
 const availableHeight = computed(() => hostHeight.value || window.innerHeight)
 
-const enabled = computed(() => availableWidth.value >= props.minWidth)
+const rawScale = computed(() => Math.min(availableWidth.value / props.width, availableHeight.value / props.height))
+const enabled = computed(() => availableWidth.value >= props.minWidth && rawScale.value >= props.minScale)
 
 const scale = computed(() => {
   if (!enabled.value) {
     return 1
   }
-  return Math.min(availableWidth.value / props.width, availableHeight.value / props.height)
+  return rawScale.value
 })
 
 provide(screenScaleKey, scale)
@@ -50,6 +56,7 @@ const canvasStyle = computed(() => (enabled.value
   <div
     ref="hostRef"
     class="screen-adapter relative h-full w-full"
+    :data-adapted="enabled ? 'true' : 'false'"
     :class="enabled ? 'overflow-hidden' : 'overflow-y-auto'"
   >
     <div

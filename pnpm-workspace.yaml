@@ -5,6 +5,7 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - "@lucide/vue@1.34.0"
   - eslint@10.9.1
+  - vccs@1.0.0
 shellEmulator: true
 
 trustPolicy: no-downgrade

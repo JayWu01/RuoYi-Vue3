@@ -11,8 +11,18 @@ const props = defineProps({
   loading: {
     type: Boolean,
     default: false
+  },
+  error: {
+    type: Boolean,
+    default: false
+  },
+  revealIndex: {
+    type: Number,
+    default: 0
   }
 })
+
+const emit = defineEmits(['retry'])
 
 const hasData = computed(() => Object.keys(props.data ?? {}).length > 0)
 const showSkeleton = computed(() => props.loading && !hasData.value)
@@ -39,14 +49,21 @@ function formatRate(rateStr) {
 </script>
 
 <template>
-  <ScreenPanel title="接处警数据" unit="(单位：起)" :loading="loading">
+  <ScreenPanel title="接处警数据" unit="(单位：起)" :loading="loading" :error="error" :reveal-index="revealIndex" @retry="emit('retry')">
+    <template #meta>
+      <span class="chip plain">环比</span>
+    </template>
     <div class="panel-stack">
       <Transition name="scr-swap">
         <div v-if="showSkeleton" key="skeleton" class="kpi-grid" aria-hidden="true">
-          <div v-for="index in 4" :key="index" class="kpi">
-            <span class="scr-skeleton" style="width: 58px; height: 10px" />
-            <span class="scr-skeleton" style="width: 72%; height: 27px; margin-top: 10px" />
-            <span class="scr-skeleton" style="width: 84px; height: 9px; margin-top: 10px" />
+          <div class="kpi kpi-featured">
+            <span class="scr-skeleton" style="width: 58px; height: 11px" />
+            <span class="scr-skeleton" style="width: 42%; height: 32px; margin-top: 12px" />
+          </div>
+          <div v-for="index in 3" :key="index" class="kpi">
+            <span class="scr-skeleton" style="width: 54px; height: 10px" />
+            <span class="scr-skeleton" style="width: 64%; height: 22px; margin-top: 9px" />
+            <span class="scr-skeleton" style="width: 72px; height: 9px; margin-top: 8px" />
           </div>
         </div>
 
@@ -56,6 +73,7 @@ function formatRate(rateStr) {
             :value="props.data.totalAlarm"
             :rate="formatRate(props.data.totalAlarmRatio)"
             :loading="loading"
+            featured
           />
           <KpiCard
             title="自接警数据"

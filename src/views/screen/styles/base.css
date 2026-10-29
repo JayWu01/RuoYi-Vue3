@@ -13,7 +13,10 @@
   min-height: 100vh;
   color: var(--scr-text-1);
   font-family: var(--scr-font-text);
+  font-size: var(--scr-font-body);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-kerning: normal;
   background:
     radial-gradient(1400px 780px at 8% -12%, var(--scr-mesh-1), transparent 62%),
     radial-gradient(1200px 800px at 110% 2%, var(--scr-mesh-2), transparent 58%),
@@ -37,7 +40,7 @@
 }
 .dashboard ::-webkit-scrollbar-thumb {
   background: var(--scr-scroll-thumb);
-  border-radius: 6px;
+  border-radius: var(--scr-radius-pill);
 }
 .dashboard ::-webkit-scrollbar-thumb:hover {
   background: var(--scr-scroll-thumb-hover);
@@ -93,16 +96,6 @@
    3. 动效关键帧
    -------------------------------------------------------------------------- */
 
-@keyframes scr-blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.35;
-  }
-}
-
 @keyframes scr-progress {
   0% {
     transform: translateX(-110%);
@@ -115,28 +108,6 @@
 @keyframes scr-shimmer {
   100% {
     transform: translateX(100%);
-  }
-}
-
-@keyframes scr-reveal {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes scr-rank-in {
-  from {
-    opacity: 0;
-    transform: translateX(-6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
   }
 }
 
@@ -155,22 +126,6 @@
   }
 }
 
-@keyframes scr-ripple {
-  0% {
-    transform: scale(0.7);
-    opacity: 0.7;
-  }
-  100% {
-    transform: scale(2.4);
-    opacity: 0;
-  }
-}
-
-.dashboard .scr-reveal {
-  animation: scr-reveal 0.55s var(--scr-ease-out) both;
-  animation-delay: var(--scr-reveal-delay, 0ms);
-}
-
 /* 主题切换：View Transitions 交叉淡入（不支持时直接切换） */
 ::view-transition-old(root),
 ::view-transition-new(root) {
@@ -182,10 +137,9 @@
    4. 全局响应式
    -------------------------------------------------------------------------- */
 
-@media (min-width: 1280px) and (min-height: 900px) {
-  .dashboard .screen-main {
-    min-height: 0 !important;
-  }
+/* 缩放适配时主区装进 1080 画布；流式布局时保留组件自身的最小高度 */
+.dashboard .screen-adapter[data-adapted="true"] .screen-main {
+  min-height: 0 !important;
 }
 
 @media (max-width: 1023px) {

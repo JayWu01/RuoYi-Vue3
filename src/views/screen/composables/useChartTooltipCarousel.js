@@ -1,38 +1,34 @@
-import { useIntervalFn } from '@vueuse/core'
-import { onBeforeUnmount, onMounted, ref, toValue, watch } from 'vue'
+import { useEventListener, useIntervalFn, usePreferredReducedMotion } from '@vueuse/core'
+import { onBeforeUnmount, ref, toValue, watch } from 'vue'
 
 /**
- * ECharts tooltip 轮播
- * - 按固定间隔 showTip 到下一个数据点，不隐藏 tooltip
- * - 鼠标进入暂停，离开恢复
- * - 数据点不足 2 个、页面不可见或图表未初始化时不轮播
+ * tooltip 轮播
+ * - 定时把 activeIndex 推到下一个数据点，tooltip 常显
+ * - 鼠标进入图表暂停，离开后从当前点继续
+ * - 数据点不足 2 个、页面不可见时不轮播
  */
 export function useChartTooltipCarousel({
-  chart,
   count,
   chartRef,
   interval = 3200,
   delay = 0,
-  seriesIndex = 0
+  enabled = true
 }) {
-  const index = ref(0)
+  const activeIndex = ref(null)
   const isHovering = ref(false)
+  const reducedMotion = usePreferredReducedMotion()
+  let nextIndex = 0
   let startTimer = 0
-  let chartElement = null
 
   const total = () => Number(toValue(count)) || 0
-  const instance = () => toValue(chart)
+  const isEnabled = () => Boolean(toValue(enabled))
 
   const showNext = () => {
-    const current = instance()
-    const points = total()
-    if (!current || points < 2 || document.visibilityState !== 'visible') {
+    if (!isEnabled() || reducedMotion.value === 'reduce' || total() < 2 || document.visibilityState !== 'visible') {
       return
     }
-
-    const nextIndex = index.value % points
-    current.dispatchAction({ type: 'showTip', seriesIndex, dataIndex: nextIndex })
-    index.value = (nextIndex + 1) % points
+    activeIndex.value = nextIndex % total()
+    nextIndex = (activeIndex.value + 1) % total()
   }
 
   const { pause, resume } = useIntervalFn(showNext, interval, { immediate: false })
@@ -47,8 +43,9 @@ export function useChartTooltipCarousel({
   const start = () => {
     clearStartTimer()
     pause()
-    index.value = 0
-    if (!instance() || total() < 2) {
+    nextIndex = 0
+    activeIndex.value = null
+    if (!isEnabled() || total() < 2 || reducedMotion.value === 'reduce') {
       return
     }
 
@@ -62,39 +59,35 @@ export function useChartTooltipCarousel({
     }, delay)
   }
 
-  const pauseCarousel = () => {
+  // tooltip 也会把鼠标悬停的位置写回 activeIndex，轮播从该点继续
+  watch(activeIndex, (value) => {
+    if (typeof value === 'number') {
+      nextIndex = (value + 1) % total()
+    }
+  })
+
+  const handleEnter = () => {
     isHovering.value = true
     pause()
   }
 
-  const resumeCarousel = () => {
+  const handleLeave = () => {
     isHovering.value = false
-    if (instance() && total() > 1) {
+    if (total() > 1 && reducedMotion.value !== 'reduce') {
       resume()
     }
   }
 
-  watch([() => toValue(chart), total], start, { immediate: true })
-
-  onMounted(() => {
-    chartElement = chartRef.value
-    chartElement?.addEventListener('mouseenter', pauseCarousel)
-    chartElement?.addEventListener('mouseleave', resumeCarousel)
-  })
+  watch([total, reducedMotion, () => isEnabled()], start, { immediate: true })
+  useEventListener(chartRef, 'mouseenter', handleEnter)
+  useEventListener(chartRef, 'mouseleave', handleLeave)
 
   onBeforeUnmount(() => {
     clearStartTimer()
     pause()
-    chartElement?.removeEventListener('mouseenter', pauseCarousel)
-    chartElement?.removeEventListener('mouseleave', resumeCarousel)
-    chartElement = null
   })
 
   return {
-    index,
-    isHovering,
-    start,
-    pause: pauseCarousel,
-    resume: resumeCarousel
+    activeIndex
   }
 }

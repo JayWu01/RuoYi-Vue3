@@ -1,6 +1,6 @@
 <script setup>
 import { useFullscreen } from '@vueuse/core'
-import { onBeforeUnmount, ref, shallowRef, watch, watchEffect } from 'vue'
+import { ref, shallowRef, watch } from 'vue'
 import ScreenAdapter from './components/ScreenAdapter.vue'
 import ScreenHeader from './components/ScreenHeader.vue'
 import { toggleScreenTheme, useScreenTheme } from './composables/useScreenTheme'
@@ -18,21 +18,15 @@ const loading = ref(false)
 const updateTime = shallowRef('-')
 const filterOpen = ref(false)
 const filterSummary = ref('')
+const panelStatus = shallowRef('live')
 
 // 切换面板时先清空上一个面板回传的状态，避免页头显示其他单位的数据
-watch(activePanel, () => {
+watch(activePanel, (panel) => {
   loading.value = false
   updateTime.value = '-'
   filterOpen.value = false
   filterSummary.value = ''
-})
-
-watchEffect(() => {
-  document.documentElement.dataset.screenTheme = theme.value
-})
-
-onBeforeUnmount(() => {
-  delete document.documentElement.dataset.screenTheme
+  panelStatus.value = panel === 'subBureau' ? 'pending' : 'live'
 })
 
 const handleFilterChange = ({ open, summary }) => {
@@ -81,6 +75,8 @@ const exportData = () => {
           :filter-open="filterOpen"
           :filter-summary="filterSummary"
           :exportable="activePanel === 'swat'"
+          :status="panelStatus"
+          :filterable="activePanel === 'swat'"
           @fullscreen="toggle"
           @refresh="reloadActive"
           @toggle-theme="toggleScreenTheme"
@@ -94,12 +90,14 @@ const exportData = () => {
           @loading-change="loading = $event"
           @update-time-change="updateTime = $event"
           @filter-change="handleFilterChange"
+          @status-change="panelStatus = $event"
         />
         <SubBureau
           v-else
           ref="subBureauRef"
           @loading-change="loading = $event"
           @filter-change="handleFilterChange"
+          @status-change="panelStatus = $event"
         />
       </div>
     </ScreenAdapter>

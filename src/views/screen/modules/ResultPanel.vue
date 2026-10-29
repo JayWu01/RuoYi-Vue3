@@ -11,8 +11,18 @@ const props = defineProps({
   loading: {
     type: Boolean,
     default: false
+  },
+  error: {
+    type: Boolean,
+    default: false
+  },
+  revealIndex: {
+    type: Number,
+    default: 0
   }
 })
+
+const emit = defineEmits(['retry'])
 
 const hasData = computed(() => Object.keys(props.data ?? {}).length > 0)
 const showSkeleton = computed(() => props.loading && !hasData.value)
@@ -36,7 +46,7 @@ const doorPullText = computed(() => {
 </script>
 
 <template>
-  <ScreenPanel title="战果类数据" :loading="loading">
+  <ScreenPanel title="战果类数据" :loading="loading" :error="error" :reveal-index="revealIndex" @retry="emit('retry')">
     <div class="panel-stack">
       <Transition name="scr-swap">
         <div v-if="showSkeleton" key="skeleton" class="stat-grid" aria-hidden="true">

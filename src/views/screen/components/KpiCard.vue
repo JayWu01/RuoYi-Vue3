@@ -13,13 +13,13 @@ const props = defineProps({
     type: [String, Number],
     default: '-'
   },
-  note: {
-    type: String,
-    default: '环比'
-  },
   rate: {
     type: [String, Number],
     default: '-'
+  },
+  featured: {
+    type: Boolean,
+    default: false
   },
   loading: {
     type: Boolean,
@@ -43,13 +43,12 @@ const rateTone = computed(() => {
 </script>
 
 <template>
-  <article class="kpi" :aria-busy="loading || undefined">
+  <article class="kpi" :class="{ 'kpi-featured': featured }" :aria-busy="loading || undefined">
     <span class="kpi-label">{{ title }}</span>
 
     <AnimatedStatistic class="kpi-value" :value="value" :loading="loading" />
 
     <div class="kpi-delta">
-      <span>{{ note }}</span>
       <TrendValue :value="rateText" :up="isUp" :show-direction="hasRate" :class="rateTone" />
     </div>
   </article>

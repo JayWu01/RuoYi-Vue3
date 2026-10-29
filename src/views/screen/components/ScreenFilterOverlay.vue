@@ -1,8 +1,9 @@
 <script setup>
 import { X } from '@lucide/vue'
-import { useEventListener, usePreferredReducedMotion } from '@vueuse/core'
+import { useEventListener } from '@vueuse/core'
 import { AnimatePresence, motion } from 'motion-v'
-import { computed, nextTick, useTemplateRef, watch } from 'vue'
+import { nextTick, useTemplateRef, watch } from 'vue'
+import { useScreenMotion } from '../motion'
 
 const props = defineProps({
   open: {
@@ -12,18 +13,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close'])
-
-const reducedMotion = usePreferredReducedMotion()
+const { modalTransition, fadeTransition } = useScreenMotion()
 const panelRef = useTemplateRef('panelRef')
 let lastFocused = null
-
-const fadeTransition = computed(() => ({
-  duration: reducedMotion.value === 'reduce' ? 0 : 0.22
-}))
-
-const panelTransition = computed(() => (reducedMotion.value === 'reduce'
-  ? { duration: 0 }
-  : { type: 'spring', stiffness: 460, damping: 38, mass: 0.7 }))
 
 watch(() => props.open, async (open) => {
   if (open) {
@@ -37,11 +29,46 @@ watch(() => props.open, async (open) => {
   lastFocused = null
 })
 
-useEventListener(window, 'keydown', (event) => {
-  if (props.open && event.key === 'Escape') {
-    emit('close')
+const focusableSelector = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+
+const trapTab = (event) => {
+  const panel = panelRef.value
+  if (!panel) {
+    return
   }
-})
+
+  const nodes = [...panel.querySelectorAll(focusableSelector)].filter(el => el.offsetParent !== null)
+  if (!nodes.length) {
+    return
+  }
+
+  const first = nodes[0]
+  const last = nodes[nodes.length - 1]
+  const active = document.activeElement
+
+  if (event.shiftKey && (active === first || active === panel)) {
+    event.preventDefault()
+    last.focus()
+  } else if (!event.shiftKey && active === last) {
+    event.preventDefault()
+    first.focus()
+  }
+}
+
+useEventListener(window, 'keydown', (event) => {
+  if (!props.open) {
+    return
+  }
+
+  if (event.key === 'Escape') {
+    emit('close')
+    return
+  }
+
+  if (event.key === 'Tab') {
+    trapTab(event)
+  }
+}, { capture: true })
 </script>
 
 <template>
@@ -64,7 +91,7 @@ useEventListener(window, 'keydown', (event) => {
       :initial="{ opacity: 0, y: -12, scale: 0.985 }"
       :animate="{ opacity: 1, y: 0, scale: 1 }"
       :exit="{ opacity: 0, y: -8, scale: 0.99 }"
-      :transition="panelTransition"
+      :transition="modalTransition"
     >
       <div
         ref="panelRef"

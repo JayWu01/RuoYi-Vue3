@@ -1,7 +1,7 @@
 /* ==========================================================================
-   驾驶舱大屏 · 设计令牌（skill: dashboard-bigscreen-design / design-tokens.md）
-   - 颜色全部收敛为语义变量：背景 / 玻璃表面 / 文字 / 主色 / 语义色
-   - 暗色为默认，亮色为同源扩展；组件样式只引用变量，禁止硬编码颜色
+   驾驶舱大屏 · 设计令牌
+   - 唯一颜色源：组件、图表、Element Plus 都从这里取值
+   - 暗色为默认，亮色为同源扩展；图表色板不再在 JS 里维护第二份色值
    - 令牌同时挂在 .dashboard 与 <html data-screen-theme>，
      以便 Element Plus 传送到 body 的弹层复用同一套颜色
    ========================================================================== */
@@ -14,68 +14,82 @@
 html[data-screen-theme="dark"] {
   color-scheme: dark;
 
-  /* 背景层 */
+  /* 背景层：深藏蓝 + 极弱冷色光晕 */
   --scr-canvas: #070b16;
-  --scr-mesh-1: rgba(30, 58, 138, 0.42);
-  --scr-mesh-2: rgba(76, 29, 149, 0.32);
-  --scr-mesh-3: rgba(6, 182, 212, 0.16);
+  --scr-mesh-1: rgba(37, 99, 235, 0.2);
+  --scr-mesh-2: rgba(13, 148, 136, 0.12);
+  --scr-mesh-3: rgba(56, 189, 248, 0.07);
 
-  /* 玻璃表面（3 级） */
-  --scr-surface-1: rgba(255, 255, 255, 0.035);
-  --scr-surface-2: rgba(255, 255, 255, 0.06);
-  --scr-surface-3: rgba(255, 255, 255, 0.09);
+  /* 表面：卡片改为近实色，玻璃只留给浮层 */
+  --scr-header: #070b16;
+  --scr-card: #0d1424;
+  --scr-surface-1: rgba(255, 255, 255, 0.03);
+  --scr-surface-2: rgba(255, 255, 255, 0.055);
+  --scr-surface-3: rgba(255, 255, 255, 0.085);
   --scr-field: rgba(255, 255, 255, 0.04);
   --scr-field-hover: rgba(255, 255, 255, 0.07);
-  --scr-line: rgba(255, 255, 255, 0.08);
-  --scr-line-strong: rgba(255, 255, 255, 0.14);
-  --scr-hairline: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
-  --scr-glass: linear-gradient(180deg, var(--scr-surface-2), var(--scr-surface-1));
-  --scr-glass-strong: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02));
-  --scr-panel: linear-gradient(180deg, rgba(22, 30, 55, 0.97), rgba(12, 18, 35, 0.97));
-  --scr-popover: rgba(14, 20, 38, 0.94);
+  --scr-line: rgba(255, 255, 255, 0.085);
+  --scr-line-strong: rgba(255, 255, 255, 0.16);
+  --scr-panel: linear-gradient(180deg, rgba(20, 28, 48, 0.97), rgba(10, 16, 30, 0.98));
+  --scr-popover: rgba(14, 20, 38, 0.97);
   --scr-popover-line: rgba(255, 255, 255, 0.12);
-  --scr-track: rgba(255, 255, 255, 0.09);
+  --scr-track: rgba(255, 255, 255, 0.08);
   --scr-scroll-thumb: rgba(255, 255, 255, 0.14);
   --scr-scroll-thumb-hover: rgba(255, 255, 255, 0.22);
   --scr-mask: rgba(7, 11, 22, 0.6);
 
   /* 文字（3 级） */
-  --scr-text-1: #f1f5f9;
-  --scr-text-2: #aab4c5;
-  --scr-text-3: #67748a;
+  --scr-text-1: #f2f5fa;
+  --scr-text-2: #b3bdcd;
+  --scr-text-3: #8b98ab;
 
-  /* 主色：青 + 紫 */
-  --scr-accent: #22d3ee;
-  --scr-accent-2: #a78bfa;
-  --scr-accent-soft: rgba(34, 211, 238, 0.12);
-  --scr-accent-line: rgba(34, 211, 238, 0.22);
-  --scr-accent-glow: rgba(34, 211, 238, 0.3);
-  --scr-accent-gradient: linear-gradient(135deg, var(--scr-accent), var(--scr-accent-2));
-  --scr-on-accent: #04121a;
+  /* 主色：单一冷色（天青蓝） */
+  --scr-accent: #38bdf8;
+  --scr-accent-2: #60a5fa;
+  --scr-accent-soft: rgba(56, 189, 248, 0.12);
+  --scr-accent-line: rgba(56, 189, 248, 0.26);
+  --scr-on-accent: #06121f;
 
   /* 语义色 */
   --scr-success: #34d399;
-  --scr-success-soft: rgba(52, 211, 153, 0.12);
+  --scr-success-soft: rgba(52, 211, 153, 0.1);
   --scr-success-line: rgba(52, 211, 153, 0.22);
   --scr-warning: #fbbf24;
-  --scr-warning-soft: rgba(251, 191, 36, 0.12);
+  --scr-warning-soft: rgba(251, 191, 36, 0.1);
   --scr-warning-line: rgba(251, 191, 36, 0.22);
   --scr-danger: #fb7185;
-  --scr-danger-soft: rgba(251, 113, 133, 0.12);
+  --scr-danger-soft: rgba(251, 113, 133, 0.1);
   --scr-danger-line: rgba(251, 113, 133, 0.22);
-  --scr-info: #60a5fa;
-  --scr-purple: #c084fc;
-  --scr-orange: #fb923c;
-  --scr-yellow: #fde047;
-  --scr-gray: #64748b;
+
+  /* 图表序列：与语义色同源，冷色打底，暖色只做区分 */
+  --scr-chart-1: #38bdf8;
+  --scr-chart-2: #fbbf24;
+  --scr-chart-3: #2dd4bf;
+  --scr-chart-4: #fb7185;
+  --scr-chart-5: #818cf8;
+  --scr-chart-area-alpha: 0.18;
+  --scr-chart-bar-alpha: 0.32;
+  --scr-chart-axis: rgba(255, 255, 255, 0.09);
+  --scr-chart-grid: rgba(255, 255, 255, 0.06);
+  --scr-chart-cursor: rgba(56, 189, 248, 0.45);
+  --scr-chart-inactive: rgba(255, 255, 255, 0.25);
+  --scr-chart-brush-fill: rgba(56, 189, 248, 0.14);
+  --scr-chart-brush-stroke: rgba(255, 255, 255, 0.12);
+
+  /* 罪错未成年等级 */
+  --scr-level-red: #fb7185;
+  --scr-level-orange: #fb923c;
+  --scr-level-yellow: #fbbf24;
+  --scr-level-blue: #60a5fa;
+  --scr-level-gray: #7b879b;
 
   /* 阴影 / 焦点 / 骨架 */
-  --scr-shadow-card: 0 10px 30px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  --scr-shadow-card-hover: 0 16px 44px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.09);
-  --scr-shadow-popover: 0 18px 50px rgba(0, 0, 0, 0.5);
-  --scr-skeleton-base: rgba(255, 255, 255, 0.055);
-  --scr-skeleton-shine: rgba(255, 255, 255, 0.11);
-  --scr-focus: rgba(34, 211, 238, 0.55);
+  --scr-shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 14px 32px rgba(0, 0, 0, 0.28);
+  --scr-shadow-card-hover: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 18px 40px rgba(0, 0, 0, 0.34);
+  --scr-shadow-popover: 0 20px 48px rgba(0, 0, 0, 0.5);
+  --scr-skeleton-base: rgba(255, 255, 255, 0.05);
+  --scr-skeleton-shine: rgba(255, 255, 255, 0.09);
+  --scr-focus: rgba(56, 189, 248, 0.55);
 }
 
 /* --------------------------------------------------------------------------
@@ -86,23 +100,22 @@ html[data-screen-theme="dark"] {
 html[data-screen-theme="light"] {
   color-scheme: light;
 
-  --scr-canvas: #eef2f9;
-  --scr-mesh-1: rgba(37, 99, 235, 0.16);
-  --scr-mesh-2: rgba(124, 58, 237, 0.12);
-  --scr-mesh-3: rgba(8, 145, 178, 0.12);
+  --scr-canvas: #eef2f8;
+  --scr-mesh-1: rgba(37, 99, 235, 0.14);
+  --scr-mesh-2: rgba(13, 148, 136, 0.1);
+  --scr-mesh-3: rgba(56, 189, 248, 0.08);
 
-  --scr-surface-1: rgba(255, 255, 255, 0.58);
-  --scr-surface-2: rgba(255, 255, 255, 0.82);
+  --scr-header: #eef2f8;
+  --scr-card: #ffffff;
+  --scr-surface-1: rgba(255, 255, 255, 0.66);
+  --scr-surface-2: rgba(255, 255, 255, 0.86);
   --scr-surface-3: rgba(15, 23, 42, 0.05);
-  --scr-field: rgba(255, 255, 255, 0.76);
+  --scr-field: rgba(255, 255, 255, 0.8);
   --scr-field-hover: #ffffff;
-  --scr-line: rgba(15, 23, 42, 0.09);
-  --scr-line-strong: rgba(15, 23, 42, 0.16);
-  --scr-hairline: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
-  --scr-glass: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.62));
-  --scr-glass-strong: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.66));
-  --scr-panel: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.97));
-  --scr-popover: rgba(255, 255, 255, 0.97);
+  --scr-line: rgba(15, 23, 42, 0.1);
+  --scr-line-strong: rgba(15, 23, 42, 0.18);
+  --scr-panel: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(248, 250, 252, 0.97));
+  --scr-popover: rgba(255, 255, 255, 0.99);
   --scr-popover-line: rgba(15, 23, 42, 0.1);
   --scr-track: rgba(15, 23, 42, 0.06);
   --scr-scroll-thumb: rgba(15, 23, 42, 0.16);
@@ -110,15 +123,13 @@ html[data-screen-theme="light"] {
   --scr-mask: rgba(238, 242, 249, 0.6);
 
   --scr-text-1: #0f172a;
-  --scr-text-2: #475569;
-  --scr-text-3: #64748b;
+  --scr-text-2: #3f4c60;
+  --scr-text-3: #5b6a7d;
 
-  --scr-accent: #0e7490;
-  --scr-accent-2: #7c3aed;
-  --scr-accent-soft: rgba(14, 116, 144, 0.1);
-  --scr-accent-line: rgba(14, 116, 144, 0.24);
-  --scr-accent-glow: rgba(14, 116, 144, 0.22);
-  --scr-accent-gradient: linear-gradient(135deg, var(--scr-accent), var(--scr-accent-2));
+  --scr-accent: #0369a1;
+  --scr-accent-2: #2563eb;
+  --scr-accent-soft: rgba(3, 105, 161, 0.1);
+  --scr-accent-line: rgba(3, 105, 161, 0.24);
   --scr-on-accent: #ffffff;
 
   --scr-success: #047857;
@@ -130,18 +141,33 @@ html[data-screen-theme="light"] {
   --scr-danger: #be123c;
   --scr-danger-soft: rgba(190, 18, 60, 0.1);
   --scr-danger-line: rgba(190, 18, 60, 0.22);
-  --scr-info: #2563eb;
-  --scr-purple: #7e22ce;
-  --scr-orange: #c2410c;
-  --scr-yellow: #a16207;
-  --scr-gray: #64748b;
 
-  --scr-shadow-card: 0 10px 30px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  --scr-shadow-card-hover: 0 18px 44px rgba(15, 23, 42, 0.1), inset 0 1px 0 #ffffff;
-  --scr-shadow-popover: 0 18px 50px rgba(15, 23, 42, 0.14);
+  --scr-chart-1: #0369a1;
+  --scr-chart-2: #b45309;
+  --scr-chart-3: #0f766e;
+  --scr-chart-4: #be123c;
+  --scr-chart-5: #4338ca;
+  --scr-chart-area-alpha: 0.12;
+  --scr-chart-bar-alpha: 0.3;
+  --scr-chart-axis: rgba(15, 23, 42, 0.1);
+  --scr-chart-grid: rgba(15, 23, 42, 0.07);
+  --scr-chart-cursor: rgba(3, 105, 161, 0.45);
+  --scr-chart-inactive: rgba(15, 23, 42, 0.28);
+  --scr-chart-brush-fill: rgba(3, 105, 161, 0.12);
+  --scr-chart-brush-stroke: rgba(15, 23, 42, 0.12);
+
+  --scr-level-red: #be123c;
+  --scr-level-orange: #c2410c;
+  --scr-level-yellow: #a16207;
+  --scr-level-blue: #1d4ed8;
+  --scr-level-gray: #475569;
+
+  --scr-shadow-card: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 12px 28px rgba(15, 23, 42, 0.08);
+  --scr-shadow-card-hover: 0 1px 0 #ffffff inset, 0 18px 40px rgba(15, 23, 42, 0.12);
+  --scr-shadow-popover: 0 20px 48px rgba(15, 23, 42, 0.16);
   --scr-skeleton-base: rgba(15, 23, 42, 0.06);
   --scr-skeleton-shine: rgba(15, 23, 42, 0.1);
-  --scr-focus: rgba(14, 116, 144, 0.35);
+  --scr-focus: rgba(3, 105, 161, 0.35);
 }
 
 /* --------------------------------------------------------------------------
@@ -149,33 +175,61 @@ html[data-screen-theme="light"] {
    -------------------------------------------------------------------------- */
 
 .dashboard {
-  /* 尺寸与节奏（skill: 卡片 16px / 磁贴 12px / pill 999px / 模块间距 16px） */
-  --scr-radius-card: 16px;
-  --scr-radius-tile: 12px;
-  --scr-radius-control: 10px;
+  /* 间距：4 / 8 / 12 / 16 / 24 / 32 */
+  --scr-space-2xs: 4px;
+  --scr-space-xs: 8px;
+  --scr-space-sm: 12px;
+  --scr-space-md: 16px;
+  --scr-space-lg: 24px;
+  --scr-space-xl: 32px;
+  --scr-space-card: var(--scr-space-md);
+  --scr-gap: var(--scr-space-md);
+
+  /* 圆角：卡片 / 磁贴 / 控件 / 胶囊 */
+  --scr-radius-card: 14px;
+  --scr-radius-tile: 10px;
+  --scr-radius-control: 8px;
   --scr-radius-pill: 999px;
-  --scr-space-card: 16px;
-  --scr-gap: 16px;
-  --scr-header-height: 4.25rem;
 
-  /* 字体：数字统一等宽，字号层级对齐 skill */
-  --scr-font-text: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --scr-header-height: 4.5rem;
+
+  /* 字体：中文系统黑体 + 数字等宽；远距优先，关键读数先大后小 */
+  --scr-font-text: -apple-system, BlinkMacSystemFont, "PingFang SC", "HarmonyOS Sans SC", "Source Han Sans SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
   --scr-font-numeric: "DIN Alternate", "Bahnschrift", "SF Mono", "Roboto Mono", "Menlo", Consolas, monospace;
-  --scr-font-kpi: clamp(24px, 1.55vw, 32px);
-  --scr-font-tile: clamp(18px, 1.15vw, 22px);
-  --scr-font-donut: 26px;
-  --scr-font-card-title: 14px;
-  --scr-font-body: 11.5px;
-  --scr-font-label: 10.5px;
-  --scr-weight-kpi: 750;
+  --scr-font-h1: 26px;
+  --scr-font-clock: 22px;
+  --scr-font-card-title: clamp(18px, 1.15vw, 22px);
+  --scr-font-body: 14px;
+  --scr-font-label: 13px;
+  --scr-font-meta: 12px;
+  --scr-font-kpi: clamp(56px, 4.2vw, 80px);
+  --scr-font-tile: clamp(24px, 1.6vw, 30px);
+  --scr-font-stat: clamp(22px, 1.45vw, 28px);
+  --scr-font-donut: 44px;
+  --scr-font-rank-name: 17px;
+  --scr-font-rank-value: 24px;
+  --scr-font-axis: 13px;
+  --scr-font-legend: 13px;
+  --scr-font-tooltip: 13px;
+  --scr-font-chip: 12px;
+  --scr-font-kpi-delta: 13px;
+  --scr-font-status: 12.5px;
+  --scr-font-field: 13.5px;
+  --scr-font-filter-title: 20px;
+  --scr-weight-kpi: 700;
   --scr-weight-title: 650;
+  --scr-tracking-title: 0.2px;
 
-  /* 动效 */
+  /* 动效：只做状态过渡，不使用回弹 */
   --scr-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --scr-ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
-  --scr-dur-fast: 160ms;
-  --scr-dur-base: 240ms;
-  --scr-dur-slow: 420ms;
+  --scr-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --scr-dur-instant: 90ms;
+  --scr-dur-fast: 150ms;
+  --scr-dur-base: 220ms;
+  --scr-dur-slow: 380ms;
+  --scr-dur-reveal: 520ms;
+  --scr-stagger: 55ms;
+  --scr-distance: 8px;
 }
 
 /* 大屏独立路由：兜住移动端 overscroll / 首帧白底 */

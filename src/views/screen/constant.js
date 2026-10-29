@@ -58,7 +58,7 @@ export const createEmptyDashboard = () => ({
   cityBranchUnits: []
 })
 
-/* 罪错未成年等级：色值由 charts/palette.js 按亮/暗主题解析 */
+/* 罪错未成年等级：色值由 composables/useScreenPalette.js 从主题令牌解析 */
 export const MINOR_LEVELS = [
   { key: 'red', label: '红标' },
   { key: 'orange', label: '橙标' },
