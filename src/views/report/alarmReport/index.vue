@@ -182,7 +182,7 @@ onMounted(() => {
       <el-table-column label="警务站" prop="unitName" align="center" />
       <el-table-column label="总警情数" prop="totalAlarm" align="center" />
       <el-table-column label="110派警" prop="policeDispatch" align="center" />
-      <el-table-column label="流出所转警" prop="transferAlarm" align="center" />
+      <el-table-column label="派出所转警" prop="transferAlarm" align="center" />
       <el-table-column label="自接警" prop="selfAlarm" align="center" />
       <el-table-column label="大队单站日警情数" prop="detDailyAvg" align="center" />
     </el-table>
