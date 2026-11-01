@@ -54,6 +54,97 @@ export const constantRoutes = [
     hidden: true,
     meta: { title: '警务站统计大屏' }
   },
+  /**
+   * 警用装备仓库管理系统（独立子系统：独立布局、独立导航、独立主题）
+   * 入口：首页“警用装备仓库管理”按钮，以新窗口方式打开 /warehouse
+   */
+  {
+    path: '/warehouse',
+    component: () => import('@/views/equip/layout/index.vue'),
+    hidden: true,
+    redirect: '/warehouse/home',
+    meta: { title: '警用装备仓库管理系统' },
+    children: [
+      {
+        path: 'home',
+        component: () => import('@/views/equip/home/index.vue'),
+        name: 'EquipHome',
+        meta: { title: '指挥工作台' }
+      },
+      {
+        path: 'item',
+        component: () => import('@/views/equip/item/index.vue'),
+        name: 'EquipItem',
+        meta: { title: '装备档案' }
+      },
+      {
+        path: 'category',
+        component: () => import('@/views/equip/category/index.vue'),
+        name: 'EquipCategory',
+        meta: { title: '装备分类' }
+      },
+      {
+        path: 'stock',
+        component: () => import('@/views/equip/stock/index.vue'),
+        name: 'EquipStock',
+        meta: { title: '库存总览' }
+      },
+      {
+        path: 'inbound',
+        component: () => import('@/views/equip/inbound/index.vue'),
+        name: 'EquipInbound',
+        meta: { title: '装备入库' }
+      },
+      {
+        path: 'outbound',
+        component: () => import('@/views/equip/outbound/index.vue'),
+        name: 'EquipOutbound',
+        meta: { title: '装备出库' }
+      },
+      {
+        path: 'requisition',
+        component: () => import('@/views/equip/requisition/index.vue'),
+        name: 'EquipRequisition',
+        meta: { title: '装备领用' }
+      },
+      {
+        path: 'loan',
+        component: () => import('@/views/equip/loan/index.vue'),
+        name: 'EquipLoan',
+        meta: { title: '装备借用' }
+      },
+      {
+        path: 'approval',
+        component: () => import('@/views/equip/approval/index.vue'),
+        name: 'EquipApproval',
+        meta: { title: '审批中心' }
+      },
+      {
+        path: 'stat',
+        component: () => import('@/views/equip/stat/index.vue'),
+        name: 'EquipStat',
+        meta: { title: '统计报表' }
+      },
+      {
+        path: 'warning',
+        component: () => import('@/views/equip/warning/index.vue'),
+        name: 'EquipWarning',
+        meta: { title: '预警中心' }
+      },
+      {
+        path: 'message',
+        component: () => import('@/views/equip/message/index.vue'),
+        name: 'EquipMessage',
+        meta: { title: '消息中心' }
+      },
+      {
+        path: 'approver',
+        component: () => import('@/views/equip/approver/index.vue'),
+        name: 'EquipApprover',
+        meta: { title: '审批人配置' }
+      }
+    ]
+  },
   {
     path: '/:pathMatch(.*)*',
     component: () => import('@/views/error/404'),

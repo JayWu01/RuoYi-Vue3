@@ -1,0 +1,571 @@
+/* ============================================================
+   警用装备仓库管理系统 —— 独立主题（深色警务蓝）
+   仅在 /warehouse 独立系统内生效（body.equip-theme）
+   ============================================================ */
+
+body.equip-theme {
+  --el-color-primary: #20b5f1;
+  --el-color-primary-light-3: #1a8fc0;
+  --el-color-primary-light-5: #1478ba;
+  --el-color-primary-light-7: rgba(32, 181, 241, 0.28);
+  --el-color-primary-light-8: rgba(32, 181, 241, 0.18);
+  --el-color-primary-light-9: rgba(32, 181, 241, 0.12);
+  --el-color-primary-dark-2: #1596cf;
+  --el-color-success: #9acd55;
+  --el-color-warning: #f5a622;
+  --el-color-danger: #ef665d;
+  --el-color-error: #ef665d;
+  --el-color-info: #93a9bd;
+
+  --el-bg-color: #041a31;
+  --el-bg-color-page: #020817;
+  --el-bg-color-overlay: #061b34;
+  --el-text-color-primary: #d8e9f6;
+  --el-text-color-regular: #c3d6e6;
+  --el-text-color-secondary: #93a9bd;
+  --el-text-color-placeholder: #71869a;
+  --el-text-color-disabled: #55708a;
+  --el-border-color: rgba(20, 106, 170, 0.62);
+  --el-border-color-light: rgba(20, 106, 170, 0.48);
+  --el-border-color-lighter: rgba(20, 106, 170, 0.32);
+  --el-border-color-extra-light: rgba(20, 106, 170, 0.2);
+  --el-border-color-dark: #1478ba;
+  --el-fill-color: #061b34;
+  --el-fill-color-light: #0a2945;
+  --el-fill-color-lighter: #082239;
+  --el-fill-color-blank: #061b34;
+  --el-fill-color-dark: #06203d;
+  --el-mask-color: rgba(2, 8, 23, 0.76);
+  --el-disabled-bg-color: #082239;
+  --el-disabled-text-color: #55708a;
+  --el-disabled-border-color: rgba(20, 106, 170, 0.32);
+  --el-box-shadow-light: 0 0 12px rgba(0, 100, 190, 0.24);
+  --el-box-shadow: 0 12px 32px rgba(0, 20, 45, 0.56);
+  background-color: #020817;
+  color: #d8e9f6;
+}
+
+body.equip-theme ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+body.equip-theme ::-webkit-scrollbar-thumb {
+  background: rgba(20, 106, 170, 0.55);
+  border-radius: 4px;
+}
+
+body.equip-theme ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---------- 表格 ---------- */
+body.equip-theme .el-table {
+  --el-table-border-color: rgba(20, 106, 170, 0.32);
+  --el-table-border: 1px solid rgba(20, 106, 170, 0.32);
+  --el-table-text-color: #c3d6e6;
+  --el-table-header-text-color: #d8e9f6;
+  --el-table-row-hover-bg-color: rgba(13, 79, 143, 0.42);
+  --el-table-current-row-bg-color: rgba(13, 79, 143, 0.32);
+  --el-table-bg-color: transparent;
+  --el-table-tr-bg-color: transparent;
+  --el-table-header-bg-color: #0a2945;
+  --el-table-fixed-box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  background-color: transparent;
+}
+
+body.equip-theme .el-table th.el-table__cell {
+  background-color: #0a2945 !important;
+  font-weight: 600;
+}
+
+body.equip-theme .el-table tr {
+  background-color: transparent;
+}
+
+body.equip-theme .el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
+  background-color: rgba(6, 27, 52, 0.6);
+}
+
+body.equip-theme .el-table__empty-block {
+  background-color: transparent;
+}
+
+body.equip-theme .el-table__empty-text {
+  color: #71869a;
+}
+
+body.equip-theme .el-table__inner-wrapper::before {
+  background-color: rgba(20, 106, 170, 0.32);
+}
+
+/* ---------- 输入 / 选择 ---------- */
+body.equip-theme .el-input__wrapper,
+body.equip-theme .el-textarea__inner,
+body.equip-theme .el-select__wrapper {
+  background-color: #061b34 !important;
+  box-shadow: 0 0 0 1px rgba(20, 106, 170, 0.62) inset !important;
+}
+
+body.equip-theme .el-input__wrapper:hover,
+body.equip-theme .el-select__wrapper:hover,
+body.equip-theme .el-textarea__inner:hover {
+  box-shadow: 0 0 0 1px #20b5f1 inset !important;
+}
+
+body.equip-theme .el-input__wrapper.is-focus,
+body.equip-theme .el-select__wrapper.is-focused,
+body.equip-theme .el-textarea__inner:focus {
+  box-shadow: 0 0 0 1px #20b5f1 inset !important;
+}
+
+body.equip-theme .el-input__inner,
+body.equip-theme .el-textarea__inner,
+body.equip-theme .el-select__placeholder {
+  color: #d8e9f6 !important;
+}
+
+body.equip-theme .el-input.is-disabled .el-input__wrapper {
+  background-color: #082239 !important;
+}
+
+/* ---------- 弹层（下拉/日期/弹窗） ---------- */
+body.equip-theme .el-popper.is-light,
+body.equip-theme .el-popper.is-pure {
+  border-color: #1478ba !important;
+  background-color: #061b34 !important;
+  color: #d8e9f6;
+}
+
+body.equip-theme .el-popper.is-light .el-popper__arrow::before,
+body.equip-theme .el-popper.is-dark .el-popper__arrow::before {
+  border-color: #1478ba !important;
+  background-color: #061b34 !important;
+}
+
+body.equip-theme .el-select-dropdown__item {
+  color: #c3d6e6;
+}
+
+body.equip-theme .el-select-dropdown__item.is-hovering,
+body.equip-theme .el-select-dropdown__item.is-selected {
+  background-color: #0d4f8f !important;
+  color: #ffffff;
+}
+
+body.equip-theme .el-picker-panel,
+body.equip-theme .el-date-picker,
+body.equip-theme .el-date-range-picker {
+  --el-datepicker-bg-color: #061b34;
+  --el-datepicker-text-color: #d8e9f6;
+  --el-datepicker-off-text-color: #71869a;
+  --el-datepicker-header-text-color: #a8b4c1;
+  --el-datepicker-icon-color: #d8e9f6;
+  --el-datepicker-inrange-bg-color: rgba(13, 122, 209, 0.28);
+  --el-datepicker-inrange-hover-bg-color: rgba(13, 122, 209, 0.44);
+  --el-datepicker-active-color: #20b5f1;
+  border-color: #1478ba !important;
+  background-color: #061b34 !important;
+  color: #d8e9f6;
+}
+
+body.equip-theme .el-date-table td.available:hover,
+body.equip-theme .el-date-table td .el-date-table-cell__text {
+  color: #d8e9f6;
+}
+
+body.equip-theme .el-date-table td.current:not(.disabled) .el-date-table-cell__text {
+  background-color: #20b5f1;
+  color: #041a31;
+}
+
+/* ---------- 弹窗 ---------- */
+body.equip-theme .el-dialog {
+  background: linear-gradient(160deg, rgba(5, 31, 59, 0.98), rgba(3, 18, 38, 0.99));
+  border: 1px solid #1478ba;
+  box-shadow: 0 0 24px rgba(0, 100, 190, 0.35);
+  border-radius: 6px;
+}
+
+body.equip-theme .el-dialog__title {
+  color: #d8e9f6;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+body.equip-theme .el-dialog__header {
+  border-bottom: 1px solid rgba(20, 106, 170, 0.32);
+  margin-right: 0;
+  padding-bottom: 14px;
+}
+
+body.equip-theme .el-dialog__body {
+  color: #c3d6e6;
+}
+
+body.equip-theme .el-drawer {
+  background: linear-gradient(160deg, rgba(5, 31, 59, 0.99), rgba(3, 18, 38, 0.99));
+}
+
+body.equip-theme .el-drawer__header {
+  color: #d8e9f6;
+  border-bottom: 1px solid rgba(20, 106, 170, 0.32);
+  margin-bottom: 0;
+  padding-bottom: 14px;
+}
+
+/* ---------- 其他组件 ---------- */
+body.equip-theme .el-pagination {
+  --el-pagination-bg-color: transparent;
+  --el-pagination-button-bg-color: #061b34;
+  --el-pagination-text-color: #c3d6e6;
+  --el-pagination-button-color: #c3d6e6;
+  --el-pagination-hover-color: #20b5f1;
+  justify-content: flex-end;
+}
+
+body.equip-theme .el-pagination button,
+body.equip-theme .el-pagination .el-pager li {
+  background-color: #061b34 !important;
+  color: #c3d6e6 !important;
+  border: 1px solid rgba(20, 106, 170, 0.4);
+  margin: 0 2px;
+  border-radius: 3px;
+}
+
+body.equip-theme .el-pagination .el-pager li.is-active {
+  background-color: #0c3865 !important;
+  color: #20b5f1 !important;
+  border-color: #20b5f1;
+}
+
+body.equip-theme .el-tabs__item {
+  color: #93a9bd;
+}
+
+body.equip-theme .el-tabs__item.is-active {
+  color: #20b5f1;
+}
+
+body.equip-theme .el-tabs__nav-wrap::after {
+  background-color: rgba(20, 106, 170, 0.32);
+}
+
+body.equip-theme .el-tabs__active-bar {
+  background-color: #20b5f1;
+}
+
+body.equip-theme .el-form-item__label {
+  color: #93a9bd;
+}
+
+body.equip-theme .el-descriptions {
+  --el-descriptions-item-bordered-label-background: #0a2945;
+}
+
+body.equip-theme .el-descriptions__body,
+body.equip-theme .el-descriptions__cell {
+  background-color: transparent;
+  color: #c3d6e6;
+}
+
+body.equip-theme .el-descriptions__label {
+  color: #93a9bd;
+}
+
+body.equip-theme .el-empty__description p {
+  color: #71869a;
+}
+
+body.equip-theme .el-divider {
+  border-color: rgba(20, 106, 170, 0.32);
+}
+
+body.equip-theme .el-radio-button__inner,
+body.equip-theme .el-checkbox-button__inner {
+  background-color: #061b34;
+  border-color: rgba(20, 106, 170, 0.5);
+  color: #c3d6e6;
+}
+
+body.equip-theme .el-message-box {
+  background: linear-gradient(160deg, rgba(5, 31, 59, 0.99), rgba(3, 18, 38, 0.99));
+  border: 1px solid #1478ba;
+}
+
+body.equip-theme .el-message-box__title,
+body.equip-theme .el-message-box__message {
+  color: #d8e9f6;
+}
+
+/* ============================================================
+   装备系统布局样式
+   ============================================================ */
+
+.equip-shell {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% -10%, #08264a 0%, #03132a 42%, #020817 82%);
+  color: #d8e9f6;
+  font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+}
+
+.equip-shell__aside {
+  width: 224px;
+  flex: 0 0 224px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(20, 106, 170, 0.36);
+  background: linear-gradient(180deg, rgba(5, 31, 59, 0.96), rgba(2, 12, 26, 0.96));
+  position: relative;
+  z-index: 3;
+}
+
+.equip-shell__brand {
+  height: 76px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 18px;
+  border-bottom: 1px solid rgba(20, 106, 170, 0.32);
+}
+
+.equip-shell__brand-mark {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #03101f;
+  background: linear-gradient(135deg, #20b5f1, #0d6fb0);
+  box-shadow: 0 0 14px rgba(32, 181, 241, 0.55);
+}
+
+.equip-shell__brand-text strong {
+  display: block;
+  font-size: 15px;
+  letter-spacing: 1px;
+  color: #e9f5ff;
+}
+
+.equip-shell__brand-text span {
+  font-size: 11px;
+  color: #6fa8ce;
+  letter-spacing: 2px;
+}
+
+.equip-shell__nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 10px 20px;
+}
+
+.equip-shell__group {
+  margin: 14px 8px 6px;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #55708a;
+}
+
+.equip-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 12px;
+  margin-bottom: 4px;
+  border-radius: 5px;
+  font-size: 13.5px;
+  color: #a9c2d6;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.18s ease;
+  text-decoration: none;
+}
+
+.equip-nav-item:hover {
+  color: #e9f5ff;
+  background: rgba(13, 79, 143, 0.32);
+}
+
+.equip-nav-item.is-active {
+  color: #ffffff;
+  background: linear-gradient(90deg, rgba(13, 79, 143, 0.9), rgba(13, 79, 143, 0.25));
+  border-color: rgba(32, 181, 241, 0.55);
+  box-shadow: inset 2px 0 0 #20b5f1;
+}
+
+.equip-nav-item__badge {
+  margin-left: auto;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+  color: #03101f;
+  background: #f5a622;
+}
+
+.equip-shell__aside-foot {
+  padding: 12px 16px 16px;
+  border-top: 1px solid rgba(20, 106, 170, 0.28);
+  font-size: 11px;
+  color: #55708a;
+  line-height: 1.7;
+}
+
+.equip-shell__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.equip-shell__header {
+  height: 60px;
+  flex: 0 0 60px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 22px;
+  border-bottom: 1px solid rgba(20, 106, 170, 0.32);
+  background: linear-gradient(180deg, rgba(6, 30, 56, 0.9), rgba(4, 20, 38, 0.72));
+}
+
+.equip-shell__title {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #e9f5ff;
+}
+
+.equip-shell__crumb {
+  font-size: 12px;
+  color: #6fa8ce;
+}
+
+.equip-shell__main {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 18px 22px 26px;
+}
+
+.equip-panel {
+  border: 1px solid rgba(20, 106, 170, 0.4);
+  background: linear-gradient(135deg, rgba(5, 31, 59, 0.82), rgba(3, 18, 38, 0.86));
+  box-shadow: inset 0 0 22px rgba(13, 105, 180, 0.1);
+  border-radius: 6px;
+}
+
+.equip-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(20, 106, 170, 0.28);
+}
+
+.equip-panel__head h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #d8e9f6;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.equip-panel__head h3::before {
+  content: '';
+  width: 3px;
+  height: 14px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #20b5f1, #0d6fb0);
+  box-shadow: 0 0 8px rgba(32, 181, 241, 0.8);
+}
+
+.equip-panel__body {
+  padding: 14px 16px 16px;
+}
+
+.equip-kpi {
+  position: relative;
+  overflow: hidden;
+  padding: 14px 16px;
+  border-radius: 6px;
+  border: 1px solid rgba(20, 106, 170, 0.4);
+  background: linear-gradient(135deg, rgba(10, 43, 76, 0.9), rgba(5, 27, 52, 0.85));
+}
+
+.equip-kpi::after {
+  content: '';
+  position: absolute;
+  right: -30px;
+  top: -30px;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(32, 181, 241, 0.22), transparent 70%);
+}
+
+.equip-kpi__label {
+  font-size: 12px;
+  color: #93a9bd;
+  letter-spacing: 1px;
+}
+
+.equip-kpi__value {
+  margin-top: 6px;
+  font-size: 26px;
+  font-weight: 700;
+  color: #e9f5ff;
+  text-shadow: 0 0 12px rgba(32, 181, 241, 0.4);
+}
+
+.equip-kpi__unit {
+  margin-left: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #6fa8ce;
+}
+
+.equip-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  border: 1px solid;
+}
+
+.equip-tag--info {
+  color: #9cc4e0;
+  border-color: rgba(20, 106, 170, 0.6);
+  background: rgba(13, 79, 143, 0.25);
+}
+
+.equip-tag--warn {
+  color: #f5c35d;
+  border-color: rgba(245, 166, 34, 0.6);
+  background: rgba(245, 166, 34, 0.14);
+}
+
+.equip-tag--danger {
+  color: #ff8f88;
+  border-color: rgba(239, 102, 93, 0.6);
+  background: rgba(239, 102, 93, 0.14);
+}
+
+.equip-tag--success {
+  color: #b6e08a;
+  border-color: rgba(154, 205, 85, 0.55);
+  background: rgba(154, 205, 85, 0.14);
+}

@@ -1,8 +1,12 @@
 <script setup>
-import { Monitor } from '@lucide/vue'
+import { Monitor, Warehouse } from '@lucide/vue'
 
 function openPoliceScreen() {
   window.open('/screen', '_blank')
+}
+
+function openEquipWarehouse() {
+  window.open('/warehouse', '_blank')
 }
 </script>
 
@@ -19,6 +23,17 @@ function openPoliceScreen() {
             @click="openPoliceScreen"
           >
             街面警务站大数据屏
+          </el-button>
+        </el-col>
+        <el-col :span="8">
+          <el-button
+            type="success"
+            size="large"
+            :icon="Warehouse"
+            class="w-full h-[90px] text-lg"
+            @click="openEquipWarehouse"
+          >
+            警用装备仓库管理
           </el-button>
         </el-col>
       </el-row>
