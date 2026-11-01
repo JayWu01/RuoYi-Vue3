@@ -1,4 +1,5 @@
 import path from 'node:path'
+import legacy from '@vitejs/plugin-legacy'
 import autoprefixer from 'autoprefixer'
 import tailwindcss from 'tailwindcss'
 import { defineConfig, loadEnv } from 'vite'
@@ -14,7 +15,14 @@ export default defineConfig(({ mode, command }) => {
     // 默认情况下，vite 会假设你的应用是被部署在一个域名的根路径上
     // 例如 https://www.ruoyi.vip/。如果应用被部署在一个子路径上，你就需要用这个选项指定这个子路径。例如，如果你的应用被部署在 https://www.ruoyi.vip/admin/，则设置 VITE_BACKEND_URL 为 /admin/。
     base: '/',
-    plugins: createVitePlugins(env, command === 'build'),
+    plugins: [
+      createVitePlugins(env, command === 'build'),
+      // 兼容老版本 Chrome（>=49，Vue3 Proxy 硬底线）：
+      // 语法降级到 es2015 + core-js polyfill（Object.hasOwn/Array.at 等）+ nomodule 兜底包
+      legacy({
+        targets: ['chrome >= 49', 'edge >= 79', 'firefox >= 51', 'safari >= 10']
+      })
+    ],
     resolve: {
       // https://cn.vitejs.dev/config/#resolve-alias
       alias: {
@@ -31,6 +39,8 @@ export default defineConfig(({ mode, command }) => {
     },
     // 打包配置
     build: {
+      // 语法目标降到 es2015（配合 legacy 插件转译 ?./?? 等 ES2020 语法，老 Chrome 可执行）
+      target: 'es2015',
       // https://vite.dev/config/build-options.html
       sourcemap: command === 'build' ? false : 'inline',
       outDir: 'dist',
@@ -67,7 +77,11 @@ export default defineConfig(({ mode, command }) => {
       postcss: {
         plugins: [
           tailwindcss(),
-          autoprefixer(),
+          // 仅给 autoprefixer 指定低版本浏览器，补 -webkit- 前缀（backdrop-filter 等）。
+          // 不写 .browserslistrc：plugin-legacy 的现代包目标也会读项目 browserslist，会把现代包一起降级。
+          autoprefixer({
+            overrideBrowserslist: ['chrome >= 49', 'edge >= 79', 'firefox >= 51', 'safari >= 10']
+          }),
           {
             postcssPlugin: 'internal:charset-removal',
             AtRule: {
