@@ -57,6 +57,7 @@ const returnForm = reactive({
   returnDate: '',
   handleBy: '',
   partsCheck: '',
+  attachUrl: '',
   remark: '',
   items: []
 })
@@ -200,6 +201,7 @@ async function openReturn(row) {
   returnForm.returnDate = new Date().toISOString().slice(0, 10)
   returnForm.handleBy = scope.value.userName || ''
   returnForm.partsCheck = ''
+  returnForm.attachUrl = ''
   returnForm.remark = ''
   returnForm.items = (loan.items || []).map(item => ({
     itemId: item.itemId,
@@ -584,6 +586,9 @@ onMounted(getList)
         </el-table>
         <el-form-item label="情况说明" class="mt-3">
           <el-input v-model="returnForm.remark" type="textarea" :rows="2" maxlength="300" placeholder="遗失/损坏需说明情况" />
+        </el-form-item>
+        <el-form-item label="相关附件">
+          <file-upload v-model="returnForm.attachUrl" :limit="3" :file-size="10" />
         </el-form-item>
       </el-form>
       <template #footer>

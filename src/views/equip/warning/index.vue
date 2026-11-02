@@ -86,7 +86,7 @@ onMounted(getData)
           </div>
         </div>
         <div class="mt-3 text-[12px] text-[#93a9bd]">
-          当前范围：{{ scope.all ? '全支队' : '本单位及下属单位' }}；借用到期默认提前 2 天提醒，有效期按装备配置的预警天数计算
+          当前范围：{{ scope.all ? '全支队' : '本单位及下属单位' }}；借用到期提前两个工作日提醒（含已逾期），有效期按所选天数预警，轮换按 {{ Math.max(1, Math.floor((summary.expireDays ?? 30) / 30)) }} 个月提前提醒
         </div>
       </div>
     </section>
@@ -101,10 +101,10 @@ onMounted(getData)
               <el-table-column label="借用人" prop="borrowerName" width="110" align="center" />
               <el-table-column label="借用数量" prop="totalQty" width="90" align="center" />
               <el-table-column label="预计归还" prop="expectReturnDate" width="130" align="center" />
-              <el-table-column label="状态" width="130" align="center">
+              <el-table-column label="距归还" width="120" align="center">
                 <template #default="{ row }">
                   <span class="equip-tag" :class="row.overdueDays > 0 ? 'equip-tag--danger' : 'equip-tag--warn'">
-                    {{ row.warnState }}{{ row.overdueDays > 0 ? ` ${row.overdueDays} 天` : '' }}
+                    {{ row.overdueDays > 0 ? `逾期 ${row.overdueDays} 天` : `剩余 ${row.remainDays} 天` }}
                   </span>
                 </template>
               </el-table-column>
@@ -140,10 +140,12 @@ onMounted(getData)
                   {{ row.rotateMonths }} 个月
                 </template>
               </el-table-column>
-              <el-table-column label="应检查日期" prop="rotateDate" width="130" align="center" />
-              <el-table-column label="超期" width="100" align="center">
+              <el-table-column label="应轮换日期" prop="rotateDate" width="130" align="center" />
+              <el-table-column label="状态" width="130" align="center">
                 <template #default="{ row }">
-                  <span class="equip-tag equip-tag--warn">{{ row.overdueDays }} 天</span>
+                  <span class="equip-tag" :class="row.warnState === '已超期' ? 'equip-tag--danger' : 'equip-tag--warn'">
+                    {{ row.warnState }}{{ row.warnState === '已超期' ? ` ${row.overdueDays} 天` : ` 剩 ${row.remainDays} 天` }}
+                  </span>
                 </template>
               </el-table-column>
             </el-table>

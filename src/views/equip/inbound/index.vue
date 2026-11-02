@@ -13,7 +13,7 @@ import {
 import { addDateRange } from '@/utils/ruoyi'
 import StatusTag from '../components/StatusTag.vue'
 import { INBOUND_STATUS } from '../constants'
-import { equipCtx } from '../context'
+import { equipCtx, findDeptName } from '../context'
 
 const loading = ref(false)
 const list = ref([])
@@ -28,8 +28,11 @@ const query = reactive({ pageNum: 1, pageSize: 10, inboundNo: '', status: '' })
 
 const scope = computed(() => equipCtx.scope)
 const items = computed(() => equipCtx.items)
+const deptTree = computed(() => equipCtx.deptTree)
 
 const form = reactive({
+  warehouseDeptId: null,
+  warehouseDeptName: '',
   handler: '',
   handlerPhone: '',
   remark: '',
@@ -37,6 +40,7 @@ const form = reactive({
 })
 
 const rules = {
+  warehouseDeptId: [{ required: true, message: '请选择入库单位', trigger: 'change' }],
   handler: [{ required: true, message: '请输入入库经办人', trigger: 'blur' }]
 }
 
@@ -92,6 +96,9 @@ function itemUnit(itemId) {
 }
 
 function handleAdd() {
+  // 支队账号默认入支队总仓库，大队/警务站账号默认入本单位
+  form.warehouseDeptId = scope.value.all ? scope.value.hqDeptId : scope.value.deptId || scope.value.hqDeptId
+  form.warehouseDeptName = onDeptName(form.warehouseDeptId)
   form.handler = ''
   form.handlerPhone = ''
   form.remark = ''
@@ -101,10 +108,24 @@ function handleAdd() {
   nextTick(() => formRef.value?.clearValidate())
 }
 
+function onDeptName(deptId) {
+  if (deptId && scope.value.hqDeptId === deptId) {
+    return scope.value.hqDeptName
+  }
+  return findDeptName(deptId) || scope.value.deptName || ''
+}
+
+function onWarehouseChange(deptId) {
+  form.warehouseDeptName = onDeptName(deptId)
+}
+
 function submitForm() {
   formRef.value.validate(async (valid) => {
     if (!valid) {
       return
+    }
+    if (!form.warehouseDeptName) {
+      form.warehouseDeptName = onDeptName(form.warehouseDeptId)
     }
     if (!form.items.length) {
       ElMessage.warning('请至少添加一条入库明细')
@@ -122,7 +143,11 @@ function submitForm() {
 }
 
 async function handleConfirm(row) {
-  await ElMessageBox.confirm(`确认入库单【${row.inboundNo}】并增加支队仓库库存？`, '确认入库', { type: 'warning' })
+  await ElMessageBox.confirm(
+    `确认入库单【${row.inboundNo}】并增加【${row.warehouseDeptName}】库存？`,
+    '确认入库',
+    { type: 'warning' }
+  )
   await confirmInbound(row.inboundId)
   ElMessage.success('入库成功，库存已更新')
   getList()
@@ -167,9 +192,9 @@ onMounted(getList)
       </div>
       <div class="equip-panel__body">
         <div class="mb-3 flex flex-wrap items-center gap-2 text-[12px] text-[#93a9bd]">
-          <span>入库仓库：{{ scope.hqDeptName || '-' }}</span>
+          <span>默认入库单位：{{ scope.all ? scope.hqDeptName : scope.deptName || scope.hqDeptName }}{{ scope.all ? '（可改为指定单位）' : '' }}</span>
           <span class="text-[#55708a]">｜</span>
-          <span>入库单创建后需“确认入库”才会增加库存</span>
+          <span>入库单创建后需“确认入库”才会增加对应单位库存</span>
         </div>
         <el-form :inline="true" :model="query" class="mb-3">
           <el-form-item label="入库单号">
@@ -201,7 +226,7 @@ onMounted(getList)
 
         <el-table v-loading="loading" :data="list">
           <el-table-column label="入库单号" prop="inboundNo" min-width="160" show-overflow-tooltip />
-          <el-table-column label="入库仓库" prop="warehouseDeptName" min-width="140" show-overflow-tooltip />
+          <el-table-column label="入库单位" prop="warehouseDeptName" min-width="140" show-overflow-tooltip />
           <el-table-column label="入库数量" prop="totalQty" width="100" align="center" />
           <el-table-column label="经办人" prop="handler" width="110" align="center" />
           <el-table-column label="状态" width="100" align="center">
@@ -273,8 +298,17 @@ onMounted(getList)
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="入库仓库">
-              <el-input :model-value="scope.hqDeptName" disabled />
+            <el-form-item label="入库单位" prop="warehouseDeptId">
+              <el-tree-select
+                v-model="form.warehouseDeptId"
+                :data="deptTree"
+                :props="{ value: 'id', label: 'label', children: 'children' }"
+                check-strictly
+                node-key="id"
+                placeholder="请选择入库单位"
+                style="width: 100%"
+                @change="onWarehouseChange"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -361,7 +395,7 @@ onMounted(getList)
         <el-descriptions-item label="状态">
           <StatusTag :value="detail.status" :map="INBOUND_STATUS" />
         </el-descriptions-item>
-        <el-descriptions-item label="入库仓库">
+        <el-descriptions-item label="入库单位">
           {{ detail.warehouseDeptName }}
         </el-descriptions-item>
         <el-descriptions-item label="经办人">

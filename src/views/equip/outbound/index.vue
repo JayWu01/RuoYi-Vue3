@@ -13,7 +13,7 @@ import {
 import { addDateRange } from '@/utils/ruoyi'
 import StatusTag from '../components/StatusTag.vue'
 import { OUTBOUND_STATUS } from '../constants'
-import { equipCtx } from '../context'
+import { equipCtx, findDeptName } from '../context'
 
 const loading = ref(false)
 const list = ref([])
@@ -28,8 +28,11 @@ const query = reactive({ pageNum: 1, pageSize: 10, outboundNo: '', status: '' })
 
 const scope = computed(() => equipCtx.scope)
 const items = computed(() => equipCtx.items)
+const deptTree = computed(() => equipCtx.deptTree)
 
 const form = reactive({
+  outDeptId: null,
+  outDeptName: '',
   outReason: '',
   handler: '',
   remark: '',
@@ -37,6 +40,7 @@ const form = reactive({
 })
 
 const rules = {
+  outDeptId: [{ required: true, message: '请选择出库单位', trigger: 'change' }],
   outReason: [{ required: true, message: '请填写出库原因', trigger: 'blur' }]
 }
 
@@ -66,6 +70,9 @@ function itemUnit(itemId) {
 }
 
 function handleAdd() {
+  // 支队账号默认从支队总仓库出库，大队/警务站账号默认从本单位出库
+  form.outDeptId = scope.value.all ? scope.value.hqDeptId : scope.value.deptId || scope.value.hqDeptId
+  form.outDeptName = onDeptName(form.outDeptId)
   form.outReason = ''
   form.handler = ''
   form.remark = ''
@@ -75,10 +82,24 @@ function handleAdd() {
   nextTick(() => formRef.value?.clearValidate())
 }
 
+function onDeptName(deptId) {
+  if (deptId && scope.value.hqDeptId === deptId) {
+    return scope.value.hqDeptName
+  }
+  return findDeptName(deptId) || scope.value.deptName || ''
+}
+
+function onOutDeptChange(deptId) {
+  form.outDeptName = onDeptName(deptId)
+}
+
 function submitForm() {
   formRef.value.validate(async (valid) => {
     if (!valid) {
       return
+    }
+    if (!form.outDeptName) {
+      form.outDeptName = onDeptName(form.outDeptId)
     }
     if (!form.items.length) {
       ElMessage.warning('请至少添加一条出库明细')
@@ -141,9 +162,9 @@ onMounted(getList)
       </div>
       <div class="equip-panel__body">
         <div class="mb-3 flex flex-wrap items-center gap-2 text-[12px] text-[#93a9bd]">
-          <span>出库仓库：{{ scope.hqDeptName || '-' }}</span>
+          <span>默认出库单位：{{ scope.all ? scope.hqDeptName : scope.deptName || scope.hqDeptName }}{{ scope.all ? '（可改为指定单位）' : '' }}</span>
           <span class="text-[#55708a]">｜</span>
-          <span>出库用于领用、借用以外的库存减少，确认出库后自动扣减库存</span>
+          <span>出库用于领用、借用以外的库存减少，确认出库后自动扣减对应单位库存</span>
         </div>
         <el-form :inline="true" :model="query" class="mb-3">
           <el-form-item label="出库单号">
@@ -175,7 +196,7 @@ onMounted(getList)
 
         <el-table v-loading="loading" :data="list">
           <el-table-column label="出库单号" prop="outboundNo" min-width="160" show-overflow-tooltip />
-          <el-table-column label="出库仓库" prop="outDeptName" min-width="140" show-overflow-tooltip />
+          <el-table-column label="出库单位" prop="outDeptName" min-width="140" show-overflow-tooltip />
           <el-table-column label="出库数量" prop="totalQty" width="100" align="center" />
           <el-table-column label="出库原因" prop="outReason" min-width="160" show-overflow-tooltip />
           <el-table-column label="经办人" prop="handler" width="100" align="center" />
@@ -246,8 +267,17 @@ onMounted(getList)
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="出库仓库">
-              <el-input :model-value="scope.hqDeptName" disabled />
+            <el-form-item label="出库单位" prop="outDeptId">
+              <el-tree-select
+                v-model="form.outDeptId"
+                :data="deptTree"
+                :props="{ value: 'id', label: 'label', children: 'children' }"
+                check-strictly
+                node-key="id"
+                placeholder="请选择出库单位"
+                style="width: 100%"
+                @change="onOutDeptChange"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -318,7 +348,7 @@ onMounted(getList)
         <el-descriptions-item label="状态">
           <StatusTag :value="detail.status" :map="OUTBOUND_STATUS" />
         </el-descriptions-item>
-        <el-descriptions-item label="出库仓库">
+        <el-descriptions-item label="出库单位">
           {{ detail.outDeptName }}
         </el-descriptions-item>
         <el-descriptions-item label="出库原因" :span="2">

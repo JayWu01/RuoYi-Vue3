@@ -4,6 +4,8 @@
    ============================================================ */
 
 body.equip-theme {
+  /* 界面缩放系数：整体（含弹窗、下拉等 teleport 到 body 的浮层）等比缩放 */
+  --equip-zoom: 0.9;
   --el-color-primary: #20b5f1;
   --el-color-primary-light-3: #1a8fc0;
   --el-color-primary-light-5: #1478ba;
@@ -302,6 +304,14 @@ body.equip-theme .el-message-box__message {
    装备系统布局样式
    ============================================================ */
 
+/* ---------- 整体缩放：--equip-zoom 由右上角“缩放”切换（0.8 ~ 1） ---------- */
+/* 缩放挂在 body 上，弹窗/下拉/消息等 teleport 到 body 的浮层才能一起缩放 */
+@supports (zoom: 1) {
+  body.equip-theme {
+    zoom: var(--equip-zoom);
+  }
+}
+
 .equip-shell {
   height: 100vh;
   width: 100%;
@@ -312,11 +322,26 @@ body.equip-theme .el-message-box__message {
   font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
 }
 
+/* zoom 会连带缩小 100vh，这里反算回来，保证铺满可视区 */
+@supports (zoom: 1) {
+  .equip-shell {
+    height: calc(100vh / var(--equip-zoom));
+  }
+}
+
 .equip-shell__aside {
   width: 224px;
   flex: 0 0 224px;
   display: flex;
   flex-direction: column;
+  /* 覆盖 RuoYi 全局 index.scss 里的 aside 元素样式（padding/margin/line-height/font-size） */
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+  line-height: normal;
+  font-size: 13px;
+  font-family: inherit;
+  color: #d8e9f6;
   border-right: 1px solid rgba(20, 106, 170, 0.36);
   background: linear-gradient(180deg, rgba(5, 31, 59, 0.96), rgba(2, 12, 26, 0.96));
   position: relative;
@@ -324,36 +349,41 @@ body.equip-theme .el-message-box__message {
 }
 
 .equip-shell__brand {
-  height: 76px;
+  height: 58px;
+  flex: 0 0 58px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 0 18px;
+  gap: 9px;
+  padding: 0 14px;
   border-bottom: 1px solid rgba(20, 106, 170, 0.32);
 }
 
 .equip-shell__brand-mark {
-  width: 38px;
-  height: 38px;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
   display: grid;
   place-items: center;
-  border-radius: 8px;
+  border-radius: 7px;
   color: #03101f;
   background: linear-gradient(135deg, #20b5f1, #0d6fb0);
-  box-shadow: 0 0 14px rgba(32, 181, 241, 0.55);
+  box-shadow: 0 0 12px rgba(32, 181, 241, 0.5);
+}
+
+.equip-shell__brand-text {
+  min-width: 0;
 }
 
 .equip-shell__brand-text strong {
   display: block;
-  font-size: 15px;
-  letter-spacing: 1px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: #e9f5ff;
-}
-
-.equip-shell__brand-text span {
-  font-size: 11px;
-  color: #6fa8ce;
-  letter-spacing: 2px;
 }
 
 .equip-shell__nav {
@@ -426,33 +456,45 @@ body.equip-theme .el-message-box__message {
 }
 
 .equip-shell__header {
-  height: 60px;
-  flex: 0 0 60px;
+  height: 54px;
+  flex: 0 0 54px;
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 0 22px;
+  padding: 0 18px;
   border-bottom: 1px solid rgba(20, 106, 170, 0.32);
   background: linear-gradient(180deg, rgba(6, 30, 56, 0.9), rgba(4, 20, 38, 0.72));
 }
 
+.equip-shell__header > div:first-child {
+  min-width: 0;
+}
+
 .equip-shell__title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   letter-spacing: 1px;
+  line-height: 1.3;
   color: #e9f5ff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .equip-shell__crumb {
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 1.4;
   color: #6fa8ce;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .equip-shell__main {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 18px 22px 26px;
+  padding: 14px 18px 20px;
 }
 
 .equip-panel {

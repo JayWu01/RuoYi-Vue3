@@ -89,6 +89,21 @@ const visibleMenus = computed(() =>
 
 const pageTitle = computed(() => route.meta?.title || '警用装备仓库管理系统')
 
+/* ---------- 界面缩放（0.8 ~ 1，存本地，下次进入沿用） ---------- */
+const ZOOM_KEY = 'equip.ui.zoom'
+const ZOOM_LIST = [0.8, 0.85, 0.9, 0.95, 1]
+const savedZoom = Number(localStorage.getItem(ZOOM_KEY))
+const zoom = ref(ZOOM_LIST.includes(savedZoom) ? savedZoom : 0.9)
+
+function setZoomVar(value) {
+  document.body.style.setProperty('--equip-zoom', String(value))
+}
+
+function onZoomChange(value) {
+  setZoomVar(value)
+  localStorage.setItem(ZOOM_KEY, String(value))
+}
+
 const scope = computed(() => equipCtx.scope)
 const roleText = computed(() => {
   if (scope.value.all) {
@@ -133,6 +148,7 @@ async function refreshUnread() {
 
 async function boot() {
   document.body.classList.add('equip-theme')
+  setZoomVar(zoom.value)
   tick()
   timer = setInterval(tick, 1000)
   try {
@@ -147,6 +163,7 @@ onMounted(boot)
 
 onBeforeUnmount(() => {
   document.body.classList.remove('equip-theme')
+  document.body.style.removeProperty('--equip-zoom')
   if (timer) {
     clearInterval(timer)
   }
@@ -159,11 +176,10 @@ onBeforeUnmount(() => {
     <aside class="equip-shell__aside">
       <div class="equip-shell__brand">
         <div class="equip-shell__brand-mark">
-          <ShieldCheck :size="22" />
+          <ShieldCheck :size="18" />
         </div>
         <div class="equip-shell__brand-text">
           <strong>警用装备仓库</strong>
-          <span>POLICE EQUIPMENT WMS</span>
         </div>
       </div>
 
@@ -214,6 +230,16 @@ onBeforeUnmount(() => {
           <button class="equip-header-btn" :title="isFullscreen ? '退出全屏' : '全屏'" @click="toggleFullscreen">
             <component :is="isFullscreen ? Minimize : Maximize" :size="16" />
           </button>
+          <el-select
+            v-model="zoom"
+            class="equip-zoom-select"
+            size="small"
+            title="界面缩放"
+            style="width: 82px"
+            @change="onZoomChange"
+          >
+            <el-option v-for="z in ZOOM_LIST" :key="z" :label="`${Math.round(z * 100)}%`" :value="z" />
+          </el-select>
           <div class="flex items-center gap-2 text-[#d8e9f6]">
             <span class="equip-header-avatar">{{ (scope.userName || '警').slice(0, 1) }}</span>
             <span>
@@ -260,6 +286,15 @@ onBeforeUnmount(() => {
 
 .equip-header-btn--text {
   font-size: 12px;
+}
+
+.equip-zoom-select :deep(.el-select__wrapper) {
+  min-height: 30px;
+  height: 30px;
+  border-radius: 4px;
+  font-size: 12px;
+  background-color: #061b34;
+  box-shadow: 0 0 0 1px rgba(20, 106, 170, 0.5) inset;
 }
 
 .equip-header-dot {
