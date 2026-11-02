@@ -130,7 +130,7 @@ onMounted(getList)
 
         <el-table v-loading="loading" :data="list" row-key="categoryId" default-expand-all :tree-props="{ children: 'children' }">
           <el-table-column label="分类名称" prop="categoryName" min-width="220" />
-          <el-table-column label="装备数量" prop="itemCount" width="110" align="center" />
+          <el-table-column label="下属种类数" prop="itemCount" width="110" align="center" />
           <el-table-column label="排序" prop="orderNum" width="90" align="center" />
           <el-table-column label="状态" width="100" align="center">
             <template #default="{ row }">

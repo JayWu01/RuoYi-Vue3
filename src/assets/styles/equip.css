@@ -62,15 +62,17 @@ body.equip-theme ::-webkit-scrollbar-track {
 }
 
 /* ---------- 表格 ---------- */
+/* 行背景必须是不透明色：Element Plus 的固定列（操作列）用 background: inherit 继承行背景，
+   一旦行背景透明，横向滚动时右侧固定列就会和后面的数据叠在一起 */
 body.equip-theme .el-table {
   --el-table-border-color: rgba(20, 106, 170, 0.32);
   --el-table-border: 1px solid rgba(20, 106, 170, 0.32);
   --el-table-text-color: #c3d6e6;
   --el-table-header-text-color: #d8e9f6;
-  --el-table-row-hover-bg-color: rgba(13, 79, 143, 0.42);
-  --el-table-current-row-bg-color: rgba(13, 79, 143, 0.32);
-  --el-table-bg-color: transparent;
-  --el-table-tr-bg-color: transparent;
+  --el-table-row-hover-bg-color: #083058;
+  --el-table-current-row-bg-color: #093a5f;
+  --el-table-bg-color: #041a31;
+  --el-table-tr-bg-color: #051a30;
   --el-table-header-bg-color: #0a2945;
   --el-table-fixed-box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
   background-color: transparent;
@@ -82,11 +84,42 @@ body.equip-theme .el-table th.el-table__cell {
 }
 
 body.equip-theme .el-table tr {
-  background-color: transparent;
+  background-color: var(--el-table-tr-bg-color);
 }
 
 body.equip-theme .el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
-  background-color: rgba(6, 27, 52, 0.6);
+  background-color: #072039;
+}
+
+/* 固定列（操作列）兜底不透明，悬停/斑马纹同样不透明 */
+body.equip-theme .el-table__body-wrapper tr td.el-table-fixed-column--right,
+body.equip-theme .el-table__body-wrapper tr td.el-table-fixed-column--left {
+  background-color: var(--el-table-tr-bg-color);
+}
+
+body.equip-theme .el-table__body tr.el-table__row--striped td.el-table-fixed-column--right,
+body.equip-theme .el-table__body tr.el-table__row--striped td.el-table-fixed-column--left {
+  background-color: #072039;
+}
+
+body.equip-theme .el-table__body tr:hover > td.el-table-fixed-column--right,
+body.equip-theme .el-table__body tr:hover > td.el-table-fixed-column--left {
+  background-color: var(--el-table-row-hover-bg-color);
+}
+
+/* 固定列左侧分隔阴影，滚动时能看出层次 */
+body.equip-theme .el-table td.el-table-fixed-column--right.is-first-column::before {
+  box-shadow: -8px 0 10px -8px rgba(0, 0, 0, 0.75);
+}
+
+/* 操作列按钮紧凑排布：按钮多时不至于在窄列里换行、挤成一团 */
+body.equip-theme .el-table .cell .el-button {
+  padding: 0 3px;
+  font-size: 12.5px;
+}
+
+body.equip-theme .el-table .cell .el-button + .el-button {
+  margin-left: 6px;
 }
 
 body.equip-theme .el-table__empty-block {
