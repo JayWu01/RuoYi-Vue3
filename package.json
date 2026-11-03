@@ -2,7 +2,7 @@
   "name": "dashboard",
   "type": "module",
   "version": "0.0.1",
-  "description": "数智巡防管理系统前端",
+  "description": "数智特警管理系统前端",
   "author": "JayWu01 <https://github.com/JayWu01>",
   "scripts": {
     "dev": "vite",
