@@ -154,8 +154,9 @@ async function boot() {
   try {
     await loadEquipCtx(true)
     await refreshUnread()
-  } catch {
-    ElMessage.error('装备系统初始化失败，请检查参数 equip.hq.deptId 与数据库配置')
+  } catch (e) {
+    const msg = e?.message && e.message !== 'error' ? e.message : '请检查参数 equip.hq.deptId 与数据库配置'
+    ElMessage.error(`装备系统初始化失败：${msg}`)
   }
 }
 
@@ -255,7 +256,18 @@ onBeforeUnmount(() => {
       </header>
 
       <main class="equip-shell__main">
-        <router-view v-slot="{ Component }">
+        <div v-if="equipCtx.denied" class="equip-denied">
+          <ShieldCheck :size="44" />
+          <h3>当前账号未开通装备仓库系统权限</h3>
+          <p>
+            请联系管理员为账号分配「装备管理员」角色（支队 / 大队 / 警务站），
+            或在角色菜单里勾选装备模块权限（如 <code>equip:item:list</code>）。
+          </p>
+          <p class="equip-denied__hint">
+            权限变更后需要重新登录才会生效。
+          </p>
+        </div>
+        <router-view v-else v-slot="{ Component }">
           <component :is="Component" />
         </router-view>
       </main>

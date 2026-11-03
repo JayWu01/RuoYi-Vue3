@@ -18,7 +18,9 @@ export const equipCtx = reactive({
   unread: 0,
   deptTree: [],
   items: [],
-  loaded: false
+  loaded: false,
+  /** 当前账号没有装备模块的查询权限（如缺少 equip:item:list） */
+  denied: false
 })
 
 let loading = null
@@ -31,12 +33,22 @@ export function loadEquipCtx(force = false) {
   if (loading) {
     return loading
   }
-  loading = Promise.all([getEquipScopeInfo(), getEquipDeptTree(), getItemOptions()])
+  // 装备选项 403 不影响整体初始化：记下“无权限”后由布局给出提示
+  let itemDenied = false
+  loading = Promise.all([
+    getEquipScopeInfo(),
+    getEquipDeptTree().catch(() => ({ data: { trees: [] } })),
+    getItemOptions().catch(() => {
+      itemDenied = true
+      return { data: [] }
+    })
+  ])
     .then(([infoRes, treeRes, itemRes]) => {
       equipCtx.scope = infoRes.data?.scope || {}
       equipCtx.unread = infoRes.data?.unreadCount || 0
       equipCtx.deptTree = treeRes.data?.trees || []
       equipCtx.items = itemRes.data || []
+      equipCtx.denied = itemDenied
       equipCtx.loaded = true
       return equipCtx
     })
